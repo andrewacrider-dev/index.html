@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AAFS Codex // Integrated Flight Deck</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap');
+
+    :root {
+      --phosphor-green: #39ff14;
+      --phosphor-dim: #136013;
+      --phosphor-cyan: #00e5ff;
+      --phosphor-amber: #ffb000;
+      --bezel-bg: #15181a;
+      --bezel-border: #2c3238;
+      --screen-bg: #030804;
+      --screen-glow: rgba(57, 255, 20, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: #07090b;
+      color: var(--phosphor-green);
+      font-family: 'Share Tech Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+    }
+
+    /* Cockpit Main Frame */
+    .cockpit-chassis {
+      width: 100%;
+      max-width: 1240px;
+      background: linear-gradient(180deg, #1f2428 0%, #111416 100%);
+      border: 4px solid #3a424a;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.9), inset 0 2px 4px rgba(255,255,255,0.1);
+      position: relative;
+    }
+
+    .cockpit-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      border-bottom: 2px solid #2d343c;
+      padding-bottom: 8px;
+      color: #7d8b99;
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+    }
+
+    .cockpit-header .brand-tag {
+      color: var(--phosphor-cyan);
+      font-weight: bold;
+    }
+
+    /* Dual Display Layout */
+    .glass-cockpit-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 960px) {
+      .glass-cockpit-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Bezel Screen Housing */
+    .bezel-unit {
+      background: var(--bezel-bg);
+      border: 4px solid var(--bezel-border);
+      border-radius: 10px;
+      padding: 12px;
+      box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 4px 10px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bezel-topbar {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #5d6874;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .display-screen {
+      background: var(--screen-bg);
+      border: 2px solid var(--phosphor-dim);
+      border-radius: 6px;
+      height: 480px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.95), 0 0 15px var(--screen-glow);
+    }
+
+    /* Scanlines */
+    .display-screen::before {
+      content: " ";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%);
+      background-size: 100% 4px;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* PFD (Primary Flight Display) */
+    .pfd-annunciator {
+      background: #0d1a0d;
+      border-bottom: 1px solid var(--phosphor-dim);
+      display: flex;
+      justify-content: space-around;
+      font-size: 0.8rem;
+      padding: 6px 4px;
+      color: var(--phosphor-cyan);
+    }
+
+    .pfd-main-stage {
+      flex-grow: 1;
+      display: grid;
+      grid-template-columns: 65px 1fr 75px;
+      position: relative;
+    }
+
+    /* Speed & Altitude Tapes */
+    .tape {
+      background: rgba(0, 20, 0, 0.6);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      font-size: 0.85rem;
+      border-right: 1px solid var(--phosphor-dim);
+      position: relative;
+    }
+
+    .tape.right-tape {
+      border-right: none;
+      border-left: 1px solid var(--phosphor-dim);
+    }
+
+    .tape-box {
+      border: 2px solid var(--phosphor-green);
+      background: #000;
+      padding: 4px 6px;
+      font-size: 1rem;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 0 0 8px var(--phosphor-green);
+      z-index: 5;
+    }
+
+    /* Artificial Horizon */
+    .horizon-container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: radial-gradient(circle, #051405 0%, #000000 85%);
+    }
+
+    .pitch-ladder {
+      width: 140px;
+      height: 2px;
+      background: var(--phosphor-green);
+      margin: 14px 0;
+      position: relative;
+    }
+
+    .pitch-ladder::before, .pitch-ladder::after {
+      content: "";
+      position: absolute;
+      top: -6px;
+      width: 2px;
+      height: 14px;
+      background: var(--phosphor-green);
+    }
+    .pitch-ladder::before { left: 0; }
+    .pitch-ladder::after { right: 0; }
+
+    .aircraft-symbol {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 6;
+    }
+
+    .aircraft-symbol::before {
+      content: "";
+      width: 100%;
+      height: 4px;
+      background: var(--phosphor-amber);
+      box-shadow: 0 0 6px var(--phosphor-amber);
+    }
+
+    .aircraft-symbol::after {
+      content: "";
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border: 2px solid var(--phosphor-amber);
+      border-radius: 50%;
+    }
+
+    .pfd-footer {
+      border-top: 1px solid var(--phosphor-dim);
+      background: #060e06;
+      padding: 8px 12px;
+      font-size: 0.75rem;
+      line-height: 1.4;
+      color: #8cff8c;
+    }
+
+    /* MFD (Multi-Function Display) */
+    .mfd-content-viewport {
+      flex-grow: 1;
+      padding: 16px;
+      overflow-y: auto;
+      z-index: 5;
+    }
+
+    .mfd-bezel-softkeys {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .softkey {
+      background: #1e2429;
+      color: #9cb1c6;
+      border: 2px solid #3d4752;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.75rem;
+      padding: 8px 2px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.1s ease;
+      text-align: center;
+    }
+
+    .softkey:hover, .softkey.active {
+      background: var(--phosphor-dim);
+      color: #fff;
+      border-color: var(--phosphor-green);
+      box-shadow: 0 0 8px var(--phosphor-green);
+    }
+
+    /* MFD Cards and Buttons */
+    .mfd-menu-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .mfd-btn {
+      background: rgba(0, 30, 0, 0.4);
+      border: 1px solid var(--phosphor-dim);
+      color: var(--phosphor-green);
+      font-family: inherit;
+      font-size: 0.9rem;
+      padding: 10px 12px;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.15s;
+    }
+
+    .mfd-btn:hover {
+      background: var(--phosphor-dim);
+      color: #fff;
+      border-color: var(--phosphor-green);
+    }
+
+    .mfd-embedded-frame {
+      width: 100%;
+      height: 380px;
+      border: 1px solid var(--phosphor-dim);
+      background: #0d120d;
+      filter: invert(90%) hue-rotate(180deg) brightness(85%) contrast(120%);
+    }
+
+    .photo-display {
+      width: 100%;
+      max-height: 220px;
+      object-fit: cover;
+      filter: grayscale(100%) brightness(90%) sepia(100%) hue-rotate(80deg) saturate(500%);
+      border: 1px solid var(--phosphor-dim);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cockpit-chassis">
+    <div class="cockpit-header">
+      <span>AAFS INTEGRATED AVIONICS SYSTEM // CODEX v2.6</span>
+      <span>SECTOR: <span class="brand-tag">RICHMOND, VA (VFR)</span></span>
+      <span>SYS CLOCK: <strong>AUGUST 2026</strong></span>
+    </div>
+
+    <div class="glass-cockpit-grid">
+      
+      <!-- LEFT SCREEN: PRIMARY FLIGHT DISPLAY (PFD) -->
+      <div class="bezel-unit">
+        <div class="bezel-topbar">
+          <span>[ PFD 1 // PRIMARY ]</span>
+          <span>ANNUNCIATOR: ACTIVE</span>
+        </div>
+
+        <div class="display-screen">
+          <div class="pfd-annunciator">
+            <span>MODE: WISPER</span>
+            <span>GPS VFR</span>
+            <span>ON COURSE</span>
+          </div>
+
+          <div class="pfd-main-stage">
+            <!-- Airspeed Tape -->
+            <div class="tape">
+              <span>100</span>
+              <span>98</span>
+              <div class="tape-box">96</div>
+              <span>94</span>
+              <span>92</span>
+              <span style="font-size:0.7rem; color:#6b8c6b;">KIAS</span>
+            </div>
+
+            <!-- Artificial Horizon & Pitch Ladder -->
+            <div class="horizon-container">
+              <div class="pitch-ladder" style="width: 100px;"></div>
+              <div class="pitch-ladder" style="width: 140px;"></div>
+              <div class="aircraft-symbol"></div>
+              <div class="pitch-ladder" style="width: 140px;"></div>
+              <div class="pitch-ladder" style="width: 100px;"></div>
+            </div>
+
+            <!-- Altitude & VSI Tape -->
+            <div class="tape right-tape">
+              <span>20,000</span>
+              <span>15,000</span>
+              <div class="tape-box">10,000</div>
+              <span>9,500</span>
+              <span>8,500</span>
+              <span style="font-size:0.7rem; color:#6b8c6b;">V/S: +500</span>
+            </div>
+          </div>
+
+          <div class="pfd-footer">
+            > COMMISSIONED 2026: Built as a deconfliction tool between today's technologies and those who inherit this earth.
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT SCREEN: MULTI-FUNCTION DISPLAY (MFD) -->
+      <div class="bezel-unit">
+        <div class="bezel-topbar">
+          <span id="mfd-mode-tag">[ MFD 2 // COMMUNITY ]</span>
+          <span>DATA FEED: SYNCED</span>
+        </div>
+
+        <div class="display-screen">
+          <div class="mfd-content-viewport" id="mfd-screen">
+            <!-- Injected via JavaScript -->
+          </div>
+        </div>
+
+        <!-- MFD Bezel Softkeys -->
+        <div class="mfd-bezel-softkeys">
+          <button class="softkey active" id="key-comm" onclick="switchPage('community')">COMM</button>
+          <button class="softkey" id="key-consult" onclick="switchPage('consulting')">CONSULT</button>
+          <button class="softkey" id="key-flight" onclick="switchPage('flight')">FLIGHT</button>
+          <button class="softkey" id="key-cats" onclick="switchPage('cats')">CATS!</button>
+          <button class="softkey" id="key-pilots" onclick="switchPage('pilots')">PILOTS</button>
+          <button class="softkey" id="key-mcu" onclick="switchPage('mcu')">MCU</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const SURVEY_LINKS = {
+      hirePilot: "https://docs.google.com/forms/d/e/1FAIpQLSdJXQ38WZqti9x5enUoOpwfvnErhDSCIkiMQWBoV79blaptFA/viewform?embedded=true",
+      studentPilot: "https://docs.google.com/forms/d/e/1FAIpQLScYXKl_eTJplwOlGb1z0cLVbJcK-99k8LGneeJ5Q55zvVXZbQ/viewform?embedded=true",
+      pilotTeach: "https://docs.google.com/forms/d/e/1FAIpQLSebU_PdiQX3HvnzkvZyUKgEnZniE-NoZ3TLj5Q2MXqtcSc8Jw/viewform?embedded=true",
+      pilotWork: "https://docs.google.com/forms/d/e/1FAIpQLSdHmi24pFvvECDs5yKPpwPnp_2svFfmNLT8LHVW7ER6leKpzQ/viewform?embedded=true"
+    };
+
+    const mfdScreen = document.getElementById("mfd-screen");
+    const mfdModeTag = document.getElementById("mfd-mode-tag");
+
+    // Web Audio Synthesizer
+    let audioCtx = null;
+    function playBezelClick() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      const now = audioCtx.currentTime;
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(1400, now);
+      osc.frequency.exponentialRampToValueAtTime(400, now + 0.04);
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.04);
+      osc.start(now);
+      osc.stop(now + 0.04);
+    }
+
+    function setActiveKey(pageId) {
+      document.querySelectorAll('.softkey').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`key-${pageId}`);
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+
+    function switchPage(page) {
+      playBezelClick();
+      setActiveKey(page);
+
+      if (page === 'community') {
+        mfdModeTag.innerText = "[ MFD // COMMUNITY DIRECTORY ]";
+        mfdScreen.innerHTML = `
+          <p style="margin-bottom:12px; color:#7aff7a;">> COMMUNITY NODES & EVENTS:</p>
+          <div class="mfd-menu-grid">
+            <button class="mfd-btn" onclick="renderSurvey('pilotWork', 'PILOT REGISTRATION')"><span>> Pilot Registration (We Have Work)</span><span>[OPEN]</span></button>
+            <button class="mfd-btn" onclick="alert('First Flight Training: Classroom portal queued.')"><span>> First Flight Training for Classroom</span><span>[COMM]</span></button>
+            <button class="mfd-btn" onclick="alert('Events Near You: Syncing Richmond calendar.')"><span>> Events Near You & RSVP</span><span>[CAL]</span></button>
+            <button class="mfd-btn" onclick="alert('Job Board Online: 14 Active Contracts.')"><span>> Jobs & Scouting</span><span>[OPS]</span></button>
+          </div>
+        `;
+      } else if (page === 'consulting') {
+        mfdModeTag.innerText = "[ MFD // CONSULTING & DEFENSE ]";
+        mfdScreen.innerHTML = `
+          <p style="margin-bottom:12px; color:#7aff7a;">> CONSULTING CAPABILITIES:</p>
+          <div class="mfd-menu-grid">
+            <button class="mfd-btn" onclick="alert('Drone Performance Telemetry: Data specs loaded.')"><span>> Drone Performance Data</span><span>[LOG]</span></button>
+            <button class="mfd-btn" onclick="alert('Drone Swarm Light Shows: Mission planner.')"><span>> Drone Swarm Light Shows</span><span>[OPS]</span></button>
+            <button class="mfd-btn" onclick="alert('Safety & Defense: Tactical advisory active.')"><span>> Safety / Defense Operations</span><span>[SEC]</span></button>
+            <button class="mfd-btn" onclick="alert('Manned Aircraft: Flight scheduling ready.')"><span>> Manned Aircraft Operation</span><span>[VFR]</span></button>
+          </div>
+        `;
+      } else if (page === 'flight') {
+        mfdModeTag.innerText = "[ MFD // FLIGHT OPERATIONS ]";
+        mfdScreen.innerHTML = `
+          <p style="margin-bottom:12px; color:#7aff7a;">> COMMERCIAL FLIGHT PATHS:</p>
+          <div class="mfd-menu-grid">
+            <button class="mfd-btn" onclick="alert('Construction Mapping: LiDAR and Photogrammetry loaded.')"><span>> Construction & Surveying</span><span>[AIR]</span></button>
+            <button class="mfd-btn" onclick="alert('Cinema & Film: FPV heavy-lift team.')"><span>> Film & Cinema Operations</span><span>[CAM]</span></button>
+            <button class="mfd-btn" onclick="alert('E-Commerce: Delivery routing active.')"><span>> E-Commerce Logistics</span><span>[CARGO]</span></button>
+            <button class="mfd-btn" onclick="alert('Event Planes: Flyover booking online.')"><span>> Have Our Plane at Your Event</span><span>[BOOK]</span></button>
+          </div>
+        `;
+      } else if (page === 'cats') {
+        mfdModeTag.innerText = "[ MFD // FELINE NETWORK (CATS!) ]";
+        mfdScreen.innerHTML = `
+          <p style="margin-bottom:10px; color:#7aff7a;">> FELINE TACTICAL CODEX:</p>
+          <div class="mfd-menu-grid">
+            <button class="mfd-btn" onclick="window.open('https://instagram.com/RichmondCats', '_blank')"><span>> Richmond Cats Instagram</span><span>[LINK]</span></button>
+            <button class="mfd-btn" onclick="showForest()"><span>> Pictures of Forest (The CAT)</span><span>[IMG]</span></button>
+            <button class="mfd-btn" onclick="alert('Cat Fight Alert unit notified.')"><span>> Report Cat Fight</span><span>[ALERT]</span></button>
+            <button class="mfd-btn" onclick="alert('UAS Search and Rescue unit dispatched.')"><span>> UAS Enhanced Search & Rescue</span><span>[SAR]</span></button>
+          </div>
+        `;
+      } else if (page === 'pilots') {
+        mfdModeTag.innerText = "[ MFD // PILOT INGESTION & HIRING ]";
+        mfdScreen.innerHTML = `
+          <p style="margin-bottom:12px; color:#7aff7a;">> CHOOSE AVIONICS PORTAL:</p>
+          <div class="mfd-menu-grid">
+            <button class="mfd-btn" onclick="renderSurvey('hirePilot', 'COMPANY: HIRE PILOTS')"><span>> 🏢 Company Looking to Hire Pilots</span><span>[FORM]</span></button>
+            <button class="mfd-btn" onclick="renderSurvey('pilotWork', 'PILOT: SEEKING WORK')"><span>> 🛠️ Pilot Looking to Work (Jobs)</span><span>[FORM]</span></button>
+            <button class="mfd-btn" onclick="renderSurvey('pilotTeach', 'PILOT: INSTRUCTOR')"><span>> 👨‍🏫 Pilot Willing to Help Teach</span><span>[FORM]</span></button>
+            <button class="mfd-btn" onclick="renderSurvey('studentPilot', 'STUDENT: LEARN PILOTING')"><span>> 🎓 Student Looking to Become Pilot</span><span>[FORM]</span></button>
+          </div>
+        `;
+      } else if (page === 'mcu') {
+        mfdModeTag.innerText = "[ MFD // MAIN CALENDAR UNIT ]";
+        mfdScreen.innerHTML = `
+          <p style="margin-bottom:12px; color:#7aff7a;">> MAIN CALENDAR UNIT (MCU):</p>
+          <div style="border: 1px solid var(--phosphor-dim); padding: 12px; background: rgba(0,20,0,0.5);">
+            <p>> ACTIVE SECTOR: <strong>RICHMOND, VIRGINIA</strong></p>
+            <p>> CALENDAR CYCLE: <strong>AUGUST 2026</strong></p>
+            <p>> GPS COURSE: <strong>VFR ON COURSE (090 RADIAL)</strong></p>
+            <br />
+            <p style="color:#fff;">[!] All nodes synchronized with Google Sheets master database.</p>
+          </div>
+        `;
+      }
+    }
+
+    function showForest() {
+      mfdScreen.innerHTML = `
+        <p>> VISUAL RECORD: <strong>FOREST (THE CAT)</strong></p>
+        <div style="margin-top:10px; text-align:center;">
+          <img class="photo-display" src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=600&q=80" alt="Forest The Cat">
+          <p style="font-size:0.8rem; margin-top:6px; color:#7aff7a;">[ IDENT: FOREST // RICHMOND VA ]</p>
+        </div>
+        <button class="mfd-btn" style="margin-top:10px;" onclick="switchPage('cats')">> < RETURN TO FELINE MENU</button>
+      `;
+    }
+
+    function renderSurvey(key, title) {
+      const url = SURVEY_LINKS[key];
+      mfdScreen.innerHTML = `
+        <p style="font-size:0.85rem;">> UPLINK: <strong>${title}</strong></p>
+        <iframe class="mfd-embedded-frame" src="${url}" frameborder="0">Loading Survey Matrix...</iframe>
+        <button class="mfd-btn" style="margin-top:8px;" onclick="switchPage('pilots')">> < RETURN TO PILOT DIRECTORY</button>
+      `;
+    }
+
+    // Default boot page
+    switchPage('community');
+  </script>
+</body>
+</html>
