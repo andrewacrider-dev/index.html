@@ -12,6 +12,8 @@
       --phosphor-dim: #136013;
       --phosphor-cyan: #00e5ff;
       --phosphor-amber: #ffb000;
+      --sky-blue: #0066cc;
+      --ground-brown: #663a1e;
       --bezel-bg: #15181a;
       --bezel-border: #2c3238;
       --screen-bg: #030804;
@@ -103,7 +105,7 @@
       background: var(--screen-bg);
       border: 2px solid var(--phosphor-dim);
       border-radius: 6px;
-      height: 480px;
+      height: 490px;
       position: relative;
       overflow: hidden;
       display: flex;
@@ -116,124 +118,172 @@
       content: " ";
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%);
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%);
       background-size: 100% 4px;
       pointer-events: none;
       z-index: 10;
     }
 
-    /* PFD (Primary Flight Display) */
+    /* PFD Header Annunciator */
     .pfd-annunciator {
-      background: #0d1a0d;
-      border-bottom: 1px solid var(--phosphor-dim);
+      background: #000;
+      border-bottom: 2px solid #222;
       display: flex;
       justify-content: space-around;
       font-size: 0.8rem;
       padding: 6px 4px;
       color: var(--phosphor-cyan);
+      z-index: 8;
     }
 
     .pfd-main-stage {
       flex-grow: 1;
       display: grid;
-      grid-template-columns: 65px 1fr 75px;
+      grid-template-columns: 75px 1fr 90px;
       position: relative;
+      overflow: hidden;
     }
 
-    /* Speed & Altitude Tapes */
-    .tape {
-      background: rgba(0, 20, 0, 0.6);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 0;
-      font-size: 0.85rem;
-      border-right: 1px solid var(--phosphor-dim);
-      position: relative;
-    }
-
-    .tape.right-tape {
-      border-right: none;
-      border-left: 1px solid var(--phosphor-dim);
-    }
-
-    .tape-box {
-      border: 2px solid var(--phosphor-green);
-      background: #000;
-      padding: 4px 6px;
-      font-size: 1rem;
-      font-weight: bold;
-      color: #fff;
-      text-shadow: 0 0 8px var(--phosphor-green);
-      z-index: 5;
-    }
-
-    /* Artificial Horizon */
+    /* Synthetic Vision Horizon */
     .horizon-container {
       position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .synthetic-vision-bg {
+      position: absolute;
+      width: 250%;
+      height: 250%;
+      background: linear-gradient(to bottom, 
+        var(--sky-blue) 0%, 
+        var(--sky-blue) 50%, 
+        #ffffff 50%, 
+        var(--ground-brown) 50.8%, 
+        var(--ground-brown) 100%);
+      transform: translateY(0px) rotate(0deg);
+      transition: transform 0.4s cubic-bezier(0.1, 0.9, 0.2, 1);
+      z-index: 1;
+    }
+
+    /* Grid Overlay for Synthetic Vision */
+    .synthetic-vision-bg::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 38px, rgba(255,255,255,0.15) 39px, transparent 40px),
+                  repeating-linear-gradient(90deg, transparent, transparent 38px, rgba(255,255,255,0.1) 39px, transparent 40px);
+    }
+
+    /* Pitch Ladder */
+    .pitch-ladder-wrapper {
+      position: absolute;
+      width: 100%;
+      height: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
-      background: radial-gradient(circle, #051405 0%, #000000 85%);
+      z-index: 3;
+      pointer-events: none;
     }
 
-    .pitch-ladder {
-      width: 140px;
+    .pitch-ladder-rung {
+      width: 120px;
       height: 2px;
-      background: var(--phosphor-green);
-      margin: 14px 0;
+      background: #ffffff;
+      margin: 18px 0;
       position: relative;
+      box-shadow: 0 0 4px #000;
     }
 
-    .pitch-ladder::before, .pitch-ladder::after {
+    .pitch-ladder-rung::before, .pitch-ladder-rung::after {
       content: "";
       position: absolute;
       top: -6px;
       width: 2px;
       height: 14px;
-      background: var(--phosphor-green);
+      background: #ffffff;
     }
-    .pitch-ladder::before { left: 0; }
-    .pitch-ladder::after { right: 0; }
+    .pitch-ladder-rung::before { left: 0; }
+    .pitch-ladder-rung::after { right: 0; }
 
-    .aircraft-symbol {
+    /* Heart Centered Attitude Indicator */
+    .aircraft-heart-symbol {
       position: absolute;
-      width: 80px;
-      height: 80px;
+      width: 60px;
+      height: 60px;
       display: flex;
       align-items: center;
       justify-content: center;
+      z-index: 7;
       pointer-events: none;
+    }
+
+    .heart-icon {
+      font-size: 2.2rem;
+      color: #ff2a7a;
+      text-shadow: 0 0 12px #ff2a7a, 0 0 4px #fff;
+      animation: pulse-heart 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse-heart {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .aircraft-wings {
+      position: absolute;
+      width: 140px;
+      height: 4px;
+      background: #ffb000;
+      box-shadow: 0 0 6px #ffb000;
+      border-radius: 2px;
+    }
+
+    /* Speed & Altitude Tapes */
+    .tape {
+      background: rgba(0, 15, 0, 0.85);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      font-size: 0.9rem;
+      border-right: 2px solid var(--phosphor-dim);
+      position: relative;
       z-index: 6;
     }
 
-    .aircraft-symbol::before {
-      content: "";
-      width: 100%;
-      height: 4px;
-      background: var(--phosphor-amber);
-      box-shadow: 0 0 6px var(--phosphor-amber);
+    .tape.right-tape {
+      border-right: none;
+      border-left: 2px solid var(--phosphor-dim);
     }
 
-    .aircraft-symbol::after {
-      content: "";
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      border: 2px solid var(--phosphor-amber);
-      border-radius: 50%;
+    .tape-box {
+      border: 2px solid var(--phosphor-green);
+      background: #000;
+      padding: 6px 6px;
+      font-size: 1.05rem;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 0 0 8px var(--phosphor-green);
+      z-index: 7;
+      border-radius: 4px;
+      text-align: center;
+      min-width: 65px;
     }
 
     .pfd-footer {
-      border-top: 1px solid var(--phosphor-dim);
-      background: #060e06;
+      border-top: 2px solid #222;
+      background: #000;
       padding: 8px 12px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       line-height: 1.4;
-      color: #8cff8c;
+      color: #7aff7a;
+      z-index: 8;
     }
 
     /* MFD (Multi-Function Display) */
@@ -272,7 +322,6 @@
       box-shadow: 0 0 8px var(--phosphor-green);
     }
 
-    /* MFD Cards and Buttons */
     .mfd-menu-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -328,48 +377,57 @@
 
     <div class="glass-cockpit-grid">
       
-      <!-- LEFT SCREEN: PRIMARY FLIGHT DISPLAY (PFD) -->
+      <!-- LEFT SCREEN: SYNTHETIC VISION PFD -->
       <div class="bezel-unit">
         <div class="bezel-topbar">
-          <span>[ PFD 1 // PRIMARY ]</span>
-          <span>ANNUNCIATOR: ACTIVE</span>
+          <span>[ PFD 1 // SYNTHETIC VISION ]</span>
+          <span id="pfd-status">ANNUNCIATOR: ACTIVE</span>
         </div>
 
         <div class="display-screen">
           <div class="pfd-annunciator">
             <span>MODE: WISPER</span>
             <span>GPS VFR</span>
-            <span>ON COURSE</span>
+            <span id="nav-mode-tag">ON COURSE</span>
           </div>
 
           <div class="pfd-main-stage">
-            <!-- Airspeed Tape -->
+            <!-- Dynamic Airspeed Tape -->
             <div class="tape">
-              <span>100</span>
-              <span>98</span>
-              <div class="tape-box">96</div>
-              <span>94</span>
-              <span>92</span>
+              <span id="spd-p2">102</span>
+              <span id="spd-p1">99</span>
+              <div class="tape-box" id="spd-box">96</div>
+              <span id="spd-m1">93</span>
+              <span id="spd-m2">90</span>
               <span style="font-size:0.7rem; color:#6b8c6b;">KIAS</span>
             </div>
 
-            <!-- Artificial Horizon & Pitch Ladder -->
+            <!-- Synthetic Vision Horizon Stage -->
             <div class="horizon-container">
-              <div class="pitch-ladder" style="width: 100px;"></div>
-              <div class="pitch-ladder" style="width: 140px;"></div>
-              <div class="aircraft-symbol"></div>
-              <div class="pitch-ladder" style="width: 140px;"></div>
-              <div class="pitch-ladder" style="width: 100px;"></div>
+              <div class="synthetic-vision-bg" id="synthetic-horizon"></div>
+              
+              <div class="pitch-ladder-wrapper">
+                <div class="pitch-ladder-rung" style="width: 80px;"></div>
+                <div class="pitch-ladder-rung" style="width: 120px;"></div>
+                <div class="pitch-ladder-rung" style="width: 120px;"></div>
+                <div class="pitch-ladder-rung" style="width: 80px;"></div>
+              </div>
+
+              <!-- Centered Heart Attitude Indicator -->
+              <div class="aircraft-heart-symbol">
+                <div class="aircraft-wings"></div>
+                <div class="heart-icon">♥</div>
+              </div>
             </div>
 
-            <!-- Altitude & VSI Tape -->
+            <!-- Dynamic Altitude & VSI Tape -->
             <div class="tape right-tape">
-              <span>20,000</span>
-              <span>15,000</span>
-              <div class="tape-box">10,000</div>
-              <span>9,500</span>
-              <span>8,500</span>
-              <span style="font-size:0.7rem; color:#6b8c6b;">V/S: +500</span>
+              <span id="alt-p2">15,000</span>
+              <span id="alt-p1">12,500</span>
+              <div class="tape-box" id="alt-box">10,000</div>
+              <span id="alt-m1">9,500</span>
+              <span id="alt-m2">8,000</span>
+              <span id="vsi-tag" style="font-size:0.7rem; color:#6b8c6b;">V/S: +500</span>
             </div>
           </div>
 
@@ -416,6 +474,14 @@
 
     const mfdScreen = document.getElementById("mfd-screen");
     const mfdModeTag = document.getElementById("mfd-mode-tag");
+    const syntheticHorizon = document.getElementById("synthetic-horizon");
+
+    // Flight Dynamics Telemetry State
+    let currentSpeed = 96;
+    let currentAltitude = 10000;
+    let currentVS = 500;
+    let currentPitch = 0;
+    let currentRoll = 0;
 
     // Web Audio Synthesizer
     let audioCtx = null;
@@ -436,6 +502,35 @@
       osc.stop(now + 0.04);
     }
 
+    // Telemetry Update & Gamified Reward Function
+    function rewardUserInteraction(speedDelta = 2, altDelta = 250, pitchDelta = -4, rollDelta = 3) {
+      currentSpeed += speedDelta;
+      currentAltitude += altDelta;
+      currentPitch = Math.max(-25, Math.min(25, currentPitch + pitchDelta));
+      currentRoll = Math.max(-20, Math.min(20, (Math.random() - 0.5) * rollDelta * 4));
+
+      // Update Tapes
+      document.getElementById("spd-box").innerText = currentSpeed;
+      document.getElementById("spd-p1").innerText = currentSpeed + 3;
+      document.getElementById("spd-p2").innerText = currentSpeed + 6;
+      document.getElementById("spd-m1").innerText = currentSpeed - 3;
+      document.getElementById("spd-m2").innerText = currentSpeed - 6;
+
+      document.getElementById("alt-box").innerText = currentAltitude.toLocaleString();
+      document.getElementById("alt-p1").innerText = (currentAltitude + 2500).toLocaleString();
+      document.getElementById("alt-p2").innerText = (currentAltitude + 5000).toLocaleString();
+      document.getElementById("alt-m1").innerText = (currentAltitude - 500).toLocaleString();
+      document.getElementById("alt-m2").innerText = (currentAltitude - 2000).toLocaleString();
+
+      // Animate Synthetic Vision
+      syntheticHorizon.style.transform = `translateY(${currentPitch}px) rotate(${currentRoll}deg)`;
+
+      // Gradually level out attitude
+      setTimeout(() => {
+        syntheticHorizon.style.transform = `translateY(0px) rotate(0deg)`;
+      }, 900);
+    }
+
     function setActiveKey(pageId) {
       document.querySelectorAll('.softkey').forEach(btn => btn.classList.remove('active'));
       const activeBtn = document.getElementById(`key-${pageId}`);
@@ -445,16 +540,17 @@
     function switchPage(page) {
       playBezelClick();
       setActiveKey(page);
+      rewardUserInteraction(1, 150, -5, 2);
 
       if (page === 'community') {
         mfdModeTag.innerText = "[ MFD // COMMUNITY DIRECTORY ]";
         mfdScreen.innerHTML = `
           <p style="margin-bottom:12px; color:#7aff7a;">> COMMUNITY NODES & EVENTS:</p>
           <div class="mfd-menu-grid">
-            <button class="mfd-btn" onclick="renderSurvey('pilotWork', 'PILOT REGISTRATION')"><span>> Pilot Registration (We Have Work)</span><span>[OPEN]</span></button>
-            <button class="mfd-btn" onclick="alert('First Flight Training: Classroom portal queued.')"><span>> First Flight Training for Classroom</span><span>[COMM]</span></button>
-            <button class="mfd-btn" onclick="alert('Events Near You: Syncing Richmond calendar.')"><span>> Events Near You & RSVP</span><span>[CAL]</span></button>
-            <button class="mfd-btn" onclick="alert('Job Board Online: 14 Active Contracts.')"><span>> Jobs & Scouting</span><span>[OPS]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(3, 400); renderSurvey('pilotWork', 'PILOT REGISTRATION')"><span>> Pilot Registration (We Have Work)</span><span>[OPEN]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(2, 200); alert('First Flight Training: Classroom portal queued.')"><span>> First Flight Training for Classroom</span><span>[COMM]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(2, 200); alert('Events Near You: Syncing Richmond calendar.')"><span>> Events Near You & RSVP</span><span>[CAL]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(2, 200); alert('Job Board Online: 14 Active Contracts.')"><span>> Jobs & Scouting</span><span>[OPS]</span></button>
           </div>
         `;
       } else if (page === 'consulting') {
@@ -462,10 +558,10 @@
         mfdScreen.innerHTML = `
           <p style="margin-bottom:12px; color:#7aff7a;">> CONSULTING CAPABILITIES:</p>
           <div class="mfd-menu-grid">
-            <button class="mfd-btn" onclick="alert('Drone Performance Telemetry: Data specs loaded.')"><span>> Drone Performance Data</span><span>[LOG]</span></button>
-            <button class="mfd-btn" onclick="alert('Drone Swarm Light Shows: Mission planner.')"><span>> Drone Swarm Light Shows</span><span>[OPS]</span></button>
-            <button class="mfd-btn" onclick="alert('Safety & Defense: Tactical advisory active.')"><span>> Safety / Defense Operations</span><span>[SEC]</span></button>
-            <button class="mfd-btn" onclick="alert('Manned Aircraft: Flight scheduling ready.')"><span>> Manned Aircraft Operation</span><span>[VFR]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(3, 300); alert('Drone Performance Telemetry: Data specs loaded.')"><span>> Drone Performance Data</span><span>[LOG]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(3, 300); alert('Drone Swarm Light Shows: Mission planner.')"><span>> Drone Swarm Light Shows</span><span>[OPS]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(3, 300); alert('Safety & Defense: Tactical advisory active.')"><span>> Safety / Defense Operations</span><span>[SEC]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(3, 300); alert('Manned Aircraft: Flight scheduling ready.')"><span>> Manned Aircraft Operation</span><span>[VFR]</span></button>
           </div>
         `;
       } else if (page === 'flight') {
@@ -473,10 +569,10 @@
         mfdScreen.innerHTML = `
           <p style="margin-bottom:12px; color:#7aff7a;">> COMMERCIAL FLIGHT PATHS:</p>
           <div class="mfd-menu-grid">
-            <button class="mfd-btn" onclick="alert('Construction Mapping: LiDAR and Photogrammetry loaded.')"><span>> Construction & Surveying</span><span>[AIR]</span></button>
-            <button class="mfd-btn" onclick="alert('Cinema & Film: FPV heavy-lift team.')"><span>> Film & Cinema Operations</span><span>[CAM]</span></button>
-            <button class="mfd-btn" onclick="alert('E-Commerce: Delivery routing active.')"><span>> E-Commerce Logistics</span><span>[CARGO]</span></button>
-            <button class="mfd-btn" onclick="alert('Event Planes: Flyover booking online.')"><span>> Have Our Plane at Your Event</span><span>[BOOK]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(4, 500); alert('Construction Mapping: LiDAR and Photogrammetry loaded.')"><span>> Construction & Surveying</span><span>[AIR]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(4, 500); alert('Cinema & Film: FPV heavy-lift team.')"><span>> Film & Cinema Operations</span><span>[CAM]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(4, 500); alert('E-Commerce: Delivery routing active.')"><span>> E-Commerce Logistics</span><span>[CARGO]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(4, 500); alert('Event Planes: Flyover booking online.')"><span>> Have Our Plane at Your Event</span><span>[BOOK]</span></button>
           </div>
         `;
       } else if (page === 'cats') {
@@ -484,10 +580,10 @@
         mfdScreen.innerHTML = `
           <p style="margin-bottom:10px; color:#7aff7a;">> FELINE TACTICAL CODEX:</p>
           <div class="mfd-menu-grid">
-            <button class="mfd-btn" onclick="window.open('https://instagram.com/RichmondCats', '_blank')"><span>> Richmond Cats Instagram</span><span>[LINK]</span></button>
-            <button class="mfd-btn" onclick="showForest()"><span>> Pictures of Forest (The CAT)</span><span>[IMG]</span></button>
-            <button class="mfd-btn" onclick="alert('Cat Fight Alert unit notified.')"><span>> Report Cat Fight</span><span>[ALERT]</span></button>
-            <button class="mfd-btn" onclick="alert('UAS Search and Rescue unit dispatched.')"><span>> UAS Enhanced Search & Rescue</span><span>[SAR]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(2, 200); window.open('https://instagram.com/RichmondCats', '_blank')"><span>> Richmond Cats Instagram</span><span>[LINK]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(2, 300); showForest()"><span>> Pictures of Forest (The CAT)</span><span>[IMG]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(2, 200); alert('Cat Fight Alert unit notified.')"><span>> Report Cat Fight</span><span>[ALERT]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(2, 400); alert('UAS Search and Rescue unit dispatched.')"><span>> UAS Enhanced Search & Rescue</span><span>[SAR]</span></button>
           </div>
         `;
       } else if (page === 'pilots') {
@@ -495,10 +591,10 @@
         mfdScreen.innerHTML = `
           <p style="margin-bottom:12px; color:#7aff7a;">> CHOOSE AVIONICS PORTAL:</p>
           <div class="mfd-menu-grid">
-            <button class="mfd-btn" onclick="renderSurvey('hirePilot', 'COMPANY: HIRE PILOTS')"><span>> 🏢 Company Looking to Hire Pilots</span><span>[FORM]</span></button>
-            <button class="mfd-btn" onclick="renderSurvey('pilotWork', 'PILOT: SEEKING WORK')"><span>> 🛠️ Pilot Looking to Work (Jobs)</span><span>[FORM]</span></button>
-            <button class="mfd-btn" onclick="renderSurvey('pilotTeach', 'PILOT: INSTRUCTOR')"><span>> 👨‍🏫 Pilot Willing to Help Teach</span><span>[FORM]</span></button>
-            <button class="mfd-btn" onclick="renderSurvey('studentPilot', 'STUDENT: LEARN PILOTING')"><span>> 🎓 Student Looking to Become Pilot</span><span>[FORM]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(3, 350); renderSurvey('hirePilot', 'COMPANY: HIRE PILOTS')"><span>> 🏢 Company Looking to Hire Pilots</span><span>[FORM]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(3, 350); renderSurvey('pilotWork', 'PILOT: SEEKING WORK')"><span>> 🛠️ Pilot Looking to Work (Jobs)</span><span>[FORM]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(3, 350); renderSurvey('pilotTeach', 'PILOT: INSTRUCTOR')"><span>> 👨‍🏫 Pilot Willing to Help Teach</span><span>[FORM]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(3, 350); renderSurvey('studentPilot', 'STUDENT: LEARN PILOTING')"><span>> 🎓 Student Looking to Become Pilot</span><span>[FORM]</span></button>
           </div>
         `;
       } else if (page === 'mcu') {
