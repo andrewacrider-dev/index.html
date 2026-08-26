@@ -15,7 +15,7 @@
       --avionics-white: #ffffff;
       --avionics-dark-panel: #0d1117;
       --sky-blue: #0277bd;
-      --ground-brown: #5d4037;
+      --ground-brown: #4e342e;
       --bezel-bg: #1e232a;
       --bezel-border: #38424d;
       --screen-bg: #05080c;
@@ -137,7 +137,7 @@
       overflow: hidden;
     }
 
-    /* Synthetic Vision Stage */
+    /* Realistic Synthetic Vision Horizon */
     .horizon-container {
       position: relative;
       overflow: hidden;
@@ -152,17 +152,28 @@
       width: 260%;
       height: 260%;
       background: linear-gradient(to bottom, 
-        var(--sky-blue) 0%, 
-        var(--sky-blue) 50%, 
+        #01579b 0%, 
+        #0288d1 49.5%, 
         #ffffff 50%, 
-        #ffffff 50.4%, 
-        var(--ground-brown) 50.4%, 
-        var(--ground-brown) 100%);
+        #2e7d32 50.5%, 
+        var(--ground-brown) 53%, 
+        #3e2723 100%);
       transform: translateY(0px) rotate(0deg);
       transition: transform 0.4s cubic-bezier(0.1, 0.9, 0.2, 1);
       z-index: 1;
     }
 
+    /* Richmond Terrain Synthetic Grid */
+    .synthetic-vision-bg::after {
+      content: "";
+      position: absolute;
+      top: 50%; left: 0; right: 0; bottom: 0;
+      background: 
+        repeating-linear-gradient(0deg, transparent, transparent 24px, rgba(0, 255, 102, 0.12) 25px),
+        repeating-linear-gradient(90deg, transparent, transparent 34px, rgba(0, 255, 102, 0.08) 35px);
+    }
+
+    /* Clean Minimalist Pitch Ladder */
     .pitch-ladder-wrapper {
       position: absolute;
       width: 100%;
@@ -173,33 +184,32 @@
       justify-content: center;
       z-index: 3;
       pointer-events: none;
+      gap: 16px;
     }
 
-    .pitch-ladder-rung {
-      width: 130px;
-      height: 3px;
-      background: #ffffff;
-      margin: 22px 0;
-      position: relative;
+    .pitch-line {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.85);
+      text-shadow: 0 1px 2px #000;
+    }
+
+    .pitch-bar {
+      width: 45px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.9);
       box-shadow: 0 1px 3px rgba(0,0,0,0.8);
     }
 
-    .pitch-ladder-rung::before, .pitch-ladder-rung::after {
-      content: "";
-      position: absolute;
-      top: -8px;
-      width: 3px;
-      height: 18px;
-      background: #ffffff;
-    }
-    .pitch-ladder-rung::before { left: 0; }
-    .pitch-ladder-rung::after { right: 0; }
-
-    /* Hollow Vector Heart Boresight Symbol */
+    /* Symmetrical Hollow Heart Attitude Boresight */
     .aircraft-heart-symbol {
       position: absolute;
-      width: 120px;
-      height: 120px;
+      width: 160px;
+      height: 60px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -208,10 +218,11 @@
     }
 
     .heart-svg {
-      width: 58px;
-      height: 58px;
+      width: 48px;
+      height: 48px;
       filter: drop-shadow(0 0 6px rgba(255, 42, 141, 0.9));
       animation: pulse-heart 2s infinite ease-in-out;
+      z-index: 2;
     }
 
     @keyframes pulse-heart {
@@ -220,17 +231,14 @@
     }
 
     .aircraft-wings-left, .aircraft-wings-right {
-      position: absolute;
-      width: 50px;
-      height: 6px;
+      width: 46px;
+      height: 5px;
       background: var(--avionics-amber);
-      border-radius: 3px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.9);
+      border-radius: 2px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.9);
     }
-    .aircraft-wings-left { left: -10px; }
-    .aircraft-wings-right { right: -10px; }
 
-    /* G1000 / Dynon Tape Styling */
+    /* G1000 Tapes */
     .tape {
       background: rgba(13, 17, 23, 0.94);
       display: flex;
@@ -364,20 +372,125 @@
       transform: translateX(2px);
     }
 
+    /* Live MCU Ticker */
+    .mcu-ticker-frame {
+      margin-top: 15px;
+      border: 1px solid #334155;
+      background: #090d12;
+      border-radius: 6px;
+      padding: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .mcu-ticker-title {
+      font-size: 0.85rem;
+      color: var(--avionics-cyan);
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .ticker-wrap {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      background: #000;
+      padding: 10px 0;
+      border-radius: 4px;
+      border-left: 3px solid var(--avionics-green);
+    }
+
+    .ticker-move {
+      display: inline-block;
+      white-space: nowrap;
+      padding-left: 100%;
+      animation: ticker-anim 24s linear infinite;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.95rem;
+      color: #fff;
+    }
+
+    .ticker-item {
+      display: inline-block;
+      padding: 0 20px;
+    }
+
+    .ticker-item span {
+      color: var(--avionics-green);
+      font-weight: bold;
+    }
+
+    @keyframes ticker-anim {
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(-100%, 0, 0); }
+    }
+
+    /* Tactical Map Display */
+    .tactical-map-container {
+      margin-top: 12px;
+      border: 1.5px solid #334155;
+      border-radius: 6px;
+      background: #060b10;
+      padding: 14px;
+      position: relative;
+    }
+
+    .map-grid-overlay {
+      height: 180px;
+      border: 1px solid #1e293b;
+      border-radius: 4px;
+      background: 
+        radial-gradient(circle at 50% 50%, rgba(0, 212, 255, 0.08) 0%, transparent 70%),
+        repeating-linear-gradient(0deg, transparent, transparent 29px, rgba(51, 65, 85, 0.3) 30px),
+        repeating-linear-gradient(90deg, transparent, transparent 29px, rgba(51, 65, 85, 0.3) 30px);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .map-pin {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .map-pin-pulse {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ff1744;
+      box-shadow: 0 0 10px #ff1744;
+      animation: pulse-pin 1.5s infinite;
+    }
+
+    @keyframes pulse-pin {
+      0% { transform: scale(0.9); opacity: 1; }
+      50% { transform: scale(1.6); opacity: 0.5; }
+      100% { transform: scale(0.9); opacity: 1; }
+    }
+
+    .map-label {
+      font-size: 0.72rem;
+      font-family: 'Roboto Mono', monospace;
+      color: #cbd5e1;
+      margin-top: 4px;
+      background: rgba(0,0,0,0.8);
+      padding: 2px 4px;
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+
     .mfd-embedded-frame {
       width: 100%;
       height: 440px;
       border: 1px solid #334155;
       border-radius: 6px;
       background: #ffffff;
-    }
-
-    .photo-display {
-      width: 100%;
-      max-height: 260px;
-      object-fit: cover;
-      border-radius: 6px;
-      border: 2px solid #334155;
     }
   </style>
 </head>
@@ -403,11 +516,11 @@
           <div class="pfd-annunciator">
             <span>MODE: WISPER</span>
             <span>GPS VFR</span>
-            <span id="nav-mode-tag">ON COURSE</span>
+            <span id="nav-mode-tag">RICHMOND SECTOR</span>
           </div>
 
           <div class="pfd-main-stage">
-            <!-- Uniform G1000-Style Airspeed Tape (10-kt increments) -->
+            <!-- Airspeed Tape (10-kt increments) -->
             <div class="tape">
               <div class="tape-tick-row"><span id="spd-p2">120</span><div class="tape-tick"></div></div>
               <div class="tape-tick-row"><span id="spd-p1">110</span><div class="tape-tick"></div></div>
@@ -417,18 +530,19 @@
               <span style="font-size: 0.8rem; color: #94a3b8; font-weight: 700;">KIAS</span>
             </div>
 
-            <!-- Synthetic Vision Horizon Stage -->
+            <!-- Decluttered Synthetic Horizon Stage -->
             <div class="horizon-container">
               <div class="synthetic-vision-bg" id="synthetic-horizon"></div>
               
               <div class="pitch-ladder-wrapper">
-                <div class="pitch-ladder-rung" style="width: 90px;"></div>
-                <div class="pitch-ladder-rung" style="width: 140px;"></div>
-                <div class="pitch-ladder-rung" style="width: 140px;"></div>
-                <div class="pitch-ladder-rung" style="width: 90px;"></div>
+                <div class="pitch-line"><span>+10</span><div class="pitch-bar"></div><span>+10</span></div>
+                <div class="pitch-line"><span>+05</span><div class="pitch-bar" style="width:25px;"></div><span>+05</span></div>
+                <div class="pitch-line" style="opacity:0.3;"><div class="pitch-bar" style="width:70px;"></div></div>
+                <div class="pitch-line"><span>-05</span><div class="pitch-bar" style="width:25px;"></div><span>-05</span></div>
+                <div class="pitch-line"><span>-10</span><div class="pitch-bar"></div><span>-10</span></div>
               </div>
 
-              <!-- Hollow Vector Heart Attitude Indicator -->
+              <!-- Symmetrical Hollow Heart Attitude Boresight -->
               <div class="aircraft-heart-symbol">
                 <div class="aircraft-wings-left"></div>
                 <svg class="heart-svg" viewBox="0 0 24 24" fill="none" stroke="var(--avionics-magenta)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -438,7 +552,7 @@
               </div>
             </div>
 
-            <!-- Uniform G1000-Style Altitude Tape (500-ft increments) -->
+            <!-- Altitude Tape (500-ft increments) -->
             <div class="tape right-tape">
               <div class="tape-tick-row left-tick"><div class="tape-tick"></div><span id="alt-p2">11,000</span></div>
               <div class="tape-tick-row left-tick"><div class="tape-tick"></div><span id="alt-p1">10,500</span></div>
@@ -464,7 +578,7 @@
 
         <div class="display-screen">
           <div class="mfd-content-viewport" id="mfd-screen">
-            <!-- Injected via JavaScript -->
+            <!-- Dynamic Content -->
           </div>
         </div>
 
@@ -494,13 +608,12 @@
     const mfdModeTag = document.getElementById("mfd-mode-tag");
     const syntheticHorizon = document.getElementById("synthetic-horizon");
 
-    // Flight Telemetry Baseline (G1000 Baseline)
+    // Flight Telemetry State
     let currentSpeed = 100;
     let currentAltitude = 10000;
     let currentPitch = 0;
     let currentRoll = 0;
 
-    // Web Audio Synthesizer
     let audioCtx = null;
     function playBezelClick() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -519,28 +632,24 @@
       osc.stop(now + 0.03);
     }
 
-    // Dynamic Horizon & Uniform Telemetry Reward
     function rewardUserInteraction(speedDelta = 10, altDelta = 500, pitchDelta = -5, rollDelta = 3) {
       currentSpeed += speedDelta;
       currentAltitude += altDelta;
       currentPitch = Math.max(-25, Math.min(25, currentPitch + pitchDelta));
       currentRoll = Math.max(-18, Math.min(18, (Math.random() - 0.5) * rollDelta * 4));
 
-      // Update Airspeed Tape in clean 10-knot intervals
       document.getElementById("spd-box").innerText = currentSpeed;
       document.getElementById("spd-p1").innerText = currentSpeed + 10;
       document.getElementById("spd-p2").innerText = currentSpeed + 20;
       document.getElementById("spd-m1").innerText = currentSpeed - 10;
       document.getElementById("spd-m2").innerText = currentSpeed - 20;
 
-      // Update Altitude Tape in clean 500-ft intervals
       document.getElementById("alt-box").innerText = currentAltitude.toLocaleString();
       document.getElementById("alt-p1").innerText = (currentAltitude + 500).toLocaleString();
       document.getElementById("alt-p2").innerText = (currentAltitude + 1000).toLocaleString();
       document.getElementById("alt-m1").innerText = (currentAltitude - 500).toLocaleString();
       document.getElementById("alt-m2").innerText = (currentAltitude - 1000).toLocaleString();
 
-      // Smooth Horizon Reaction
       syntheticHorizon.style.transform = `translateY(${currentPitch}px) rotate(${currentRoll}deg)`;
 
       setTimeout(() => {
@@ -562,12 +671,12 @@
       if (page === 'community') {
         mfdModeTag.innerText = "[ MFD // COMMUNITY DIRECTORY ]";
         mfdScreen.innerHTML = `
-          <p style="margin-bottom:14px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> COMMUNITY NODES & ENGAGEMENT</p>
+          <p style="margin-bottom:14px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> COMMUNITY & CAREER NODES</p>
           <div class="mfd-menu-grid">
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('pilotWork', 'PILOT REGISTRATION')"><span>> Pilot Registration (We Have Work)</span><span style="color:var(--avionics-green);">[OPEN]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('pilotWork', 'FIND A JOB IN AVIATION')"><span>> Find A Job in Aviation</span><span style="color:var(--avionics-green);">[CAREERS]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('hirePilot', 'HIRE A PILOT / MECHANIC')"><span>> Hire a Pilot / Mechanic</span><span style="color:var(--avionics-cyan);">[HIRING]</span></button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('First Flight Training: Classroom portal queued.')"><span>> First Flight Training for Classroom</span><span style="color:var(--avionics-cyan);">[COMM]</span></button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Events Near You: Syncing Richmond calendar.')"><span>> Events Near You & RSVP</span><span style="color:var(--avionics-cyan);">[CAL]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Job Board Online: 14 Active Contracts.')"><span>> Jobs & Scouting</span><span style="color:var(--avionics-cyan);">[OPS]</span></button>
           </div>
         `;
       } else if (page === 'consulting') {
@@ -595,48 +704,83 @@
       } else if (page === 'cats') {
         mfdModeTag.innerText = "[ MFD // FELINE NETWORK (CATS!) ]";
         mfdScreen.innerHTML = `
-          <p style="margin-bottom:14px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> FELINE TACTICAL CODEX</p>
+          <p style="margin-bottom:12px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> FELINE TACTICAL CODEX & SAR</p>
           <div class="mfd-menu-grid">
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); window.open('https://instagram.com/rva_cats', '_blank')"><span>> Richmond Cats Instagram</span><span style="color:var(--avionics-cyan);">[LINK]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); showForest()"><span>> Pictures of Forest (The CAT)</span><span style="color:var(--avionics-cyan);">[IMG]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Cat Fight Alert unit notified.')"><span>> Report Cat Fight</span><span style="color:#ff1744;">[ALERT]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); window.open('https://instagram.com/RichmondCats', '_blank')"><span>> Richmond Cats Instagram</span><span style="color:var(--avionics-cyan);">[LINK]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderCatReport()"><span>> Report a Cat Fight / Incident</span><span style="color:#ff1744;">[REPORT]</span></button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('UAS Search and Rescue unit dispatched.')"><span>> UAS Enhanced Search & Rescue</span><span style="color:var(--avionics-green);">[SAR]</span></button>
+          </div>
+
+          <!-- Tactical Incident Map -->
+          <div class="tactical-map-container">
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:0.8rem; font-family:'Roboto Mono';">
+              <span style="color:var(--avionics-cyan);">> LAST REPORTED CONFLICT MAP:</span>
+              <span style="color:#ff1744;">[LIVE SECTOR: RVA]</span>
+            </div>
+            <div class="map-grid-overlay">
+              <div class="map-pin" style="top: 25%; left: 35%;" onclick="alert('Incident #204: Alleyway Territorial Stare-down - Resolved')">
+                <div class="map-pin-pulse"></div>
+                <div class="map-label">Fan District: 14:15Z</div>
+              </div>
+              <div class="map-pin" style="top: 60%; left: 70%;" onclick="alert('Incident #205: Tree Stand-off Reported - SAR on standby')">
+                <div class="map-pin-pulse"></div>
+                <div class="map-label">Shockoe: 17:40Z</div>
+              </div>
+            </div>
           </div>
         `;
       } else if (page === 'pilots') {
         mfdModeTag.innerText = "[ MFD // PILOT INGESTION & HIRING ]";
         mfdScreen.innerHTML = `
-          <p style="margin-bottom:14px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> CHOOSE AVIONICS PORTAL</p>
+          <p style="margin-bottom:14px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> PILOT & CREW PORTALS</p>
           <div class="mfd-menu-grid">
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('hirePilot', 'COMPANY: HIRE PILOTS')"><span>>  Company Looking to Hire Pilots</span><span style="color:var(--avionics-green);">[FORM]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('pilotWork', 'PILOT: SEEKING WORK')"><span>>  Pilot Looking to Work (Jobs)</span><span style="color:var(--avionics-green);">[FORM]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('pilotTeach', 'PILOT: INSTRUCTOR')"><span>>  Pilot Willing to Help Teach</span><span style="color:var(--avionics-green);">[FORM]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('studentPilot', 'STUDENT: LEARN PILOTING')"><span>>  Student Looking to Become Pilot</span><span style="color:var(--avionics-green);">[FORM]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('hirePilot', 'HIRE A PILOT / CREW')"><span>> 🏢 Company Looking to Hire Pilots</span><span style="color:var(--avionics-green);">[FORM]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('pilotWork', 'FIND A JOB IN AVIATION')"><span>> 🛠️ Pilot / Mechanic Looking for Work</span><span style="color:var(--avionics-green);">[FORM]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('pilotTeach', 'PILOT: INSTRUCTOR')"><span>> 👨‍🏫 Pilot Willing to Help Teach</span><span style="color:var(--avionics-green);">[FORM]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('studentPilot', 'STUDENT: LEARN PILOTING')"><span>> 🎓 Student Looking to Become Pilot</span><span style="color:var(--avionics-green);">[FORM]</span></button>
           </div>
         `;
       } else if (page === 'mcu') {
         mfdModeTag.innerText = "[ MFD // MAIN CALENDAR UNIT ]";
         mfdScreen.innerHTML = `
-          <p style="margin-bottom:14px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> MAIN CALENDAR UNIT (MCU)</p>
-          <div style="border: 1.5px solid #2d3748; border-radius: 6px; padding: 16px; background: #111720; line-height: 1.8;">
-            <p>> ACTIVE SECTOR: <strong style="color: #fff;">RICHMOND, VIRGINIA</strong></p>
+          <p style="margin-bottom:12px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> MAIN CALENDAR UNIT & FLIGHT DISPATCH</p>
+          <div style="border: 1.5px solid #2d3748; border-radius: 6px; padding: 14px; background: #111720; line-height: 1.8;">
+            <p>> ACTIVE SECTOR: <strong style="color: #fff;">RICHMOND, VIRGINIA (KRIC / KFCI)</strong></p>
             <p>> CALENDAR CYCLE: <strong style="color: #fff;">AUGUST 2026</strong></p>
             <p>> GPS COURSE: <strong style="color: #fff;">VFR ON COURSE (090 RADIAL)</strong></p>
-            <br />
-            <p style="color: var(--avionics-green); font-weight:600;">[!] All telemetry nodes actively synchronized with master database.</p>
+          </div>
+
+          <!-- Live Event Ticker Frame -->
+          <div class="mcu-ticker-frame">
+            <div class="mcu-ticker-title">> LIVE EVENT & MISSION DISPATCH TICKER:</div>
+            <div class="ticker-wrap">
+              <div class="ticker-move">
+                <div class="ticker-item"><span>[AUG 28]</span> First Flight STEM Workshop — Richmond Public Schools (09:00 EST)</div>
+                <div class="ticker-item"><span>[SEP 02]</span> UAS Night SAR Swarm Demo @ Chesterfield Airfield (20:30 EST)</div>
+                <div class="ticker-item"><span>[SEP 08]</span> Part 107 Commercial Drone Ground School Ingestion (18:00 EST)</div>
+                <div class="ticker-item"><span>[SEP 15]</span> VFR Fly-in & Young Aviators Discovery Day (11:00 EST)</div>
+              </div>
+            </div>
           </div>
         `;
       }
     }
 
-    function showForest() {
+    function renderCatReport() {
       mfdScreen.innerHTML = `
-        <p style="font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> VISUAL RECORD: FOREST (THE CAT)</p>
-        <div style="margin-top:14px; text-align:center;">
-          <img class="photo-display" src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=800&q=80" alt="Forest The Cat">
-          <p style="font-size:0.9rem; margin-top:8px; color:#94a3b8; font-weight:600;">[ IDENT: FOREST // RICHMOND VA ]</p>
+        <p style="font-weight:700; color:#ff1744; font-size:1.1rem; margin-bottom:10px;">> INCIDENT DISPATCH: REPORT A CAT FIGHT</p>
+        <div style="border: 1.5px solid #334155; border-radius: 6px; padding: 14px; background: #111720;">
+          <div style="margin-bottom:10px;">
+            <label style="display:block; font-size:0.85rem; color:var(--avionics-cyan); margin-bottom:4px;">> INCIDENT LOCATION / INTERSECTION:</label>
+            <input type="text" id="catLoc" placeholder="e.g. Monument Ave & Belmont" style="width:100%; background:#000; border:1px solid #334155; padding:8px; color:#fff; font-family:'Roboto Mono';">
+          </div>
+          <div style="margin-bottom:10px;">
+            <label style="display:block; font-size:0.85rem; color:var(--avionics-cyan); margin-bottom:4px;">> DESCRIPTION / INVOLVED FELINES:</label>
+            <textarea id="catDesc" rows="3" placeholder="Feline descriptions, intensity, tree/ground stand-off..." style="width:100%; background:#000; border:1px solid #334155; padding:8px; color:#fff; font-family:'Roboto Mono';"></textarea>
+          </div>
+          <button class="mfd-btn" style="justify-content:center; background:#ff1744; color:#fff;" onclick="alert('[DISPATCH LOGGED]: Coordinates relayed to RVA Feline Tactical SAR.'); switchPage('cats');">> TRANSMIT INCIDENT LOG TO TACTICAL MAP</button>
         </div>
-        <button class="mfd-btn" style="margin-top:14px;" onclick="switchPage('cats')">> < RETURN TO FELINE MENU</button>
+        <button class="mfd-btn" style="margin-top:10px;" onclick="switchPage('cats')">> < RETURN TO FELINE MENU</button>
       `;
     }
 
@@ -645,11 +789,10 @@
       mfdScreen.innerHTML = `
         <p style="font-size:1rem; font-weight:700; color:var(--avionics-cyan); margin-bottom:8px;">> UPLINK: ${title}</p>
         <iframe class="mfd-embedded-frame" src="${url}" frameborder="0">Loading Survey Matrix...</iframe>
-        <button class="mfd-btn" style="margin-top:12px;" onclick="switchPage('pilots')">> < RETURN TO PILOT DIRECTORY</button>
+        <button class="mfd-btn" style="margin-top:12px;" onclick="switchPage('community')">> < RETURN TO MENU</button>
       `;
     }
 
-    // Default boot page
     switchPage('community');
   </script>
 </body>
