@@ -61,6 +61,8 @@
       color: #94a3b8;
       font-size: 0.95rem;
       font-weight: 600;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .cockpit-header-right {
@@ -69,21 +71,23 @@
       gap: 16px;
     }
 
+    /* Subtle Emergency Disconnect Switch */
     .emer-switch-btn {
       background: rgba(255, 51, 68, 0.15);
       border: 1.5px solid var(--avionics-red);
       color: #ff8892;
       font-family: 'Roboto Mono', monospace;
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       font-weight: 700;
-      padding: 4px 10px;
+      padding: 5px 12px;
       border-radius: 4px;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       transition: all 0.2s ease;
       box-shadow: 0 0 6px rgba(255, 51, 68, 0.2);
+      white-space: nowrap;
     }
 
     .emer-switch-btn:hover {
@@ -643,10 +647,9 @@
         &nbsp;|&nbsp; SECTOR: <span class="brand-tag">RICHMOND, VA (VFR)</span>
       </div>
       <div class="cockpit-header-right">
-        <!-- Subtle Emergency Disconnect Switch -->
         <button class="emer-switch-btn" onclick="triggerEmergencyDeconfliction()">
           <div class="emer-led"></div>
-          [ EMER DISC / DECON ]
+          [ EMER DISC / DECON ] (I'm upset with drones / flying)
         </button>
         <span>SYS TIME: <strong>AUGUST 2026</strong></span>
       </div>
@@ -654,7 +657,6 @@
 
     <div class="glass-cockpit-grid">
       
-      <!-- LEFT SCREEN: SYNTHETIC VISION PFD -->
       <div class="bezel-unit">
         <div class="bezel-topbar">
           <span>[ PFD 1 // PRIMARY FLIGHT DISPLAY ]</span>
@@ -669,7 +671,6 @@
           </div>
 
           <div class="pfd-main-stage">
-            <!-- Airspeed Tape (10-kt increments) -->
             <div class="tape">
               <div class="tape-tick-row"><span id="spd-p2">120</span><div class="tape-tick"></div></div>
               <div class="tape-tick-row"><span id="spd-p1">110</span><div class="tape-tick"></div></div>
@@ -679,7 +680,6 @@
               <span style="font-size: 0.8rem; color: #94a3b8; font-weight: 700;">KIAS</span>
             </div>
 
-            <!-- Decluttered Synthetic Horizon Stage -->
             <div class="horizon-container">
               <div class="synthetic-vision-bg" id="synthetic-horizon"></div>
               
@@ -691,7 +691,6 @@
                 <div class="pitch-line"><span>-10</span><div class="pitch-bar"></div><span>-10</span></div>
               </div>
 
-              <!-- Symmetrical Hollow Heart Attitude Boresight -->
               <div class="aircraft-heart-symbol">
                 <div class="aircraft-wings-left"></div>
                 <svg class="heart-svg" viewBox="0 0 24 24" fill="none" stroke="var(--avionics-magenta)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -701,7 +700,6 @@
               </div>
             </div>
 
-            <!-- Altitude Tape (500-ft increments) -->
             <div class="tape right-tape">
               <div class="tape-tick-row left-tick"><div class="tape-tick"></div><span id="alt-p2">11,000</span></div>
               <div class="tape-tick-row left-tick"><div class="tape-tick"></div><span id="alt-p1">10,500</span></div>
@@ -718,7 +716,6 @@
         </div>
       </div>
 
-      <!-- RIGHT SCREEN: MULTI-FUNCTION DISPLAY (MFD) -->
       <div class="bezel-unit">
         <div class="bezel-topbar">
           <span id="mfd-mode-tag" style="color: var(--avionics-cyan);">[ MFD 2 // COMMUNITY DIRECTORY ]</span>
@@ -727,11 +724,9 @@
 
         <div class="display-screen">
           <div class="mfd-content-viewport" id="mfd-screen">
-            <!-- Dynamic Content -->
-          </div>
+            </div>
         </div>
 
-        <!-- Bezel Softkeys -->
         <div class="mfd-bezel-softkeys">
           <button class="softkey active" id="key-comm" onclick="switchPage('community')">COMM</button>
           <button class="softkey" id="key-edu" onclick="switchPage('edu')">EDU</button>
@@ -958,7 +953,6 @@
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderCatReport('TERRITORY')"><span>> Report Cat Location / Territory</span><span style="color:var(--avionics-cyan);">[MAP TERRITORY]</span></button>
           </div>
 
-          <!-- Dynamic Form Data Incident & Territory Map -->
           <div class="tactical-map-container">
             <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:0.8rem; font-family:'Roboto Mono';">
               <span style="color:var(--avionics-cyan);">> LIVE FELINE TERRITORY & CONFLICT MAP:</span>
@@ -1018,10 +1012,8 @@
               <span id="mcu-sync-status" style="color:var(--avionics-cyan);">[SYNCING...]</span>
             </div>
 
-            <!-- Clickable Event Log Cards Container -->
             <div class="event-log-container" id="mcu-event-stage">
-              <!-- Rendered Dynamically from Google Sheets -->
-            </div>
+              </div>
 
             <div class="fmc-scratchpad">
               <span>DISPATCH: LIVE SYNC ACTIVE</span>
@@ -1043,7 +1035,6 @@
         const response = await fetch(GOOGLE_SHEET_API_URL);
         const json = await response.json();
 
-        // Comprehensive Virginia & Richmond Drone / Aviation Schedule
         const fullDroneSchedule = [
           { date: "AUG 28", title: "STEM Flight Discovery Workshop", loc: "Richmond Public Schools", link: "https://docs.google.com/forms/d/e/1FAIpQLScYXKl_eTJplwOlGb1z0cLVbJcK-99k8LGneeJ5Q55zvVXZbQ/viewform" },
           { date: "AUG 29", title: "Amazon Drone Community Meetup", loc: "Richmond Raceway", link: "https://docs.google.com/forms/d/e/1FAIpQLSdJXQ38WZqti9x5enUoOpwfvnErhDSCIkiMQWBoV79blaptFA/viewform" },
@@ -1314,7 +1305,6 @@
         return;
       }
 
-      // Add to local cache immediately so the user sees their pin plotted right away
       localTerritoryCache.push({
         formType: formType,
         loc: loc,
