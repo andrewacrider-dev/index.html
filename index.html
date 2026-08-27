@@ -13,7 +13,6 @@
       --avionics-amber: #ffaa00;
       --avionics-magenta: #ff2a8d;
       --avionics-white: #ffffff;
-      --avionics-dark-panel: #0d1117;
       --sky-blue: #0277bd;
       --ground-brown: #4e342e;
       --bezel-bg: #1e232a;
@@ -27,7 +26,6 @@
       padding: 0;
       user-select: none;
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
     body {
@@ -62,7 +60,6 @@
       color: #94a3b8;
       font-size: 0.95rem;
       font-weight: 600;
-      letter-spacing: 0.5px;
     }
 
     .cockpit-header .brand-tag {
@@ -116,6 +113,7 @@
       flex-direction: column;
     }
 
+    /* PFD Elements */
     .pfd-annunciator {
       background: #000000;
       border-bottom: 2px solid #2d3748;
@@ -137,7 +135,6 @@
       overflow: hidden;
     }
 
-    /* Realistic Synthetic Vision Horizon */
     .horizon-container {
       position: relative;
       overflow: hidden;
@@ -163,17 +160,6 @@
       z-index: 1;
     }
 
-    /* Richmond Terrain Synthetic Grid */
-    .synthetic-vision-bg::after {
-      content: "";
-      position: absolute;
-      top: 50%; left: 0; right: 0; bottom: 0;
-      background: 
-        repeating-linear-gradient(0deg, transparent, transparent 24px, rgba(0, 255, 102, 0.12) 25px),
-        repeating-linear-gradient(90deg, transparent, transparent 34px, rgba(0, 255, 102, 0.08) 35px);
-    }
-
-    /* Clean Minimalist Pitch Ladder */
     .pitch-ladder-wrapper {
       position: absolute;
       width: 100%;
@@ -205,7 +191,6 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.8);
     }
 
-    /* Symmetrical Hollow Heart Attitude Boresight */
     .aircraft-heart-symbol {
       position: absolute;
       width: 160px;
@@ -238,7 +223,6 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.9);
     }
 
-    /* G1000 Tapes */
     .tape {
       background: rgba(13, 17, 23, 0.94);
       display: flex;
@@ -305,7 +289,7 @@
       z-index: 8;
     }
 
-    /* MFD Viewport */
+    /* MFD Elements */
     .mfd-content-viewport {
       flex-grow: 1;
       padding: 20px;
@@ -372,72 +356,163 @@
       transform: translateX(2px);
     }
 
-    /* Live MCU Ticker */
-    .mcu-ticker-frame {
-      margin-top: 15px;
-      border: 1px solid #334155;
-      background: #090d12;
+    /* Rockwell Collins MCU Display */
+    .fmc-screen {
+      background: #000000;
+      border: 2px solid #334155;
       border-radius: 6px;
-      padding: 12px;
-      overflow: hidden;
-      position: relative;
+      padding: 16px;
+      font-family: 'Roboto Mono', monospace;
+      color: var(--avionics-green);
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
-    .mcu-ticker-title {
-      font-size: 0.85rem;
+    .fmc-header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dashed #334155;
+      padding-bottom: 6px;
       color: var(--avionics-cyan);
       font-weight: 700;
-      margin-bottom: 8px;
-      text-transform: uppercase;
     }
 
-    .ticker-wrap {
-      width: 100%;
+    .fmc-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 0;
+      font-size: 0.95rem;
+    }
+
+    .fmc-lsk {
+      color: #94a3b8;
+      cursor: pointer;
+      padding: 4px 8px;
+      border: 1px solid #1e293b;
+      border-radius: 4px;
+      background: #0a0e14;
+    }
+    .fmc-lsk:hover {
+      color: #000;
+      background: var(--avionics-green);
+      border-color: var(--avionics-green);
+    }
+
+    .fmc-scratchpad {
+      border-top: 1.5px solid #334155;
+      padding-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      color: var(--avionics-amber);
+      font-weight: 700;
+    }
+
+    .fmc-ticker-box {
+      margin-top: 10px;
+      background: #090d12;
+      border: 1px solid #1e293b;
+      border-left: 3px solid var(--avionics-green);
+      padding: 8px 0;
       overflow: hidden;
       white-space: nowrap;
-      background: #000;
-      padding: 10px 0;
-      border-radius: 4px;
-      border-left: 3px solid var(--avionics-green);
     }
 
-    .ticker-move {
+    .fmc-ticker-move {
       display: inline-block;
       white-space: nowrap;
       padding-left: 100%;
-      animation: ticker-anim 24s linear infinite;
-      font-family: 'Roboto Mono', monospace;
-      font-size: 0.95rem;
+      animation: fmc-ticker 40s linear infinite;
       color: #fff;
     }
 
-    .ticker-item {
-      display: inline-block;
-      padding: 0 20px;
+    @keyframes fmc-ticker {
+      0% { transform: translate3d(0,0,0); }
+      100% { transform: translate3d(-100%,0,0); }
     }
 
-    .ticker-item span {
+    /* Throttle Levers */
+    .throttle-quadrant {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 15px;
+      background: #080d14;
+      border: 1.5px solid #334155;
+      border-radius: 8px;
+      padding: 16px 12px;
+    }
+
+    .throttle-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .throttle-track {
+      width: 24px;
+      height: 190px;
+      background: #000000;
+      border: 1.5px solid #334155;
+      border-radius: 12px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 4px 0;
+      cursor: pointer;
+    }
+
+    .throttle-lever {
+      width: 44px;
+      height: 38px;
+      background: linear-gradient(180deg, #475569 0%, #1e293b 100%);
+      border: 2px solid #94a3b8;
+      border-radius: 6px;
+      position: absolute;
+      bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 800;
+      font-family: 'Roboto Mono', monospace;
+      color: #fff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+      transition: bottom 0.2s cubic-bezier(0.2, 0.9, 0.3, 1), background 0.2s;
+    }
+
+    .throttle-lever:hover {
+      border-color: var(--avionics-green);
       color: var(--avionics-green);
-      font-weight: bold;
     }
 
-    @keyframes ticker-anim {
-      0% { transform: translate3d(0, 0, 0); }
-      100% { transform: translate3d(-100%, 0, 0); }
+    .throttle-column label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-family: 'Roboto Mono', monospace;
+      text-align: center;
+      color: #cbd5e1;
+      height: 32px;
+      display: flex;
+      align-items: center;
     }
 
     /* Tactical Map Display */
     .tactical-map-container {
-      margin-top: 12px;
+      margin-top: 14px;
       border: 1.5px solid #334155;
       border-radius: 6px;
       background: #060b10;
       padding: 14px;
-      position: relative;
     }
 
     .map-grid-overlay {
-      height: 180px;
+      height: 220px;
       border: 1px solid #1e293b;
       border-radius: 4px;
       background: 
@@ -446,9 +521,6 @@
         repeating-linear-gradient(90deg, transparent, transparent 29px, rgba(51, 65, 85, 0.3) 30px);
       position: relative;
       overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
     .map-pin {
@@ -457,6 +529,7 @@
       flex-direction: column;
       align-items: center;
       cursor: pointer;
+      transform: translate(-50%, -50%);
     }
 
     .map-pin-pulse {
@@ -479,9 +552,10 @@
       font-family: 'Roboto Mono', monospace;
       color: #cbd5e1;
       margin-top: 4px;
-      background: rgba(0,0,0,0.8);
-      padding: 2px 4px;
-      border-radius: 2px;
+      background: rgba(0,0,0,0.85);
+      border: 1px solid #334155;
+      padding: 2px 5px;
+      border-radius: 3px;
       white-space: nowrap;
     }
 
@@ -588,7 +662,7 @@
           <button class="softkey" id="key-consult" onclick="switchPage('consulting')">CONSULT</button>
           <button class="softkey" id="key-flight" onclick="switchPage('flight')">FLIGHT</button>
           <button class="softkey" id="key-cats" onclick="switchPage('cats')">CATS!</button>
-          <button class="softkey" id="key-pilots" onclick="switchPage('pilots')">PILOTS</button>
+          <button class="softkey" id="key-pilots" onclick="switchPage('pilots')">THROTTLE</button>
           <button class="softkey" id="key-mcu" onclick="switchPage('mcu')">MCU</button>
         </div>
       </div>
@@ -597,6 +671,8 @@
   </div>
 
   <script>
+    const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyio6BYtMxwDNJH90M7TgfPlQhJxvkaCAvnMDrnR3u08nQxDPS_BzEjggKnyplvc46H/exec";
+
     const SURVEY_LINKS = {
       hirePilot: "https://docs.google.com/forms/d/e/1FAIpQLSdJXQ38WZqti9x5enUoOpwfvnErhDSCIkiMQWBoV79blaptFA/viewform?embedded=true",
       studentPilot: "https://docs.google.com/forms/d/e/1FAIpQLScYXKl_eTJplwOlGb1z0cLVbJcK-99k8LGneeJ5Q55zvVXZbQ/viewform?embedded=true",
@@ -706,61 +782,166 @@
         mfdScreen.innerHTML = `
           <p style="margin-bottom:12px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> FELINE TACTICAL CODEX & SAR</p>
           <div class="mfd-menu-grid">
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); window.open('https://instagram.com/RichmondCats', '_blank')"><span>> Richmond Cats Instagram</span><span style="color:var(--avionics-cyan);">[LINK]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); window.open('https://www.instagram.com/rva_cats/', '_blank')"><span>> RVA Cats Instagram</span><span style="color:var(--avionics-cyan);">[LINK]</span></button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderCatReport()"><span>> Report a Cat Fight / Incident</span><span style="color:#ff1744;">[REPORT]</span></button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('UAS Search and Rescue unit dispatched.')"><span>> UAS Enhanced Search & Rescue</span><span style="color:var(--avionics-green);">[SAR]</span></button>
           </div>
 
-          <!-- Tactical Incident Map -->
           <div class="tactical-map-container">
             <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:0.8rem; font-family:'Roboto Mono';">
-              <span style="color:var(--avionics-cyan);">> LAST REPORTED CONFLICT MAP:</span>
-              <span style="color:#ff1744;">[LIVE SECTOR: RVA]</span>
+              <span style="color:var(--avionics-cyan);">> LIVE INCIDENT MAP (GOOGLE FORM DATA):</span>
+              <span id="map-status" style="color:var(--avionics-green);">[FETCHING ROWS...]</span>
             </div>
-            <div class="map-grid-overlay">
-              <div class="map-pin" style="top: 25%; left: 35%;" onclick="alert('Incident #204: Alleyway Territorial Stare-down - Resolved')">
-                <div class="map-pin-pulse"></div>
-                <div class="map-label">Fan District: 14:15Z</div>
-              </div>
-              <div class="map-pin" style="top: 60%; left: 70%;" onclick="alert('Incident #205: Tree Stand-off Reported - SAR on standby')">
-                <div class="map-pin-pulse"></div>
-                <div class="map-label">Shockoe: 17:40Z</div>
-              </div>
-            </div>
+            <div class="map-grid-overlay" id="map-grid-stage"></div>
           </div>
         `;
+        fetchLiveMapPoints();
       } else if (page === 'pilots') {
-        mfdModeTag.innerText = "[ MFD // PILOT INGESTION & HIRING ]";
+        mfdModeTag.innerText = "[ MFD // THROTTLE QUADRANT FORMS ]";
         mfdScreen.innerHTML = `
-          <p style="margin-bottom:14px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> PILOT & CREW PORTALS</p>
-          <div class="mfd-menu-grid">
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('hirePilot', 'HIRE A PILOT / CREW')"><span>> 🏢 Company Looking to Hire Pilots</span><span style="color:var(--avionics-green);">[FORM]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('pilotWork', 'FIND A JOB IN AVIATION')"><span>> 🛠️ Pilot / Mechanic Looking for Work</span><span style="color:var(--avionics-green);">[FORM]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('pilotTeach', 'PILOT: INSTRUCTOR')"><span>> 👨‍🏫 Pilot Willing to Help Teach</span><span style="color:var(--avionics-green);">[FORM]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('studentPilot', 'STUDENT: LEARN PILOTING')"><span>> 🎓 Student Looking to Become Pilot</span><span style="color:var(--avionics-green);">[FORM]</span></button>
+          <p style="margin-bottom:4px; font-weight:700; color:var(--avionics-green); font-size:1.05rem;">> THROTTLE QUADRANT // FORM DISPATCH</p>
+          <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:10px;">> Advance throttle lever forward to engage flight forum data uplink:</p>
+          
+          <div class="throttle-quadrant">
+            <div class="throttle-column">
+              <label>ENG 1: HIRE PILOT</label>
+              <div class="throttle-track" onclick="pushThrottle(1, 'hirePilot', 'HIRE A PILOT / CREW')">
+                <div class="throttle-lever" id="lever-1">IDLE</div>
+              </div>
+              <span style="font-size:0.75rem; color:var(--avionics-cyan);">[THRUST]</span>
+            </div>
+
+            <div class="throttle-column">
+              <label>ENG 2: FIND WORK</label>
+              <div class="throttle-track" onclick="pushThrottle(2, 'pilotWork', 'FIND A JOB IN AVIATION')">
+                <div class="throttle-lever" id="lever-2">IDLE</div>
+              </div>
+              <span style="font-size:0.75rem; color:var(--avionics-green);">[THRUST]</span>
+            </div>
+
+            <div class="throttle-column">
+              <label>ENG 3: TEACH</label>
+              <div class="throttle-track" onclick="pushThrottle(3, 'pilotTeach', 'PILOT: INSTRUCTOR')">
+                <div class="throttle-lever" id="lever-3">IDLE</div>
+              </div>
+              <span style="font-size:0.75rem; color:var(--avionics-amber);">[THRUST]</span>
+            </div>
+
+            <div class="throttle-column">
+              <label>ENG 4: STUDENT</label>
+              <div class="throttle-track" onclick="pushThrottle(4, 'studentPilot', 'STUDENT: LEARN PILOTING')">
+                <div class="throttle-lever" id="lever-4">IDLE</div>
+              </div>
+              <span style="font-size:0.75rem; color:var(--avionics-magenta);">[THRUST]</span>
+            </div>
           </div>
         `;
       } else if (page === 'mcu') {
-        mfdModeTag.innerText = "[ MFD // MAIN CALENDAR UNIT ]";
+        mfdModeTag.innerText = "[ MFD // ROCKWELL COLLINS MCU ]";
         mfdScreen.innerHTML = `
-          <p style="margin-bottom:12px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> MAIN CALENDAR UNIT & FLIGHT DISPATCH</p>
-          <div style="border: 1.5px solid #2d3748; border-radius: 6px; padding: 14px; background: #111720; line-height: 1.8;">
-            <p>> ACTIVE SECTOR: <strong style="color: #fff;">RICHMOND, VIRGINIA (KRIC / KFCI)</strong></p>
-            <p>> CALENDAR CYCLE: <strong style="color: #fff;">AUGUST 2026</strong></p>
-            <p>> GPS COURSE: <strong style="color: #fff;">VFR ON COURSE (090 RADIAL)</strong></p>
-          </div>
+          <div class="fmc-screen">
+            <div class="fmc-header">
+              <span>COLLINS CDU-900</span>
+              <span>AAFS MASTER CALENDAR</span>
+              <span>KRIC / KFCI</span>
+            </div>
 
-          <!-- Live Event Ticker Frame -->
-          <div class="mcu-ticker-frame">
-            <div class="mcu-ticker-title">> LIVE EVENT & MISSION DISPATCH TICKER:</div>
-            <div class="ticker-wrap">
-              <div class="ticker-move">
-                <div class="ticker-item"><span>[AUG 28]</span> First Flight STEM Workshop — Richmond Public Schools (09:00 EST)</div>
-                <div class="ticker-item"><span>[SEP 02]</span> UAS Night SAR Swarm Demo @ Chesterfield Airfield (20:30 EST)</div>
-                <div class="ticker-item"><span>[SEP 08]</span> Part 107 Commercial Drone Ground School Ingestion (18:00 EST)</div>
-                <div class="ticker-item"><span>[SEP 15]</span> VFR Fly-in & Young Aviators Discovery Day (11:00 EST)</div>
+            <div style="margin-top: 10px;">
+              <div class="fmc-line">
+                <span class="fmc-lsk" onclick="alert('FLIGHT PLAN: RICHMOND VFR 090 RADIAL ACTIVE')">< LSK 1L: RTE LEGS</span>
+                <span style="color:#fff;">WAYPOINT [KRIC] ></span>
+              </div>
+              <div class="fmc-line">
+                <span class="fmc-lsk" onclick="alert('PERF INIT: GROSS WT 2850 LBS | CRZ ALT 10,000 FT')">< LSK 2L: PERF INIT</span>
+                <span style="color:#fff;">CRZ FL100 ></span>
+              </div>
+              <div class="fmc-line">
+                <span class="fmc-lsk" onclick="alert('DATABASE V2.6: RVA AIRSPACE SYNCHRONIZED')">< LSK 3L: NAV DATA</span>
+                <span style="color:#fff;">CYCLE 2608 ></span>
+              </div>
+              <div class="fmc-line">
+                <span class="fmc-lsk" onclick="alert('V-SPEEDS SET: V1 65 | VR 72 | V2 80')">< LSK 4L: TAKEOFF REF</span>
+                <span style="color:var(--avionics-green);">VFR READY ></span>
               </div>
             </div>
+
+            <div>
+              <p style="font-size:0.8rem; color:var(--avionics-cyan); margin-bottom:4px;">> EVENT TICKER // MISSION DISPATCH:</p>
+              <div class="fmc-ticker-box">
+                <div class="fmc-ticker-move">
+                  [AUG 28] First Flight STEM Workshop — Richmond Public Schools (09:00 EST) &nbsp;&nbsp;///&nbsp;&nbsp;
+                  [SEP 02] UAS Night SAR Swarm Demo @ Chesterfield Airfield (20:30 EST) &nbsp;&nbsp;///&nbsp;&nbsp;
+                  [SEP 08] Part 107 Commercial Drone Ground School Ingestion (18:00 EST) &nbsp;&nbsp;///&nbsp;&nbsp;
+                  [SEP 15] VFR Fly-in & Young Aviators Discovery Day (11:00 EST)
+                </div>
+              </div>
+            </div>
+
+            <div class="fmc-scratchpad">
+              <span>SCRATCHPAD: ACTIVE</span>
+              <span>CLR / DEL</span>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function pushThrottle(leverNum, key, title) {
+      playBezelClick();
+      const lever = document.getElementById(`lever-${leverNum}`);
+      if (lever) {
+        lever.style.bottom = "140px";
+        lever.style.background = "linear-gradient(180deg, #00ff66 0%, #008833 100%)";
+        lever.innerText = "MAX";
+      }
+
+      rewardUserInteraction(25, 1000, -8, 4);
+
+      setTimeout(() => {
+        renderSurvey(key, title);
+      }, 350);
+    }
+
+    async function fetchLiveMapPoints() {
+      const stage = document.getElementById("map-grid-stage");
+      const status = document.getElementById("map-status");
+      if (!stage) return;
+
+      try {
+        const response = await fetch(GOOGLE_SHEET_API_URL);
+        const json = await response.json();
+        
+        stage.innerHTML = "";
+        let count = 0;
+
+        if (json.data && json.data.length > 1) {
+          json.data.slice(1).forEach((row, idx) => {
+            const locName = row[3] || row[2] || `Incident #${idx + 1}`;
+            const posX = 15 + ((idx * 37) % 70);
+            const posY = 20 + ((idx * 29) % 60);
+
+            const pin = document.createElement("div");
+            pin.className = "map-pin";
+            pin.style.left = `${posX}%`;
+            pin.style.top = `${posY}%`;
+            pin.onclick = () => alert(`Incident Detail: ${locName}\nStatus: Logged from Google Form Uplink`);
+            pin.innerHTML = `
+              <div class="map-pin-pulse"></div>
+              <div class="map-label">${locName.substring(0, 20)}</div>
+            `;
+            stage.appendChild(pin);
+            count++;
+          });
+          status.innerText = `[${count} REPORTS SYNCED]`;
+        } else {
+          status.innerText = "[AWAITING FORM DATA]";
+        }
+      } catch (err) {
+        status.innerText = "[OFFLINE CACHE]";
+        stage.innerHTML = `
+          <div class="map-pin" style="left: 45%; top: 50%;" onclick="alert('Google Sheet Uplink Standby.')">
+            <div class="map-pin-pulse"></div>
+            <div class="map-label">Richmond Sector (Standby)</div>
           </div>
         `;
       }
@@ -778,10 +959,42 @@
             <label style="display:block; font-size:0.85rem; color:var(--avionics-cyan); margin-bottom:4px;">> DESCRIPTION / INVOLVED FELINES:</label>
             <textarea id="catDesc" rows="3" placeholder="Feline descriptions, intensity, tree/ground stand-off..." style="width:100%; background:#000; border:1px solid #334155; padding:8px; color:#fff; font-family:'Roboto Mono';"></textarea>
           </div>
-          <button class="mfd-btn" style="justify-content:center; background:#ff1744; color:#fff;" onclick="alert('[DISPATCH LOGGED]: Coordinates relayed to RVA Feline Tactical SAR.'); switchPage('cats');">> TRANSMIT INCIDENT LOG TO TACTICAL MAP</button>
+          <button class="mfd-btn" style="justify-content:center; background:#ff1744; color:#fff;" onclick="transmitCatIncident()">> TRANSMIT INCIDENT LOG TO TACTICAL MAP</button>
         </div>
         <button class="mfd-btn" style="margin-top:10px;" onclick="switchPage('cats')">> < RETURN TO FELINE MENU</button>
       `;
+    }
+
+    async function transmitCatIncident() {
+      const loc = document.getElementById("catLoc") ? document.getElementById("catLoc").value : "";
+      const desc = document.getElementById("catDesc") ? document.getElementById("catDesc").value : "";
+
+      if (!loc) {
+        alert("Please enter a location.");
+        return;
+      }
+
+      const payload = {
+        formType: "CAT INCIDENT REPORT",
+        name: "Anonymous Citizen",
+        contact: "Dispatched",
+        detail1: loc,
+        detail2: desc
+      };
+
+      try {
+        await fetch(GOOGLE_SHEET_API_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+      } catch (e) {
+        console.error(e);
+      }
+
+      alert("[DISPATCH LOGGED]: Coordinates relayed to Google Sheet master database.");
+      switchPage('cats');
     }
 
     function renderSurvey(key, title) {
@@ -789,7 +1002,7 @@
       mfdScreen.innerHTML = `
         <p style="font-size:1rem; font-weight:700; color:var(--avionics-cyan); margin-bottom:8px;">> UPLINK: ${title}</p>
         <iframe class="mfd-embedded-frame" src="${url}" frameborder="0">Loading Survey Matrix...</iframe>
-        <button class="mfd-btn" style="margin-top:12px;" onclick="switchPage('community')">> < RETURN TO MENU</button>
+        <button class="mfd-btn" style="margin-top:12px;" onclick="switchPage('pilots')">> < RETURN TO THROTTLES</button>
       `;
     }
 
