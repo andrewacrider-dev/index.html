@@ -12,6 +12,7 @@
       --avionics-cyan: #00d4ff;
       --avionics-amber: #ffaa00;
       --avionics-magenta: #ff2a8d;
+      --avionics-red: #ff3344;
       --avionics-white: #ffffff;
       --sky-blue: #0277bd;
       --ground-brown: #4e342e;
@@ -60,6 +61,44 @@
       color: #94a3b8;
       font-size: 0.95rem;
       font-weight: 600;
+    }
+
+    .cockpit-header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .emer-switch-btn {
+      background: rgba(255, 51, 68, 0.15);
+      border: 1.5px solid var(--avionics-red);
+      color: #ff8892;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 6px rgba(255, 51, 68, 0.2);
+    }
+
+    .emer-switch-btn:hover {
+      background: var(--avionics-red);
+      color: #000;
+      box-shadow: 0 0 12px rgba(255, 51, 68, 0.6);
+    }
+
+    .emer-led {
+      width: 6px;
+      height: 6px;
+      background: var(--avionics-red);
+      border-radius: 50%;
+      box-shadow: 0 0 6px var(--avionics-red);
+      animation: pulse-pin 1.8s infinite;
     }
 
     .cockpit-header .brand-tag {
@@ -299,8 +338,8 @@
 
     .mfd-bezel-softkeys {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 8px;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
       margin-top: 12px;
     }
 
@@ -310,9 +349,9 @@
       border: 2px solid #3f4d5e;
       border-radius: 6px;
       font-family: 'Inter', sans-serif;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 700;
-      padding: 12px 4px;
+      padding: 12px 2px;
       cursor: pointer;
       text-transform: uppercase;
       transition: all 0.15s ease;
@@ -356,7 +395,7 @@
       transform: translateX(2px);
     }
 
-    /* Rockwell Collins MCU Display */
+    /* Rockwell Collins MCU Flight Log Interface */
     .fmc-screen {
       background: #000000;
       border: 2px solid #334155;
@@ -374,31 +413,74 @@
       display: flex;
       justify-content: space-between;
       border-bottom: 1px dashed #334155;
-      padding-bottom: 6px;
+      padding-bottom: 8px;
       color: var(--avionics-cyan);
       font-weight: 700;
+      font-size: 0.85rem;
     }
 
-    .fmc-line {
+    .event-log-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 12px 0;
+      max-height: 340px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .event-log-card {
+      background: #090d12;
+      border: 1.5px solid #1e293b;
+      border-left: 4px solid var(--avionics-green);
+      border-radius: 4px;
+      padding: 10px 12px;
+      cursor: pointer;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin: 10px 0;
-      font-size: 0.95rem;
+      transition: all 0.15s ease;
     }
 
-    .fmc-lsk {
-      color: #94a3b8;
-      cursor: pointer;
-      padding: 4px 8px;
-      border: 1px solid #1e293b;
-      border-radius: 4px;
-      background: #0a0e14;
+    .event-log-card:hover {
+      background: #121a24;
+      border-color: var(--avionics-cyan);
+      border-left-color: var(--avionics-cyan);
+      transform: translateX(3px);
     }
-    .fmc-lsk:hover {
+
+    .event-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .event-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .event-details {
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+
+    .event-action-tag {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--avionics-green);
+      padding: 4px 8px;
+      border: 1px solid var(--avionics-green);
+      border-radius: 3px;
+      background: rgba(0, 255, 102, 0.08);
+      white-space: nowrap;
+    }
+
+    .event-log-card:hover .event-action-tag {
+      background: var(--avionics-cyan);
       color: #000;
-      background: var(--avionics-green);
-      border-color: var(--avionics-green);
+      border-color: var(--avionics-cyan);
     }
 
     .fmc-scratchpad {
@@ -408,32 +490,10 @@
       justify-content: space-between;
       color: var(--avionics-amber);
       font-weight: 700;
+      font-size: 0.8rem;
     }
 
-    .fmc-ticker-box {
-      margin-top: 10px;
-      background: #090d12;
-      border: 1px solid #1e293b;
-      border-left: 3px solid var(--avionics-green);
-      padding: 8px 0;
-      overflow: hidden;
-      white-space: nowrap;
-    }
-
-    .fmc-ticker-move {
-      display: inline-block;
-      white-space: nowrap;
-      padding-left: 100%;
-      animation: fmc-ticker 40s linear infinite;
-      color: #fff;
-    }
-
-    @keyframes fmc-ticker {
-      0% { transform: translate3d(0,0,0); }
-      100% { transform: translate3d(-100%,0,0); }
-    }
-
-    /* Throttle Levers */
+    /* Throttle Quadrant */
     .throttle-quadrant {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -541,6 +601,11 @@
       animation: pulse-pin 1.5s infinite;
     }
 
+    .map-pin-pulse.territory-pin {
+      background: #00d4ff;
+      box-shadow: 0 0 10px #00d4ff;
+    }
+
     @keyframes pulse-pin {
       0% { transform: scale(0.9); opacity: 1; }
       50% { transform: scale(1.6); opacity: 0.5; }
@@ -572,9 +637,18 @@
 
   <div class="cockpit-chassis">
     <div class="cockpit-header">
-      <span>AAFS INTEGRATED AVIONICS SYSTEM // HD FLIGHT DECK</span>
-      <span>SECTOR: <span class="brand-tag">RICHMOND, VA (VFR)</span></span>
-      <span>SYSTEM TIME: <strong>AUGUST 2026</strong></span>
+      <div>
+        <span>AAFS INTEGRATED AVIONICS SYSTEM // HD FLIGHT DECK</span>
+        &nbsp;|&nbsp; SECTOR: <span class="brand-tag">RICHMOND, VA (VFR)</span>
+      </div>
+      <div class="cockpit-header-right">
+        <!-- Subtle Emergency Disconnect Switch -->
+        <button class="emer-switch-btn" onclick="triggerEmergencyDeconfliction()">
+          <div class="emer-led"></div>
+          [ EMER DISC / DECON ]
+        </button>
+        <span>SYS TIME: <strong>AUGUST 2026</strong></span>
+      </div>
     </div>
 
     <div class="glass-cockpit-grid">
@@ -659,6 +733,7 @@
         <!-- Bezel Softkeys -->
         <div class="mfd-bezel-softkeys">
           <button class="softkey active" id="key-comm" onclick="switchPage('community')">COMM</button>
+          <button class="softkey" id="key-edu" onclick="switchPage('edu')">EDU</button>
           <button class="softkey" id="key-consult" onclick="switchPage('consulting')">CONSULT</button>
           <button class="softkey" id="key-flight" onclick="switchPage('flight')">FLIGHT</button>
           <button class="softkey" id="key-cats" onclick="switchPage('cats')">CATS!</button>
@@ -672,6 +747,10 @@
 
   <script>
     const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyio6BYtMxwDNJH90M7TgfPlQhJxvkaCAvnMDrnR3u08nQxDPS_BzEjggKnyplvc46H/exec";
+
+    // Media & External Studies Links:
+    const FOREST_ALBUM_URL = "https://www.amazon.com/photos/groups/share/i2VmmcGaTuyKUFCY1Cb5Fg.zu0YzXNydfuDRLn_zOOB1Z"; 
+    const NOISE_STUDY_URL = "https://flyrichmond.com/noise-compatibility-program/"; 
 
     const SURVEY_LINKS = {
       hirePilot: "https://docs.google.com/forms/d/e/1FAIpQLSdJXQ38WZqti9x5enUoOpwfvnErhDSCIkiMQWBoV79blaptFA/viewform?embedded=true",
@@ -739,6 +818,83 @@
       if (activeBtn) activeBtn.classList.add('active');
     }
 
+    // Emergency Deconfliction
+    function triggerEmergencyDeconfliction() {
+      playBezelClick();
+      setActiveKey('cats');
+      mfdModeTag.innerText = "[ MFD // CITIZEN DECONFLICTION & CATS ]";
+      mfdScreen.innerHTML = `
+        <div style="border: 2px solid var(--avionics-red); border-radius: 6px; padding: 14px; background: rgba(255, 51, 68, 0.08); margin-bottom: 12px;">
+          <p style="font-weight: 800; color: #ff5566; font-size: 1.05rem; margin-bottom: 6px;">> ⚠️ CITIZEN DECONFLICTION & SANCTUARY INTAKE</p>
+          <p style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.4;">
+            Not a fan of aviation or drones? We believe in peaceful coexistence, transparency, and deconfliction. You have been redirected to the Feline Sanctuary.
+          </p>
+        </div>
+
+        <div class="mfd-menu-grid">
+          <button class="mfd-btn" style="border-color: var(--avionics-magenta);" onclick="window.open(FOREST_ALBUM_URL, '_blank')"><span>> View Forest The Cat (Stress Relief)</span><span style="color:var(--avionics-magenta);">[FOREST 🐾]</span></button>
+          <button class="mfd-btn" style="border-color: var(--avionics-red);" onclick="renderNoiseComplaintForm()"><span>> File a Drone / Aircraft Flight Complaint</span><span style="color:var(--avionics-red);">[REPORT]</span></button>
+          <button class="mfd-btn" style="border-color: var(--avionics-cyan);" onclick="window.open(NOISE_STUDY_URL, '_blank')"><span>> View Richmond Airport Noise Study</span><span style="color:var(--avionics-cyan);">[STUDY DATA]</span></button>
+          <button class="mfd-btn" onclick="switchPage('cats')"><span>> Return to Feline Tactical Map</span><span style="color:var(--avionics-green);">[CATS!]</span></button>
+        </div>
+      `;
+    }
+
+    function renderNoiseComplaintForm() {
+      mfdScreen.innerHTML = `
+        <p style="font-weight:700; color:var(--avionics-red); font-size:1.05rem; margin-bottom:10px;">> COMMUNITY FLIGHT / NOISE INTAKE</p>
+        <div style="border: 1.5px solid #334155; border-radius: 6px; padding: 14px; background: #111720;">
+          <div style="margin-bottom:10px;">
+            <label style="display:block; font-size:0.85rem; color:var(--avionics-cyan); margin-bottom:4px;">> YOUR NAME OR CALLSIGN (OPTIONAL):</label>
+            <input type="text" id="complainantName" placeholder="Concerned Citizen" style="width:100%; background:#000; border:1px solid #334155; padding:8px; color:#fff; font-family:'Roboto Mono';">
+          </div>
+          <div style="margin-bottom:10px;">
+            <label style="display:block; font-size:0.85rem; color:var(--avionics-cyan); margin-bottom:4px;">> LOCATION / INTERSECTION / ALTITUDE OF AIRCRAFT:</label>
+            <input type="text" id="complainantLoc" placeholder="e.g. Northside / low drone hovering at 14:00" style="width:100%; background:#000; border:1px solid #334155; padding:8px; color:#fff; font-family:'Roboto Mono';">
+          </div>
+          <div style="margin-bottom:10px;">
+            <label style="display:block; font-size:0.85rem; color:var(--avionics-cyan); margin-bottom:4px;">> NATURE OF CONCERN (NOISE, PRIVACY, SAFETY):</label>
+            <textarea id="complainantDesc" rows="3" placeholder="Provide details for airspace review..." style="width:100%; background:#000; border:1px solid #334155; padding:8px; color:#fff; font-family:'Roboto Mono';"></textarea>
+          </div>
+          <button class="mfd-btn" style="justify-content:center; background:var(--avionics-red); color:#000; font-weight:800;" onclick="transmitNoiseComplaint()">> TRANSMIT CITIZEN REPORT TO MASTER LOG</button>
+        </div>
+        <button class="mfd-btn" style="margin-top:10px;" onclick="triggerEmergencyDeconfliction()">> < RETURN TO DECONFLICTION MENU</button>
+      `;
+    }
+
+    async function transmitNoiseComplaint() {
+      const name = document.getElementById("complainantName").value || "Anonymous Citizen";
+      const loc = document.getElementById("complainantLoc").value;
+      const desc = document.getElementById("complainantDesc").value;
+
+      if (!loc) {
+        alert("Please enter a location or intersection.");
+        return;
+      }
+
+      const payload = {
+        formType: "CITIZEN FLIGHT COMPLAINT",
+        name: name,
+        contact: "Deconfliction Unit",
+        detail1: loc,
+        detail2: desc
+      };
+
+      try {
+        await fetch(GOOGLE_SHEET_API_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+      } catch (e) {
+        console.error(e);
+      }
+
+      alert("[DISPATCH RECORDED]: Your feedback has been securely logged to the community flight ledger.");
+      triggerEmergencyDeconfliction();
+    }
+
     function switchPage(page) {
       playBezelClick();
       setActiveKey(page);
@@ -751,8 +907,18 @@
           <div class="mfd-menu-grid">
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('pilotWork', 'FIND A JOB IN AVIATION')"><span>> Find A Job in Aviation</span><span style="color:var(--avionics-green);">[CAREERS]</span></button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('hirePilot', 'HIRE A PILOT / MECHANIC')"><span>> Hire a Pilot / Mechanic</span><span style="color:var(--avionics-cyan);">[HIRING]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('First Flight Training: Classroom portal queued.')"><span>> First Flight Training for Classroom</span><span style="color:var(--avionics-cyan);">[COMM]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Events Near You: Syncing Richmond calendar.')"><span>> Events Near You & RSVP</span><span style="color:var(--avionics-cyan);">[CAL]</span></button>
+            <button class="mfd-btn" onclick="switchPage('mcu')"><span>> Master Calendar & Events</span><span style="color:var(--avionics-cyan);">[MCU LOG]</span></button>
+            <button class="mfd-btn" onclick="switchPage('edu')"><span>> Aviation Education & STEM Portal</span><span style="color:var(--avionics-green);">[EDU]</span></button>
+          </div>
+        `;
+      } else if (page === 'edu') {
+        mfdModeTag.innerText = "[ MFD // AVIATION EDUCATION ]";
+        mfdScreen.innerHTML = `
+          <p style="margin-bottom:14px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> AVIATION EDUCATION & CLASSROOM OUTREACH</p>
+          <div class="mfd-menu-grid">
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderTeacherBooking()"><span>> 🏫 Book a Flight / Drone Demo for Classroom</span><span style="color:var(--avionics-cyan);">[TEACHERS]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('studentPilot', 'STUDENT: LEARN PILOTING')"><span>> 🎓 Become a Pilot (Student Portal)</span><span style="color:var(--avionics-green);">[STUDENTS]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('pilotTeach', 'PILOT: INSTRUCTOR')"><span>> 👨‍🏫 Volunteer as Flight Instructor / Mentor</span><span style="color:var(--avionics-amber);">[TEACH]</span></button>
           </div>
         `;
       } else if (page === 'consulting') {
@@ -780,16 +946,17 @@
       } else if (page === 'cats') {
         mfdModeTag.innerText = "[ MFD // FELINE NETWORK (CATS!) ]";
         mfdScreen.innerHTML = `
-          <p style="margin-bottom:12px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> FELINE TACTICAL CODEX & SAR</p>
+          <p style="margin-bottom:10px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> FELINE TACTICAL CODEX & TERRITORY</p>
           <div class="mfd-menu-grid">
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); window.open(FOREST_ALBUM_URL, '_blank')"><span>> Pictures of Forest (The CAT)</span><span style="color:var(--avionics-magenta);">[FOREST 🐾]</span></button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); window.open('https://www.instagram.com/rva_cats/', '_blank')"><span>> RVA Cats Instagram</span><span style="color:var(--avionics-cyan);">[LINK]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderCatReport()"><span>> Report a Cat Fight / Incident</span><span style="color:#ff1744;">[REPORT]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('UAS Search and Rescue unit dispatched.')"><span>> UAS Enhanced Search & Rescue</span><span style="color:var(--avionics-green);">[SAR]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderCatReport('FIGHT')"><span>> Report a Cat Fight (Conflict)</span><span style="color:#ff1744;">[FIGHT ALERT]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderCatReport('TERRITORY')"><span>> Report Cat Location / Territory</span><span style="color:var(--avionics-cyan);">[MAP TERRITORY]</span></button>
           </div>
 
           <div class="tactical-map-container">
             <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:0.8rem; font-family:'Roboto Mono';">
-              <span style="color:var(--avionics-cyan);">> LIVE INCIDENT MAP (GOOGLE FORM DATA):</span>
+              <span style="color:var(--avionics-cyan);">> LIVE FELINE TERRITORY & CONFLICT MAP:</span>
               <span id="map-status" style="color:var(--avionics-green);">[FETCHING ROWS...]</span>
             </div>
             <div class="map-grid-overlay" id="map-grid-stage"></div>
@@ -837,53 +1004,159 @@
           </div>
         `;
       } else if (page === 'mcu') {
-        mfdModeTag.innerText = "[ MFD // ROCKWELL COLLINS MCU ]";
+        mfdModeTag.innerText = "[ MFD // MASTER CALENDAR UNIT ]";
         mfdScreen.innerHTML = `
           <div class="fmc-screen">
             <div class="fmc-header">
               <span>COLLINS CDU-900</span>
-              <span>AAFS MASTER CALENDAR</span>
-              <span>KRIC / KFCI</span>
+              <span>AAFS MASTER CALENDAR LOG</span>
+              <span id="mcu-sync-status" style="color:var(--avionics-cyan);">[SYNCING...]</span>
             </div>
 
-            <div style="margin-top: 10px;">
-              <div class="fmc-line">
-                <span class="fmc-lsk" onclick="alert('FLIGHT PLAN: RICHMOND VFR 090 RADIAL ACTIVE')">< LSK 1L: RTE LEGS</span>
-                <span style="color:#fff;">WAYPOINT [KRIC] ></span>
-              </div>
-              <div class="fmc-line">
-                <span class="fmc-lsk" onclick="alert('PERF INIT: GROSS WT 2850 LBS | CRZ ALT 10,000 FT')">< LSK 2L: PERF INIT</span>
-                <span style="color:#fff;">CRZ FL100 ></span>
-              </div>
-              <div class="fmc-line">
-                <span class="fmc-lsk" onclick="alert('DATABASE V2.6: RVA AIRSPACE SYNCHRONIZED')">< LSK 3L: NAV DATA</span>
-                <span style="color:#fff;">CYCLE 2608 ></span>
-              </div>
-              <div class="fmc-line">
-                <span class="fmc-lsk" onclick="alert('V-SPEEDS SET: V1 65 | VR 72 | V2 80')">< LSK 4L: TAKEOFF REF</span>
-                <span style="color:var(--avionics-green);">VFR READY ></span>
-              </div>
-            </div>
-
-            <div>
-              <p style="font-size:0.8rem; color:var(--avionics-cyan); margin-bottom:4px;">> EVENT TICKER // MISSION DISPATCH:</p>
-              <div class="fmc-ticker-box">
-                <div class="fmc-ticker-move">
-                  [AUG 28] First Flight STEM Workshop — Richmond Public Schools (09:00 EST) &nbsp;&nbsp;///&nbsp;&nbsp;
-                  [SEP 02] UAS Night SAR Swarm Demo @ Chesterfield Airfield (20:30 EST) &nbsp;&nbsp;///&nbsp;&nbsp;
-                  [SEP 08] Part 107 Commercial Drone Ground School Ingestion (18:00 EST) &nbsp;&nbsp;///&nbsp;&nbsp;
-                  [SEP 15] VFR Fly-in & Young Aviators Discovery Day (11:00 EST)
-                </div>
-              </div>
+            <!-- Clickable Event Log Cards Container -->
+            <div class="event-log-container" id="mcu-event-stage">
+              <!-- Rendered Dynamically from Google Sheets -->
             </div>
 
             <div class="fmc-scratchpad">
-              <span>SCRATCHPAD: ACTIVE</span>
-              <span>CLR / DEL</span>
+              <span>DISPATCH: LIVE SYNC ACTIVE</span>
+              <span>WAYPOINTS: KRIC / KFCI</span>
             </div>
           </div>
         `;
+        fetchLiveMcuEvents();
       }
+    }
+
+    // Dynamic Google Sheets Event Fetcher for MCU
+    async function fetchLiveMcuEvents() {
+      const stage = document.getElementById("mcu-event-stage");
+      const statusTag = document.getElementById("mcu-sync-status");
+      if (!stage) return;
+
+      try {
+        const response = await fetch(GOOGLE_SHEET_API_URL);
+        const json = await response.json();
+
+        // Fallback default events
+        const fallbackEvents = [
+          { date: "AUG 28", title: "STEM Flight Discovery Workshop", loc: "Richmond Public Schools", link: "https://docs.google.com/forms/d/e/1FAIpQLScYXKl_eTJplwOlGb1z0cLVbJcK-99k8LGneeJ5Q55zvVXZbQ/viewform" },
+          { date: "SEP 02", title: "UAS Night SAR Swarm Demo", loc: "Chesterfield Airfield (20:30 EST)", link: "https://docs.google.com/forms/d/e/1FAIpQLSdJXQ38WZqti9x5enUoOpwfvnErhDSCIkiMQWBoV79blaptFA/viewform" },
+          { date: "SEP 08", title: "Part 107 Commercial Ground School", loc: "Ingestion Portal Online", link: "https://docs.google.com/forms/d/e/1FAIpQLSdHmi24pFvvECDs5yKPpwPnp_2svFfmNLT8LHVW7ER6leKpzQ/viewform" },
+          { date: "SEP 15", title: "VFR Fly-In & Young Aviators Day", loc: "Norfolk / Richmond Sector", link: "https://docs.google.com/forms/d/e/1FAIpQLSebU_PdiQX3HvnzkvZyUKgEnZniE-NoZ3TLj5Q2MXqtcSc8Jw/viewform" }
+        ];
+
+        let eventList = [];
+
+        if (json.data && json.data.length > 1) {
+          const eventsFromSheet = json.data.slice(1).filter(r => (r[0] || "").toUpperCase().includes("EVENT"));
+          if (eventsFromSheet.length > 0) {
+            eventList = eventsFromSheet.map(r => ({
+              date: r[1] || "UPCOMING",
+              title: r[2] || "Aviation Meetup",
+              loc: r[3] || "Richmond Airspace",
+              link: r[4] || "https://docs.google.com/"
+            }));
+          }
+        }
+
+        if (eventList.length === 0) {
+          eventList = fallbackEvents;
+        }
+
+        stage.innerHTML = eventList.map(ev => `
+          <div class="event-log-card" onclick="rewardUserInteraction(15, 500); window.open('${ev.link}', '_blank')">
+            <div class="event-meta">
+              <span class="event-title">[${ev.date}] ${ev.title}</span>
+              <span class="event-details">> SECTOR: ${ev.loc}</span>
+            </div>
+            <div class="event-action-tag">[RSVP / DETAILS] ></div>
+          </div>
+        `).join('');
+
+        if (statusTag) statusTag.innerText = `[${eventList.length} EVENTS SYNCED]`;
+
+      } catch (err) {
+        if (statusTag) statusTag.innerText = "[LOCAL DISPATCH]";
+        stage.innerHTML = `
+          <div class="event-log-card" onclick="window.open('${SURVEY_LINKS.studentPilot}', '_blank')">
+            <div class="event-meta">
+              <span class="event-title">[AUG 28] STEM Flight Discovery Workshop</span>
+              <span class="event-details">> SECTOR: Richmond Public Schools</span>
+            </div>
+            <div class="event-action-tag">[RSVP / DETAILS] ></div>
+          </div>
+          <div class="event-log-card" onclick="window.open('${SURVEY_LINKS.hirePilot}', '_blank')">
+            <div class="event-meta">
+              <span class="event-title">[SEP 02] UAS Night SAR Swarm Demo</span>
+              <span class="event-details">> SECTOR: Chesterfield Airfield (20:30 EST)</span>
+            </div>
+            <div class="event-action-tag">[RSVP / DETAILS] ></div>
+          </div>
+          <div class="event-log-card" onclick="window.open('${SURVEY_LINKS.pilotWork}', '_blank')">
+            <div class="event-meta">
+              <span class="event-title">[SEP 08] Part 107 Commercial Drone School</span>
+              <span class="event-details">> SECTOR: Ingestion Portal Online</span>
+            </div>
+            <div class="event-action-tag">[RSVP / DETAILS] ></div>
+          </div>
+        `;
+      }
+    }
+
+    function renderTeacherBooking() {
+      mfdScreen.innerHTML = `
+        <p style="font-weight:700; color:var(--avionics-cyan); font-size:1.05rem; margin-bottom:10px;">> TEACHER PORTAL: BOOK A CLASSROOM DEMO</p>
+        <div style="border: 1.5px solid #334155; border-radius: 6px; padding: 14px; background: #111720;">
+          <div style="margin-bottom:10px;">
+            <label style="display:block; font-size:0.85rem; color:var(--avionics-green); margin-bottom:4px;">> TEACHER / EDUCATOR NAME & SCHOOL:</label>
+            <input type="text" id="eduTeacher" placeholder="e.g. Ms. Johnson // Richmond High" style="width:100%; background:#000; border:1px solid #334155; padding:8px; color:#fff; font-family:'Roboto Mono';">
+          </div>
+          <div style="margin-bottom:10px;">
+            <label style="display:block; font-size:0.85rem; color:var(--avionics-green); margin-bottom:4px;">> CONTACT EMAIL / PHONE:</label>
+            <input type="text" id="eduContact" placeholder="teacher@school.edu" style="width:100%; background:#000; border:1px solid #334155; padding:8px; color:#fff; font-family:'Roboto Mono';">
+          </div>
+          <div style="margin-bottom:10px;">
+            <label style="display:block; font-size:0.85rem; color:var(--avionics-green); margin-bottom:4px;">> GRADE LEVEL & DEMO PREFERENCE (DRONES / MANNED / AVIONICS):</label>
+            <textarea id="eduDesc" rows="3" placeholder="Target dates, student headcount, STEM curriculum focus..." style="width:100%; background:#000; border:1px solid #334155; padding:8px; color:#fff; font-family:'Roboto Mono';"></textarea>
+          </div>
+          <button class="mfd-btn" style="justify-content:center; background:var(--avionics-green); color:#000; font-weight:800;" onclick="transmitTeacherBooking()">> SUBMIT CLASSROOM DEMONSTRATION REQUEST</button>
+        </div>
+        <button class="mfd-btn" style="margin-top:10px;" onclick="switchPage('edu')">> < RETURN TO EDUCATION DIRECTORY</button>
+      `;
+    }
+
+    async function transmitTeacherBooking() {
+      const teacher = document.getElementById("eduTeacher").value;
+      const contact = document.getElementById("eduContact").value;
+      const desc = document.getElementById("eduDesc").value;
+
+      if (!teacher || !contact) {
+        alert("Please provide your name, school, and contact info.");
+        return;
+      }
+
+      const payload = {
+        formType: "CLASSROOM DEMO REQUEST",
+        name: teacher,
+        contact: contact,
+        detail1: "Richmond STEM Outreach",
+        detail2: desc
+      };
+
+      try {
+        await fetch(GOOGLE_SHEET_API_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+      } catch (e) {
+        console.error(e);
+      }
+
+      alert("[REQUEST LOGGED]: Classroom demonstration request dispatched to AAFS Education Team!");
+      switchPage('edu');
     }
 
     function pushThrottle(leverNum, key, title) {
@@ -916,7 +1189,10 @@
 
         if (json.data && json.data.length > 1) {
           json.data.slice(1).forEach((row, idx) => {
-            const locName = row[3] || row[2] || `Incident #${idx + 1}`;
+            const formType = row[0] || "REPORT";
+            const locName = row[3] || row[2] || `Location #${idx + 1}`;
+            const isTerritory = formType.includes("TERRITORY");
+            
             const posX = 15 + ((idx * 37) % 70);
             const posY = 20 + ((idx * 29) % 60);
 
@@ -924,15 +1200,15 @@
             pin.className = "map-pin";
             pin.style.left = `${posX}%`;
             pin.style.top = `${posY}%`;
-            pin.onclick = () => alert(`Incident Detail: ${locName}\nStatus: Logged from Google Form Uplink`);
+            pin.onclick = () => alert(`[${formType}]\nLocation: ${locName}\nStatus: Verified on Google Sheet Master Database`);
             pin.innerHTML = `
-              <div class="map-pin-pulse"></div>
-              <div class="map-label">${locName.substring(0, 20)}</div>
+              <div class="map-pin-pulse ${isTerritory ? 'territory-pin' : ''}"></div>
+              <div class="map-label">${locName.substring(0, 18)}</div>
             `;
             stage.appendChild(pin);
             count++;
           });
-          status.innerText = `[${count} REPORTS SYNCED]`;
+          status.innerText = `[${count} NODES MAPPED]`;
         } else {
           status.innerText = "[AWAITING FORM DATA]";
         }
@@ -947,25 +1223,29 @@
       }
     }
 
-    function renderCatReport() {
+    function renderCatReport(reportType) {
+      const isFight = reportType === 'FIGHT';
+      const title = isFight ? "REPORT A CAT FIGHT (CONFLICT)" : "REPORT CAT LOCATION / TERRITORY";
+      const color = isFight ? "#ff1744" : "var(--avionics-cyan)";
+
       mfdScreen.innerHTML = `
-        <p style="font-weight:700; color:#ff1744; font-size:1.1rem; margin-bottom:10px;">> INCIDENT DISPATCH: REPORT A CAT FIGHT</p>
+        <p style="font-weight:700; color:${color}; font-size:1.05rem; margin-bottom:10px;">> INCIDENT DISPATCH: ${title}</p>
         <div style="border: 1.5px solid #334155; border-radius: 6px; padding: 14px; background: #111720;">
           <div style="margin-bottom:10px;">
-            <label style="display:block; font-size:0.85rem; color:var(--avionics-cyan); margin-bottom:4px;">> INCIDENT LOCATION / INTERSECTION:</label>
-            <input type="text" id="catLoc" placeholder="e.g. Monument Ave & Belmont" style="width:100%; background:#000; border:1px solid #334155; padding:8px; color:#fff; font-family:'Roboto Mono';">
+            <label style="display:block; font-size:0.85rem; color:var(--avionics-cyan); margin-bottom:4px;">> INTERSECTION / NEIGHBORHOOD (RICHMOND):</label>
+            <input type="text" id="catLoc" placeholder="e.g. Strawberry St & Park Ave" style="width:100%; background:#000; border:1px solid #334155; padding:8px; color:#fff; font-family:'Roboto Mono';">
           </div>
           <div style="margin-bottom:10px;">
-            <label style="display:block; font-size:0.85rem; color:var(--avionics-cyan); margin-bottom:4px;">> DESCRIPTION / INVOLVED FELINES:</label>
-            <textarea id="catDesc" rows="3" placeholder="Feline descriptions, intensity, tree/ground stand-off..." style="width:100%; background:#000; border:1px solid #334155; padding:8px; color:#fff; font-family:'Roboto Mono';"></textarea>
+            <label style="display:block; font-size:0.85rem; color:var(--avionics-cyan); margin-bottom:4px;">> ${isFight ? 'CONFLICT INTENSITY & FELINE DESCRIPTIONS:' : 'CAT NAME / DESCRIPTION & TERRITORY HABITS:'}</label>
+            <textarea id="catDesc" rows="3" placeholder="${isFight ? 'Yowling, stand-off, physical scuffle, tree involvement...' : 'Orange tabby, frequent porch visitor, friendly/feral...'}" style="width:100%; background:#000; border:1px solid #334155; padding:8px; color:#fff; font-family:'Roboto Mono';"></textarea>
           </div>
-          <button class="mfd-btn" style="justify-content:center; background:#ff1744; color:#fff;" onclick="transmitCatIncident()">> TRANSMIT INCIDENT LOG TO TACTICAL MAP</button>
+          <button class="mfd-btn" style="justify-content:center; background:${isFight ? '#ff1744' : 'var(--avionics-cyan)'}; color:#000; font-weight:700;" onclick="transmitCatIncident('${isFight ? 'CAT CONFLICT REPORT' : 'CAT TERRITORY REPORT'}')">> TRANSMIT TO LIVE TACTICAL MAP</button>
         </div>
         <button class="mfd-btn" style="margin-top:10px;" onclick="switchPage('cats')">> < RETURN TO FELINE MENU</button>
       `;
     }
 
-    async function transmitCatIncident() {
+    async function transmitCatIncident(formType) {
       const loc = document.getElementById("catLoc") ? document.getElementById("catLoc").value : "";
       const desc = document.getElementById("catDesc") ? document.getElementById("catDesc").value : "";
 
@@ -975,8 +1255,8 @@
       }
 
       const payload = {
-        formType: "CAT INCIDENT REPORT",
-        name: "Anonymous Citizen",
+        formType: formType,
+        name: "Community Spotter",
         contact: "Dispatched",
         detail1: loc,
         detail2: desc
@@ -993,7 +1273,7 @@
         console.error(e);
       }
 
-      alert("[DISPATCH LOGGED]: Coordinates relayed to Google Sheet master database.");
+      alert(`[DISPATCH LOGGED]: ${formType} relayed to Master Database.`);
       switchPage('cats');
     }
 
@@ -1002,7 +1282,7 @@
       mfdScreen.innerHTML = `
         <p style="font-size:1rem; font-weight:700; color:var(--avionics-cyan); margin-bottom:8px;">> UPLINK: ${title}</p>
         <iframe class="mfd-embedded-frame" src="${url}" frameborder="0">Loading Survey Matrix...</iframe>
-        <button class="mfd-btn" style="margin-top:12px;" onclick="switchPage('pilots')">> < RETURN TO THROTTLES</button>
+        <button class="mfd-btn" style="margin-top:12px;" onclick="switchPage('community')">> < RETURN TO MENU</button>
       `;
     }
 
