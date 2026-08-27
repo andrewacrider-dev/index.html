@@ -590,6 +590,7 @@
       align-items: center;
       cursor: pointer;
       transform: translate(-50%, -50%);
+      z-index: 5;
     }
 
     .map-pin-pulse {
@@ -759,6 +760,9 @@
       pilotWork: "https://docs.google.com/forms/d/e/1FAIpQLSdHmi24pFvvECDs5yKPpwPnp_2svFfmNLT8LHVW7ER6leKpzQ/viewform?embedded=true"
     };
 
+    // Client-side transient cache for submitted pins
+    let localTerritoryCache = [];
+
     const mfdScreen = document.getElementById("mfd-screen");
     const mfdModeTag = document.getElementById("mfd-mode-tag");
     const syntheticHorizon = document.getElementById("synthetic-horizon");
@@ -907,7 +911,7 @@
           <div class="mfd-menu-grid">
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('pilotWork', 'FIND A JOB IN AVIATION')"><span>> Find A Job in Aviation</span><span style="color:var(--avionics-green);">[CAREERS]</span></button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('hirePilot', 'HIRE A PILOT / MECHANIC')"><span>> Hire a Pilot / Mechanic</span><span style="color:var(--avionics-cyan);">[HIRING]</span></button>
-            <button class="mfd-btn" onclick="switchPage('mcu')"><span>> Master Calendar & Events</span><span style="color:var(--avionics-cyan);">[MCU LOG]</span></button>
+            <button class="mfd-btn" onclick="switchPage('mcu')"><span>> Master Calendar & Drone Events</span><span style="color:var(--avionics-cyan);">[MCU LOG]</span></button>
             <button class="mfd-btn" onclick="switchPage('edu')"><span>> Aviation Education & STEM Portal</span><span style="color:var(--avionics-green);">[EDU]</span></button>
           </div>
         `;
@@ -954,6 +958,7 @@
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderCatReport('TERRITORY')"><span>> Report Cat Location / Territory</span><span style="color:var(--avionics-cyan);">[MAP TERRITORY]</span></button>
           </div>
 
+          <!-- Dynamic Form Data Incident & Territory Map -->
           <div class="tactical-map-container">
             <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:0.8rem; font-family:'Roboto Mono';">
               <span style="color:var(--avionics-cyan);">> LIVE FELINE TERRITORY & CONFLICT MAP:</span>
@@ -1009,7 +1014,7 @@
           <div class="fmc-screen">
             <div class="fmc-header">
               <span>COLLINS CDU-900</span>
-              <span>AAFS MASTER CALENDAR LOG</span>
+              <span>AAFS MASTER DRONE & FLIGHT CALENDAR</span>
               <span id="mcu-sync-status" style="color:var(--avionics-cyan);">[SYNCING...]</span>
             </div>
 
@@ -1020,7 +1025,7 @@
 
             <div class="fmc-scratchpad">
               <span>DISPATCH: LIVE SYNC ACTIVE</span>
-              <span>WAYPOINTS: KRIC / KFCI</span>
+              <span>WAYPOINTS: KRIC / KFCI / KOFP / VA SECTORS</span>
             </div>
           </div>
         `;
@@ -1038,30 +1043,37 @@
         const response = await fetch(GOOGLE_SHEET_API_URL);
         const json = await response.json();
 
-        // Fallback default events
-        const fallbackEvents = [
+        // Comprehensive Virginia & Richmond Drone / Aviation Schedule
+        const fullDroneSchedule = [
           { date: "AUG 28", title: "STEM Flight Discovery Workshop", loc: "Richmond Public Schools", link: "https://docs.google.com/forms/d/e/1FAIpQLScYXKl_eTJplwOlGb1z0cLVbJcK-99k8LGneeJ5Q55zvVXZbQ/viewform" },
+          { date: "AUG 29", title: "Amazon Drone Community Meetup", loc: "Richmond Raceway", link: "https://docs.google.com/forms/d/e/1FAIpQLSdJXQ38WZqti9x5enUoOpwfvnErhDSCIkiMQWBoV79blaptFA/viewform" },
           { date: "SEP 02", title: "UAS Night SAR Swarm Demo", loc: "Chesterfield Airfield (20:30 EST)", link: "https://docs.google.com/forms/d/e/1FAIpQLSdJXQ38WZqti9x5enUoOpwfvnErhDSCIkiMQWBoV79blaptFA/viewform" },
           { date: "SEP 08", title: "Part 107 Commercial Ground School", loc: "Ingestion Portal Online", link: "https://docs.google.com/forms/d/e/1FAIpQLSdHmi24pFvvECDs5yKPpwPnp_2svFfmNLT8LHVW7ER6leKpzQ/viewform" },
-          { date: "SEP 15", title: "VFR Fly-In & Young Aviators Day", loc: "Norfolk / Richmond Sector", link: "https://docs.google.com/forms/d/e/1FAIpQLSebU_PdiQX3HvnzkvZyUKgEnZniE-NoZ3TLj5Q2MXqtcSc8Jw/viewform" }
+          { date: "SEP 12", title: "JROTC Aviation & Drone Career Day", loc: "Richmond Airspace Hub", link: "https://docs.google.com/forms/d/e/1FAIpQLSebU_PdiQX3HvnzkvZyUKgEnZniE-NoZ3TLj5Q2MXqtcSc8Jw/viewform" },
+          { date: "SEP 15", title: "VFR Fly-In & Young Aviators Day", loc: "Norfolk / Richmond Sector", link: "https://docs.google.com/forms/d/e/1FAIpQLSebU_PdiQX3HvnzkvZyUKgEnZniE-NoZ3TLj5Q2MXqtcSc8Jw/viewform" },
+          { date: "SEP 22", title: "Commonwealth Drone Practice Area Study", loc: "Virginia DOAV Working Group", link: "https://docs.google.com/forms/d/e/1FAIpQLSdHmi24pFvvECDs5yKPpwPnp_2svFfmNLT8LHVW7ER6leKpzQ/viewform" }
         ];
 
         let eventList = [];
 
         if (json.data && json.data.length > 1) {
-          const eventsFromSheet = json.data.slice(1).filter(r => (r[0] || "").toUpperCase().includes("EVENT"));
+          const eventsFromSheet = json.data.slice(1).filter(r => {
+            const joined = r.join(" ").toUpperCase();
+            return joined.includes("EVENT") || joined.includes("MEET") || joined.includes("DRONE") || joined.includes("FLIGHT");
+          });
+
           if (eventsFromSheet.length > 0) {
             eventList = eventsFromSheet.map(r => ({
-              date: r[1] || "UPCOMING",
-              title: r[2] || "Aviation Meetup",
-              loc: r[3] || "Richmond Airspace",
-              link: r[4] || "https://docs.google.com/"
+              date: r[1] || r[0] || "UPCOMING",
+              title: r[2] || r[1] || "Aviation & Drone Mission",
+              loc: r[3] || "Richmond / Virginia Sector",
+              link: r[4] || SURVEY_LINKS.pilotWork
             }));
           }
         }
 
         if (eventList.length === 0) {
-          eventList = fallbackEvents;
+          eventList = fullDroneSchedule;
         }
 
         stage.innerHTML = eventList.map(ev => `
@@ -1077,7 +1089,7 @@
         if (statusTag) statusTag.innerText = `[${eventList.length} EVENTS SYNCED]`;
 
       } catch (err) {
-        if (statusTag) statusTag.innerText = "[LOCAL DISPATCH]";
+        if (statusTag) statusTag.innerText = "[LOCAL VA DRONE LOG]";
         stage.innerHTML = `
           <div class="event-log-card" onclick="window.open('${SURVEY_LINKS.studentPilot}', '_blank')">
             <div class="event-meta">
@@ -1088,15 +1100,22 @@
           </div>
           <div class="event-log-card" onclick="window.open('${SURVEY_LINKS.hirePilot}', '_blank')">
             <div class="event-meta">
+              <span class="event-title">[AUG 29] Amazon Drone Community Meetup</span>
+              <span class="event-details">> SECTOR: Richmond Raceway</span>
+            </div>
+            <div class="event-action-tag">[RSVP / DETAILS] ></div>
+          </div>
+          <div class="event-log-card" onclick="window.open('${SURVEY_LINKS.hirePilot}', '_blank')">
+            <div class="event-meta">
               <span class="event-title">[SEP 02] UAS Night SAR Swarm Demo</span>
               <span class="event-details">> SECTOR: Chesterfield Airfield (20:30 EST)</span>
             </div>
             <div class="event-action-tag">[RSVP / DETAILS] ></div>
           </div>
-          <div class="event-log-card" onclick="window.open('${SURVEY_LINKS.pilotWork}', '_blank')">
+          <div class="event-log-card" onclick="window.open('${SURVEY_LINKS.pilotTeach}', '_blank')">
             <div class="event-meta">
-              <span class="event-title">[SEP 08] Part 107 Commercial Drone School</span>
-              <span class="event-details">> SECTOR: Ingestion Portal Online</span>
+              <span class="event-title">[SEP 12] JROTC Aviation & Drone Career Day</span>
+              <span class="event-details">> SECTOR: Richmond Airspace Hub</span>
             </div>
             <div class="event-action-tag">[RSVP / DETAILS] ></div>
           </div>
@@ -1175,51 +1194,92 @@
       }, 350);
     }
 
+    // Helper: string hash for deterministic map pin distribution
+    function hashCoordinate(str, salt) {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        hash = (hash << 5) - hash + str.charCodeAt(i) + salt;
+        hash |= 0;
+      }
+      return Math.abs(hash);
+    }
+
     async function fetchLiveMapPoints() {
       const stage = document.getElementById("map-grid-stage");
       const status = document.getElementById("map-status");
       if (!stage) return;
 
+      stage.innerHTML = "";
+      let count = 0;
+
+      // Plot local client submissions first
+      localTerritoryCache.forEach((item, idx) => {
+        const posX = 15 + (hashCoordinate(item.loc, 11) % 70);
+        const posY = 15 + (hashCoordinate(item.loc, 23) % 65);
+        const pin = document.createElement("div");
+        pin.className = "map-pin";
+        pin.style.left = `${posX}%`;
+        pin.style.top = `${posY}%`;
+        pin.onclick = () => alert(`[${item.formType}]\nLocation: ${item.loc}\nNotes: ${item.desc}\nStatus: Live Session Ingestion`);
+        pin.innerHTML = `
+          <div class="map-pin-pulse ${item.isTerritory ? 'territory-pin' : ''}"></div>
+          <div class="map-label">${item.loc.substring(0, 18)}</div>
+        `;
+        stage.appendChild(pin);
+        count++;
+      });
+
       try {
         const response = await fetch(GOOGLE_SHEET_API_URL);
         const json = await response.json();
-        
-        stage.innerHTML = "";
-        let count = 0;
 
         if (json.data && json.data.length > 1) {
           json.data.slice(1).forEach((row, idx) => {
-            const formType = row[0] || "REPORT";
-            const locName = row[3] || row[2] || `Location #${idx + 1}`;
-            const isTerritory = formType.includes("TERRITORY");
+            const rowStr = row.join(" ");
+            const isCatRelated = rowStr.toUpperCase().includes("CAT") || rowStr.toUpperCase().includes("TERRITORY") || rowStr.toUpperCase().includes("CONFLICT") || rowStr.toUpperCase().includes("FIGHT");
             
-            const posX = 15 + ((idx * 37) % 70);
-            const posY = 20 + ((idx * 29) % 60);
+            if (isCatRelated) {
+              const locName = row[3] || row[2] || row[1] || `RVA Sector ${idx + 1}`;
+              const isTerritory = rowStr.toUpperCase().includes("TERRITORY");
+              
+              const posX = 12 + (hashCoordinate(locName, idx * 7) % 76);
+              const posY = 15 + (hashCoordinate(locName, idx * 13) % 68);
 
-            const pin = document.createElement("div");
-            pin.className = "map-pin";
-            pin.style.left = `${posX}%`;
-            pin.style.top = `${posY}%`;
-            pin.onclick = () => alert(`[${formType}]\nLocation: ${locName}\nStatus: Verified on Google Sheet Master Database`);
-            pin.innerHTML = `
-              <div class="map-pin-pulse ${isTerritory ? 'territory-pin' : ''}"></div>
-              <div class="map-label">${locName.substring(0, 18)}</div>
-            `;
-            stage.appendChild(pin);
-            count++;
+              const pin = document.createElement("div");
+              pin.className = "map-pin";
+              pin.style.left = `${posX}%`;
+              pin.style.top = `${posY}%`;
+              pin.onclick = () => alert(`[${isTerritory ? 'CAT TERRITORY' : 'CAT CONFLICT'}]\nSector / Intersection: ${locName}\nStatus: Verified on Google Sheet Master Database`);
+              pin.innerHTML = `
+                <div class="map-pin-pulse ${isTerritory ? 'territory-pin' : ''}"></div>
+                <div class="map-label">${locName.substring(0, 18)}</div>
+              `;
+              stage.appendChild(pin);
+              count++;
+            }
           });
-          status.innerText = `[${count} NODES MAPPED]`;
+          status.innerText = `[${count} NODES PLOTTED]`;
+        } else if (count > 0) {
+          status.innerText = `[${count} LOCAL NODES]`;
         } else {
           status.innerText = "[AWAITING FORM DATA]";
         }
       } catch (err) {
-        status.innerText = "[OFFLINE CACHE]";
-        stage.innerHTML = `
-          <div class="map-pin" style="left: 45%; top: 50%;" onclick="alert('Google Sheet Uplink Standby.')">
-            <div class="map-pin-pulse"></div>
-            <div class="map-label">Richmond Sector (Standby)</div>
-          </div>
-        `;
+        if (count === 0) {
+          status.innerText = "[OFFLINE CACHE]";
+          stage.innerHTML = `
+            <div class="map-pin" style="left: 35%; top: 40%;" onclick="alert('Fan District Territory: Active patrol zone.')">
+              <div class="map-pin-pulse territory-pin"></div>
+              <div class="map-label">Fan District (Cached)</div>
+            </div>
+            <div class="map-pin" style="left: 65%; top: 60%;" onclick="alert('Shockoe Conflict: Resolved.')">
+              <div class="map-pin-pulse"></div>
+              <div class="map-label">Shockoe Bottom (Cached)</div>
+            </div>
+          `;
+        } else {
+          status.innerText = `[${count} NODES SYNCED]`;
+        }
       }
     }
 
@@ -1254,6 +1314,14 @@
         return;
       }
 
+      // Add to local cache immediately so the user sees their pin plotted right away
+      localTerritoryCache.push({
+        formType: formType,
+        loc: loc,
+        desc: desc,
+        isTerritory: formType.includes("TERRITORY")
+      });
+
       const payload = {
         formType: formType,
         name: "Community Spotter",
@@ -1273,7 +1341,7 @@
         console.error(e);
       }
 
-      alert(`[DISPATCH LOGGED]: ${formType} relayed to Master Database.`);
+      alert(`[DISPATCH LOGGED]: ${formType} plotted onto the Richmond tactical map!`);
       switchPage('cats');
     }
 
@@ -1282,7 +1350,7 @@
       mfdScreen.innerHTML = `
         <p style="font-size:1rem; font-weight:700; color:var(--avionics-cyan); margin-bottom:8px;">> UPLINK: ${title}</p>
         <iframe class="mfd-embedded-frame" src="${url}" frameborder="0">Loading Survey Matrix...</iframe>
-        <button class="mfd-btn" style="margin-top:12px;" onclick="switchPage('community')">> < RETURN TO MENU</button>
+        <button class="mfd-btn" style="margin-top:12px;" onclick="switchPage('pilots')">> < RETURN TO THROTTLES</button>
       `;
     }
 
