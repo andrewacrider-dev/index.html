@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AAFS Codex // Integrated HD Flight Deck</title>
   
-  <!-- Leaflet CSS for Tactical Ground Radar -->
+  <!-- Leaflet CSS for Ground Map -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <style>
@@ -75,7 +75,6 @@
       gap: 16px;
     }
 
-    /* Subtle Emergency Disconnect Switch */
     .emer-switch-btn {
       background: rgba(255, 51, 68, 0.15);
       border: 1.5px solid var(--avionics-red);
@@ -569,8 +568,8 @@
       align-items: center;
     }
 
-    /* Tactical Map Display */
-    .tactical-map-container {
+    /* Map Display */
+    .cat-map-container {
       margin-top: 14px;
       border: 1.5px solid #334155;
       border-radius: 6px;
@@ -586,7 +585,7 @@
       background: #05080c;
     }
 
-    /* Dark HUD Styling for Leaflet Tiles */
+    /* Dark Inverted Tiles for Night-Sight Theme */
     .leaflet-tile {
       filter: brightness(0.6) invert(1) contrast(3) hue-rotate(180deg) saturate(0.3) !important;
     }
@@ -606,11 +605,6 @@
     .blip-francine {
       background: var(--avionics-cyan);
       box-shadow: 0 0 10px var(--avionics-cyan);
-    }
-
-    .blip-conflict {
-      background: var(--avionics-red);
-      box-shadow: 0 0 10px var(--avionics-red);
     }
 
     .blip-other {
@@ -760,7 +754,7 @@
   <script>
     const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyio6BYtMxwDNJH90M7TgfPlQhJxvkaCAvnMDrnR3u08nQxDPS_BzEjggKnyplvc46H/exec";
 
-    // Media & External Studies Links:
+    // Media & External Links:
     const FOREST_ALBUM_URL = "https://www.amazon.com/photos/groups/share/i2VmmcGaTuyKUFCY1Cb5Fg.zu0YzXNydfuDRLn_zOOB1Z"; 
     const NOISE_STUDY_URL = "https://flyrichmond.com/noise-compatibility-program/"; 
 
@@ -851,7 +845,7 @@
           <button class="mfd-btn" style="border-color: var(--avionics-magenta);" onclick="window.open(FOREST_ALBUM_URL, '_blank')"><span>> View Forest The Cat (Stress Relief)</span><span style="color:var(--avionics-magenta);">[FOREST 🐾]</span></button>
           <button class="mfd-btn" style="border-color: var(--avionics-red);" onclick="renderNoiseComplaintForm()"><span>> File a Drone / Aircraft Flight Complaint</span><span style="color:var(--avionics-red);">[REPORT]</span></button>
           <button class="mfd-btn" style="border-color: var(--avionics-cyan);" onclick="window.open(NOISE_STUDY_URL, '_blank')"><span>> View Richmond Airport Noise Study</span><span style="color:var(--avionics-cyan);">[STUDY DATA]</span></button>
-          <button class="mfd-btn" onclick="switchPage('cats')"><span>> Return to Feline Tactical Map</span><span style="color:var(--avionics-green);">[CATS!]</span></button>
+          <button class="mfd-btn" onclick="switchPage('cats')"><span>> Return to Feline Community Map</span><span style="color:var(--avionics-green);">[CATS!]</span></button>
         </div>
       `;
     }
@@ -944,7 +938,7 @@
           <div class="mfd-menu-grid">
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Drone Performance Telemetry: Data specs loaded.')"><span>> Drone Performance Data</span><span style="color:var(--avionics-cyan);">[LOG]</span></button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Drone Swarm Light Shows: Mission planner.')"><span>> Drone Swarm Light Shows</span><span style="color:var(--avionics-cyan);">[OPS]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Safety & Defense: Tactical advisory active.')"><span>> Safety / Defense Operations</span><span style="color:var(--avionics-cyan);">[SEC]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Safety Operations: Advisory active.')"><span>> Safety Operations</span><span style="color:var(--avionics-cyan);">[SEC]</span></button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Manned Aircraft: Flight scheduling ready.')"><span>> Manned Aircraft Operation</span><span style="color:var(--avionics-cyan);">[VFR]</span></button>
           </div>
         `;
@@ -954,34 +948,32 @@
           <p style="margin-bottom:14px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> COMMERCIAL FLIGHT PATHS</p>
           <div class="mfd-menu-grid">
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Construction Mapping: LiDAR and Photogrammetry loaded.')"><span>> Construction & Surveying</span><span style="color:var(--avionics-cyan);">[AIR]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Cinema & Film: FPV heavy-lift team.')"><span>> Film & Cinema Operations</span><span style="color:var(--avionics-cyan);">[CAM]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Cinema & Film: Heavy-lift team.')"><span>> Film & Cinema Operations</span><span style="color:var(--avionics-cyan);">[CAM]</span></button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('E-Commerce: Delivery routing active.')"><span>> E-Commerce Logistics</span><span style="color:var(--avionics-cyan);">[CARGO]</span></button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Event Planes: Flyover booking online.')"><span>> Have Our Plane at Your Event</span><span style="color:var(--avionics-cyan);">[BOOK]</span></button>
           </div>
         `;
       } else if (page === 'cats') {
-        mfdModeTag.innerText = "[ MFD // FELINE NETWORK (CATS!) ]";
+        mfdModeTag.innerText = "[ MFD // FELINE COMMUNITY (CATS!) ]";
         mfdScreen.innerHTML = `
-          <p style="margin-bottom:10px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> FELINE TACTICAL CODEX & TERRITORY</p>
+          <p style="margin-bottom:10px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> RICHMOND FELINE NETWORK & SIGHTINGS</p>
           <div class="mfd-menu-grid">
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); window.open(FOREST_ALBUM_URL, '_blank')"><span>> Pictures of Forest (The CAT)</span><span style="color:var(--avionics-magenta);">[FOREST 🐾]</span></button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); window.open('https://www.instagram.com/rva_cats/', '_blank')"><span>> RVA Cats Instagram</span><span style="color:var(--avionics-cyan);">[LINK]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderCatReport('FIGHT')"><span>> Report a Cat Fight (Conflict)</span><span style="color:#ff1744;">[FIGHT ALERT]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderCatReport('TERRITORY')"><span>> Report Cat Location / Territory</span><span style="color:var(--avionics-cyan);">[MAP TERRITORY]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderCatReport()"><span>> Report Cat Location / Sighting</span><span style="color:var(--avionics-cyan);">[REPORT SIGHTING]</span></button>
           </div>
 
-          <!-- Live Leaflet Ground Radar Map -->
-          <div class="tactical-map-container">
+          <!-- Community Cat Map -->
+          <div class="cat-map-container">
             <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:0.8rem; font-family:'Roboto Mono';">
-              <span style="color:var(--avionics-cyan);">> LIVE FELINE RADAR // RICHMOND SECTOR:</span>
-              <span id="map-status" style="color:var(--avionics-green);">[RADAR ACTIVE]</span>
+              <span style="color:var(--avionics-cyan);">> RICHMOND FELINE SIGHTINGS & HOMES:</span>
+              <span id="map-status" style="color:var(--avionics-green);">[SYNCED]</span>
             </div>
             <div id="leaflet-cat-radar"></div>
             <div style="display: flex; gap: 14px; margin-top: 6px; font-size: 0.75rem; font-family: 'Roboto Mono'; color: #94a3b8;">
               <span><strong style="color:var(--avionics-green);">●</strong> Forest</span>
               <span><strong style="color:var(--avionics-cyan);">●</strong> Francine (Lowe's)</span>
-              <span><strong style="color:var(--avionics-red);">●</strong> Conflict</span>
-              <span><strong style="color:var(--avionics-amber);">●</strong> Territory</span>
+              <span><strong style="color:var(--avionics-amber);">●</strong> Community Sightings</span>
             </div>
           </div>
         `;
@@ -1036,7 +1028,6 @@
               <span id="mcu-sync-status" style="color:var(--avionics-cyan);">[SYNCING...]</span>
             </div>
 
-            <!-- Clickable Event Log Cards Container -->
             <div class="event-log-container" id="mcu-event-stage">
               <!-- Rendered Dynamically from Google Sheets -->
             </div>
@@ -1051,7 +1042,6 @@
       }
     }
 
-    // Dynamic Google Sheets Event Fetcher for MCU
     async function fetchLiveMcuEvents() {
       const stage = document.getElementById("mcu-event-stage");
       const statusTag = document.getElementById("mcu-sync-status");
@@ -1197,7 +1187,6 @@
       }, 350);
     }
 
-    // Helper: string hash for deterministic fallback coordinates
     function hashCoordinate(str, salt) {
       let hash = 0;
       for (let i = 0; i < str.length; i++) {
@@ -1207,12 +1196,10 @@
       return Math.abs(hash);
     }
 
-    // Leaflet Blip Generator
     function createRadarBlip(type) {
       let blipClass = 'blip-other';
       if (type === 'forest') blipClass = 'blip-forest';
       else if (type === 'francine') blipClass = 'blip-francine';
-      else if (type === 'fight') blipClass = 'blip-conflict';
 
       return L.divIcon({
         className: '',
@@ -1223,111 +1210,141 @@
       });
     }
 
- // Interactive Leaflet Cat Radar with Photo Dossier Cards
-function initLeafletCatRadar() {
-  const mapContainer = document.getElementById('leaflet-cat-radar');
-  if (!mapContainer) return;
+    function initLeafletCatRadar() {
+      const mapContainer = document.getElementById('leaflet-cat-radar');
+      if (!mapContainer) return;
 
-  if (leafletMapInstance) {
-    leafletMapInstance.remove();
-  }
+      if (leafletMapInstance) {
+        leafletMapInstance.remove();
+      }
 
-  // Centered right between Grace St and Broad St corridor
-  leafletMapInstance = L.map('leaflet-cat-radar').setView([37.5600, -77.4645], 14);
+      // Center map directly between Grace St and Broad St
+      leafletMapInstance = L.map('leaflet-cat-radar').setView([37.5600, -77.4645], 14);
 
-  // OpenStreetMap Layer (Free, Keyless, Dark Avionics Inverted)
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors',
-    maxZoom: 18
-  }).addTo(leafletMapInstance);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 18
+      }).addTo(leafletMapInstance);
 
-  // --- 1. FOREST (2735 W Grace St) ---
-  const forestPopupContent = `
-    <div style="min-width: 190px; padding: 2px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--avionics-green); padding-bottom:4px; margin-bottom:6px;">
-        <strong style="color:var(--avionics-green); font-size:0.9rem;">FOREST // RESIDENCE HQ</strong>
-        <span style="font-size:0.65rem; color:#000; background:var(--avionics-green); padding:1px 4px; border-radius:2px; font-weight:800;">ACTIVE</span>
-      </div>
-      <img src="https://www.amazon.com/photos/shared/4lJXNfh8QFKy6IDTCMNqIg.8ggZ1SI03jk_DwDitXSI5W" 
-           alt="Forest The Cat" 
-           style="width:100%; height:110px; object-fit:cover; border-radius:3px; border:1px solid #334155; margin-bottom:6px;" />
-      <p style="font-size:0.75rem; color:#cbd5e1; margin-bottom:4px;"><strong>Sector:</strong> 2735 W Grace St</p>
-      <p style="font-size:0.75rem; color:#94a3b8; line-height:1.3; margin-bottom:8px;">Base patrol zone. Porch surveillance and perimeter control.</p>
-      <button onclick="window.open(FOREST_ALBUM_URL, '_blank')" 
-              style="width:100%; background:rgba(0,255,102,0.15); border:1px solid var(--avionics-green); color:var(--avionics-green); font-family:'Roboto Mono'; font-size:0.72rem; padding:5px; cursor:pointer; font-weight:700; border-radius:3px;">
-        [ 🐾 VIEW FULL PHOTO ALBUM ]
-      </button>
-    </div>
-  `;
-
-  L.marker([37.5610, -77.4703], { icon: createRadarBlip('forest') })
-    .addTo(leafletMapInstance)
-    .bindPopup(forestPopupContent);
-
-  // --- 2. FRANCINE (Lowe's on Broad St) ---
-  const francinePopupContent = `
-    <div style="min-width: 190px; padding: 2px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--avionics-cyan); padding-bottom:4px; margin-bottom:6px;">
-        <strong style="color:var(--avionics-cyan); font-size:0.9rem;">FRANCINE // LOWE'S HQ</strong>
-        <span style="font-size:0.65rem; color:#000; background:var(--avionics-cyan); padding:1px 4px; border-radius:2px; font-weight:800;">QUEEN</span>
-      </div>
-      <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcorporate.lowes.com%2Fsites%2Flowes-corp%2Ffiles%2F2025-10%2FFrancine%2520is%2520found%2FBodyFrancine_Update3.jpg&f=1&nofb=1&ipt=8d84fa31a87eb505482a512a6c40d4e60d99793378781ae96f15a04a3e710d07 " 
-           alt="Francine The Lowe's Cat" 
-           style="width:100%; height:110px; object-fit:cover; border-radius:3px; border:1px solid #334155; margin-bottom:6px;" />
-      <p style="font-size:0.75rem; color:#cbd5e1; margin-bottom:4px;"><strong>Sector:</strong> 1640 W Broad St (Lowe's)</p>
-      <p style="font-size:0.75rem; color:#94a3b8; line-height:1.3; margin-bottom:8px;">Lawn & garden perimeter oversight. Customer greeting division.</p>
-      <button onclick="window.open('https://www.instagram.com/rva_cats/', '_blank')" 
-              style="width:100%; background:rgba(0,212,255,0.15); border:1px solid var(--avionics-cyan); color:var(--avionics-cyan); font-family:'Roboto Mono'; font-size:0.72rem; padding:5px; cursor:pointer; font-weight:700; border-radius:3px;">
-        [ 📸 RVA CATS DOSSIER ]
-      </button>
-    </div>
-  `;
-
-  L.marker([37.5583, -77.4588], { icon: createRadarBlip('francine') })
-    .addTo(leafletMapInstance)
-    .bindPopup(francinePopupContent);
-
-  // Plot dynamic session form cache
-  localTerritoryCache.forEach(item => {
-    const offsetLat = 37.5600 + ((hashCoordinate(item.loc, 11) % 100 - 50) * 0.0006);
-    const offsetLng = -77.4645 + ((hashCoordinate(item.loc, 23) % 100 - 50) * 0.0006);
-    
-    L.marker([offsetLat, offsetLng], { icon: createRadarBlip(item.isTerritory ? 'territory' : 'fight') })
-      .addTo(leafletMapInstance)
-      .bindPopup(`
-        <div style="min-width: 160px;">
-          <strong style="color:${item.isTerritory ? 'var(--avionics-cyan)' : 'var(--avionics-red)'}; font-size:0.85rem;">[${item.formType}]</strong>
-          <p style="font-size:0.75rem; color:#cbd5e1; margin-top:4px;"><strong>Location:</strong> ${item.loc}</p>
-          <p style="font-size:0.72rem; color:#94a3b8; margin-top:2px;">${item.desc}</p>
+      // --- 1. FOREST (2735 W Grace St) ---
+      const forestPopupContent = `
+        <div style="min-width: 190px; padding: 2px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--avionics-green); padding-bottom:4px; margin-bottom:6px;">
+            <strong style="color:var(--avionics-green); font-size:0.88rem;">FOREST // HOME</strong>
+            <span style="font-size:0.65rem; color:#000; background:var(--avionics-green); padding:1px 4px; border-radius:2px; font-weight:800;">PET</span>
+          </div>
+          <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=300&auto=format&fit=crop&q=60" 
+               alt="Forest The Cat" 
+               style="width:100%; height:110px; object-fit:cover; border-radius:3px; border:1px solid #334155; margin-bottom:6px;" />
+          <p style="font-size:0.75rem; color:#cbd5e1; margin-bottom:4px;"><strong>Location:</strong> 2735 W Grace St</p>
+          <p style="font-size:0.72rem; color:#94a3b8; line-height:1.3; margin-bottom:8px;">Porch patrol and backyard sunbathing.</p>
+          <button onclick="window.open(FOREST_ALBUM_URL, '_blank')" 
+                  style="width:100%; background:rgba(0,255,102,0.15); border:1px solid var(--avionics-green); color:var(--avionics-green); font-family:'Roboto Mono'; font-size:0.72rem; padding:5px; cursor:pointer; font-weight:700; border-radius:3px;">
+            [ 🐾 VIEW PHOTO ALBUM ]
+          </button>
         </div>
-      `);
-  });
+      `;
 
-  fetchLiveMapPoints();
-}
-    function renderCatReport(reportType) {
-      const isFight = reportType === 'FIGHT';
-      const title = isFight ? "REPORT A CAT FIGHT (CONFLICT)" : "REPORT CAT LOCATION / TERRITORY";
-      const color = isFight ? "#ff1744" : "var(--avionics-cyan)";
+      L.marker([37.5610, -77.4703], { icon: createRadarBlip('forest') })
+        .addTo(leafletMapInstance)
+        .bindPopup(forestPopupContent);
 
+      // --- 2. FRANCINE (Lowe's on Broad St) ---
+      const francinePopupContent = `
+        <div style="min-width: 190px; padding: 2px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--avionics-cyan); padding-bottom:4px; margin-bottom:6px;">
+            <strong style="color:var(--avionics-cyan); font-size:0.88rem;">FRANCINE // LOWE'S</strong>
+            <span style="font-size:0.65rem; color:#000; background:var(--avionics-cyan); padding:1px 4px; border-radius:2px; font-weight:800;">SHOP CAT</span>
+          </div>
+          <img src="https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=300&auto=format&fit=crop&q=60" 
+               alt="Francine The Lowe's Cat" 
+               style="width:100%; height:110px; object-fit:cover; border-radius:3px; border:1px solid #334155; margin-bottom:6px;" />
+          <p style="font-size:0.75rem; color:#cbd5e1; margin-bottom:4px;"><strong>Location:</strong> 1640 W Broad St</p>
+          <p style="font-size:0.72rem; color:#94a3b8; line-height:1.3; margin-bottom:8px;">Garden center supervisor & local icon.</p>
+          <button onclick="window.open('https://www.instagram.com/rva_cats/', '_blank')" 
+                  style="width:100%; background:rgba(0,212,255,0.15); border:1px solid var(--avionics-cyan); color:var(--avionics-cyan); font-family:'Roboto Mono'; font-size:0.72rem; padding:5px; cursor:pointer; font-weight:700; border-radius:3px;">
+            [ 📸 RVA CATS INSTAGRAM ]
+          </button>
+        </div>
+      `;
+
+      L.marker([37.5583, -77.4588], { icon: createRadarBlip('francine') })
+        .addTo(leafletMapInstance)
+        .bindPopup(francinePopupContent);
+
+      // Plot session cache submissions
+      localTerritoryCache.forEach(item => {
+        const offsetLat = 37.5600 + ((hashCoordinate(item.loc, 11) % 100 - 50) * 0.0006);
+        const offsetLng = -77.4645 + ((hashCoordinate(item.loc, 23) % 100 - 50) * 0.0006);
+        
+        L.marker([offsetLat, offsetLng], { icon: createRadarBlip('other') })
+          .addTo(leafletMapInstance)
+          .bindPopup(`
+            <div style="min-width: 160px;">
+              <strong style="color:var(--avionics-amber); font-size:0.85rem;">[CAT SIGHTING]</strong>
+              <p style="font-size:0.75rem; color:#cbd5e1; margin-top:4px;"><strong>Location:</strong> ${item.loc}</p>
+              <p style="font-size:0.72rem; color:#94a3b8; margin-top:2px;">${item.desc}</p>
+            </div>
+          `);
+      });
+
+      fetchLiveMapPoints();
+    }
+
+    async function fetchLiveMapPoints() {
+      const status = document.getElementById("map-status");
+      if (!status) return;
+
+      try {
+        const response = await fetch(GOOGLE_SHEET_API_URL);
+        const json = await response.json();
+
+        if (json.data && json.data.length > 1 && leafletMapInstance) {
+          let count = 2 + localTerritoryCache.length;
+
+          json.data.slice(1).forEach((row, idx) => {
+            const rowStr = row.join(" ");
+            const isCatRelated = rowStr.toUpperCase().includes("CAT") || rowStr.toUpperCase().includes("TERRITORY") || rowStr.toUpperCase().includes("SIGHTING");
+
+            if (isCatRelated) {
+              const locName = row[3] || row[2] || row[1] || `RVA Neighborhood ${idx + 1}`;
+              const lat = 37.5600 + ((hashCoordinate(locName, idx * 7) % 120 - 60) * 0.0007);
+              const lng = -77.4645 + ((hashCoordinate(locName, idx * 13) % 120 - 60) * 0.0007);
+
+              L.marker([lat, lng], { icon: createRadarBlip('other') })
+                .addTo(leafletMapInstance)
+                .bindPopup(`<strong>CAT SIGHTING</strong><br/>Location: ${locName}`);
+              
+              count++;
+            }
+          });
+
+          status.innerText = `[${count} SIGHTINGS]`;
+        }
+      } catch (err) {
+        if (status) status.innerText = "[LOCAL SIGHTINGS]";
+      }
+    }
+
+    function renderCatReport() {
       mfdScreen.innerHTML = `
-        <p style="font-weight:700; color:${color}; font-size:1.05rem; margin-bottom:10px;">> INCIDENT DISPATCH: ${title}</p>
+        <p style="font-weight:700; color:var(--avionics-cyan); font-size:1.05rem; margin-bottom:10px;">> REPORT A CAT SIGHTING / TERRITORY</p>
         <div style="border: 1.5px solid #334155; border-radius: 6px; padding: 14px; background: #111720;">
           <div style="margin-bottom:10px;">
             <label style="display:block; font-size:0.85rem; color:var(--avionics-cyan); margin-bottom:4px;">> INTERSECTION / NEIGHBORHOOD (RICHMOND):</label>
             <input type="text" id="catLoc" placeholder="e.g. Strawberry St & Park Ave" style="width:100%; background:#000; border:1px solid #334155; padding:8px; color:#fff; font-family:'Roboto Mono';">
           </div>
           <div style="margin-bottom:10px;">
-            <label style="display:block; font-size:0.85rem; color:var(--avionics-cyan); margin-bottom:4px;">> ${isFight ? 'CONFLICT INTENSITY & FELINE DESCRIPTIONS:' : 'CAT NAME / DESCRIPTION & TERRITORY HABITS:'}</label>
-            <textarea id="catDesc" rows="3" placeholder="${isFight ? 'Yowling, stand-off, physical scuffle, tree involvement...' : 'Orange tabby, frequent porch visitor, friendly/feral...'}" style="width:100%; background:#000; border:1px solid #334155; padding:8px; color:#fff; font-family:'Roboto Mono';"></textarea>
+            <label style="display:block; font-size:0.85rem; color:var(--avionics-cyan); margin-bottom:4px;">> CAT NAME & DESCRIPTION / HABITS:</label>
+            <textarea id="catDesc" rows="3" placeholder="Orange tabby, porch sleeper, friendly neighborhood cat..." style="width:100%; background:#000; border:1px solid #334155; padding:8px; color:#fff; font-family:'Roboto Mono';"></textarea>
           </div>
-          <button class="mfd-btn" style="justify-content:center; background:${isFight ? '#ff1744' : 'var(--avionics-cyan)'}; color:#000; font-weight:700;" onclick="transmitCatIncident('${isFight ? 'CAT CONFLICT REPORT' : 'CAT TERRITORY REPORT'}')">> TRANSMIT TO LIVE TACTICAL MAP</button>
+          <button class="mfd-btn" style="justify-content:center; background:var(--avionics-cyan); color:#000; font-weight:700;" onclick="transmitCatIncident()">> SUBMIT CAT SIGHTING</button>
         </div>
         <button class="mfd-btn" style="margin-top:10px;" onclick="switchPage('cats')">> < RETURN TO FELINE MENU</button>
       `;
     }
 
-    async function transmitCatIncident(formType) {
+    async function transmitCatIncident() {
       const loc = document.getElementById("catLoc") ? document.getElementById("catLoc").value : "";
       const desc = document.getElementById("catDesc") ? document.getElementById("catDesc").value : "";
 
@@ -1337,15 +1354,15 @@ function initLeafletCatRadar() {
       }
 
       localTerritoryCache.push({
-        formType: formType,
+        formType: "CAT SIGHTING",
         loc: loc,
         desc: desc,
-        isTerritory: formType.includes("TERRITORY")
+        isTerritory: true
       });
 
       const payload = {
-        formType: formType,
-        name: "Community Spotter",
+        formType: "CAT SIGHTING",
+        name: "Community Neighbor",
         contact: "Dispatched",
         detail1: loc,
         detail2: desc
@@ -1362,7 +1379,7 @@ function initLeafletCatRadar() {
         console.error(e);
       }
 
-      alert(`[DISPATCH LOGGED]: ${formType} plotted onto the Richmond tactical map!`);
+      alert("[SIGHTING LOGGED]: Added to the Richmond community map!");
       switchPage('cats');
     }
 
