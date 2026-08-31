@@ -1096,18 +1096,45 @@
           </div>
         `;
       } else if (page === 'flight') {
-        mfdModeTag.innerText = "[ MFD // FLIGHT OPERATIONS & CAPABILITIES ]";
+        mfdModeTag.innerText = "[ MFD // FLIGHT OPERATIONS & IFLYDRONES SERVICES ]";
         mfdScreen.innerHTML = `
-          <p style="margin-bottom:14px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> COMMERCIAL FLIGHT PATHS & CAPABILITIES</p>
+          <p style="margin-bottom:6px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> COMMERCIAL FLIGHT OPERATIONS // IFLYDRONES</p>
+          <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:12px;">> Select a service category to access full operational capabilities & booking:</p>
+          
           <div class="mfd-menu-grid">
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Construction Mapping: LiDAR and Photogrammetry loaded.')"><span>> Construction & Surveying</span><span style="color:var(--avionics-cyan);">[AIR]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Cinema & Film: Heavy-lift team.')"><span>> Film & Cinema Operations</span><span style="color:var(--avionics-cyan);">[CAM]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('E-Commerce: Delivery routing active.')"><span>> E-Commerce Logistics</span><span style="color:var(--avionics-cyan);">[CARGO]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Event Planes: Flyover booking online.')"><span>> Have Our Plane at Your Event</span><span style="color:var(--avionics-cyan);">[BOOK]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Drone Performance Telemetry: Data specs loaded.')"><span>> Drone Performance Data</span><span style="color:var(--avionics-cyan);">[LOG]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Drone Swarm Light Shows: Mission planner.')"><span>> Drone Swarm Light Shows</span><span style="color:var(--avionics-cyan);">[OPS]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Safety Operations: Advisory active.')"><span>> Safety Operations</span><span style="color:var(--avionics-cyan);">[SEC]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Manned Aircraft: Flight scheduling ready.')"><span>> Manned Aircraft Operation</span><span style="color:var(--avionics-cyan);">[VFR]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); window.open('https://iflydrones.com/drone-real-estate-photography-showcasing-a-propertys-best-features/', '_blank')">
+              <span>> Real Estate Photos & Video</span><span style="color:var(--avionics-cyan);">[REAL ESTATE] ↗</span>
+            </button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); window.open('https://iflydrones.com/services/', '_blank')">
+              <span>> Construction Site Surveying & Monitoring</span><span style="color:var(--avionics-cyan);">[SURVEY] ↗</span>
+            </button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); window.open('https://iflydrones.com/services/', '_blank')">
+              <span>> 2D Image Mapping & 3D Photogrammetry</span><span style="color:var(--avionics-cyan);">[MAP / 3D] ↗</span>
+            </button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); window.open('https://iflydrones.com/services/', '_blank')">
+              <span>> Film, Broadcast & Social Media Production</span><span style="color:var(--avionics-cyan);">[CINEMA] ↗</span>
+            </button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); window.open('https://iflydrones.com/how-do-you-choose-the-right-drone-show-company-in-richmond-va/', '_blank')">
+              <span>> Drone Swarm Light Shows</span><span style="color:var(--avionics-cyan);">[LIGHT SHOWS] ↗</span>
+            </button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); window.open('https://iflydrones.com/services/', '_blank')">
+              <span>> Thermal & Infrared Solar / Structural Inspection</span><span style="color:var(--avionics-cyan);">[THERMAL] ↗</span>
+            </button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); window.open('https://iflydrones.com/public-safety-sar/', '_blank')">
+              <span>> Public Safety, SAR & Security Patrols</span><span style="color:var(--avionics-cyan);">[SAFETY / SAR] ↗</span>
+            </button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); window.open('https://iflydrones.com/outdoor-events/', '_blank')">
+              <span>> Festivals, Concerts & Sporting Events Coverage</span><span style="color:var(--avionics-cyan);">[EVENTS] ↗</span>
+            </button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); window.open('https://iflydrones.com/services/', '_blank')">
+              <span>> Agriculture & Pond Management Solutions</span><span style="color:var(--avionics-cyan);">[AGRI / POND] ↗</span>
+            </button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); window.open('https://iflydrones.com/services/', '_blank')">
+              <span>> Part 107 Drone Rentals & Local Repair Support</span><span style="color:var(--avionics-cyan);">[RENT / REPAIR] ↗</span>
+            </button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Manned Aircraft Operations: VFR/IFR mission scheduling active.')">
+              <span>> Manned Aircraft Operations</span><span style="color:var(--avionics-green);">[VFR / IFR]</span>
+            </button>
           </div>
         `;
       } else if (page === 'cats') {
