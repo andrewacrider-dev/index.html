@@ -75,6 +75,21 @@
       gap: 16px;
     }
 
+    .clock-readout {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      line-height: 1.25;
+    }
+
+    .clock-readout .utc-tag {
+      color: var(--avionics-cyan);
+      font-weight: 700;
+    }
+
     .emer-switch-btn {
       background: rgba(255, 51, 68, 0.15);
       border: 1.5px solid var(--avionics-red);
@@ -175,7 +190,7 @@
     .pfd-main-stage {
       flex-grow: 1;
       display: grid;
-      grid-template-columns: 90px 1fr 105px;
+      grid-template-columns: 95px 1fr 105px;
       position: relative;
       overflow: hidden;
     }
@@ -274,7 +289,7 @@
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 18px 0;
+      padding: 14px 0 10px 0;
       font-size: 1rem;
       font-weight: 700;
       font-family: 'Roboto Mono', monospace;
@@ -311,7 +326,7 @@
     .tape-box {
       border: 2.5px solid var(--avionics-green);
       background: #000000;
-      padding: 8px 6px;
+      padding: 6px 4px;
       font-size: 1.25rem;
       font-weight: 800;
       color: #ffffff;
@@ -322,16 +337,58 @@
       box-shadow: 0 0 12px rgba(0, 255, 102, 0.25);
     }
 
-    .pfd-footer {
+    .tape-tas-box {
+      margin-top: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--avionics-cyan);
+      background: rgba(0, 212, 255, 0.08);
+      border: 1px solid #1e293b;
+      padding: 2px 6px;
+      border-radius: 3px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .pfd-footer-group {
+      display: flex;
+      flex-direction: column;
       border-top: 2px solid #2d3748;
       background: #000000;
-      padding: 10px 14px;
-      font-size: 0.85rem;
-      font-weight: 500;
-      line-height: 1.4;
-      color: var(--avionics-green);
-      font-family: 'Roboto Mono', monospace;
       z-index: 8;
+    }
+
+    .metar-panel {
+      padding: 8px 12px;
+      background: #070b10;
+      border-bottom: 1px dashed #243040;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.75rem;
+      color: #cbd5e1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .metar-tag {
+      color: var(--avionics-green);
+      font-weight: 800;
+    }
+
+    .metar-raw {
+      color: var(--avionics-amber);
+      font-size: 0.72rem;
+    }
+
+    .pfd-footer {
+      padding: 8px 12px;
+      font-size: 0.76rem;
+      font-weight: 500;
+      line-height: 1.35;
+      color: #94a3b8;
+      font-family: 'Roboto Mono', monospace;
     }
 
     /* MFD Elements */
@@ -401,7 +458,7 @@
       transform: translateX(2px);
     }
 
-    /* Rockwell Collins MCU Flight Log Interface */
+    /* Collins MCU Event Log Interface */
     .fmc-screen {
       background: #000000;
       border: 2px solid #334155;
@@ -432,7 +489,19 @@
       margin: 12px 0;
       max-height: 340px;
       overflow-y: auto;
-      padding-right: 4px;
+      padding-right: 6px;
+    }
+
+    .event-log-container::-webkit-scrollbar {
+      width: 6px;
+    }
+    .event-log-container::-webkit-scrollbar-track {
+      background: #05080c;
+    }
+    .event-log-container::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border: 1px solid var(--avionics-green);
+      border-radius: 3px;
     }
 
     .event-log-card {
@@ -585,7 +654,6 @@
       background: #05080c;
     }
 
-    /* Dark Inverted Tiles for Night-Sight Theme */
     .leaflet-tile {
       filter: brightness(0.6) invert(1) contrast(3) hue-rotate(180deg) saturate(0.3) !important;
     }
@@ -633,31 +701,6 @@
       border-radius: 6px;
       background: #ffffff;
     }
-
-    .event-log-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin: 12px 0;
-  max-height: 350px;
-  overflow-y: auto;
-  padding-right: 6px;
-}
-
-.event-log-container::-webkit-scrollbar {
-  width: 6px;
-}
-
-.event-log-container::-webkit-scrollbar-track {
-  background: #05080c;
-  border-radius: 3px;
-}
-
-.event-log-container::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border: 1px solid var(--avionics-green);
-  border-radius: 3px;
-}
   </style>
 </head>
 <body>
@@ -669,12 +712,16 @@
         &nbsp;|&nbsp; SECTOR: <span class="brand-tag">RICHMOND, VA (VFR)</span>
       </div>
       <div class="cockpit-header-right">
+        <!-- Live System Clock Display -->
+        <div class="clock-readout">
+          <div><span id="sys-local-time">--:--:-- LCL</span> | <span id="sys-date">--- --, ----</span></div>
+          <div><span class="utc-tag" id="sys-utc-time">--:--:-- UTC</span></div>
+        </div>
         <!-- Emergency Deconfliction Switch -->
         <button class="emer-switch-btn" onclick="triggerEmergencyDeconfliction()">
           <div class="emer-led"></div>
           [ EMER DISC / DECON ] (I'm upset with drones / flying)
         </button>
-        <span>SYS TIME: <strong>AUGUST 2026</strong></span>
       </div>
     </div>
 
@@ -695,14 +742,16 @@
           </div>
 
           <div class="pfd-main-stage">
-            <!-- Airspeed Tape (10-kt increments) -->
+            <!-- Airspeed Tape with TAS (KT) Indicator -->
             <div class="tape">
               <div class="tape-tick-row"><span id="spd-p2">120</span><div class="tape-tick"></div></div>
               <div class="tape-tick-row"><span id="spd-p1">110</span><div class="tape-tick"></div></div>
               <div class="tape-box" id="spd-box">100</div>
               <div class="tape-tick-row"><span id="spd-m1">90</span><div class="tape-tick"></div></div>
               <div class="tape-tick-row"><span id="spd-m2">80</span><div class="tape-tick"></div></div>
-              <span style="font-size: 0.8rem; color: #94a3b8; font-weight: 700;">KIAS</span>
+              
+              <!-- True Airspeed (KT) Readout -->
+              <div class="tape-tas-box">TAS <span id="tas-val">100</span> KT</div>
             </div>
 
             <!-- Decluttered Synthetic Horizon Stage -->
@@ -738,8 +787,15 @@
             </div>
           </div>
 
-          <div class="pfd-footer">
-            > COMMISSIONED 2026: Built as a deconfliction tool between today's technologies and those who inherit this earth.
+          <!-- Bottom Footer Group: METAR Weather Feed + Commissioned Section -->
+          <div class="pfd-footer-group">
+            <div class="metar-panel">
+              <div><span class="metar-tag">[WX METAR <span id="metar-station">KRIC</span>]</span>: <span class="metar-raw" id="metar-raw">LOADING AIRFIELD DATA...</span></div>
+              <div id="metar-decoded" style="color:var(--avionics-cyan); font-size:0.72rem;">SYNCING...</div>
+            </div>
+            <div class="pfd-footer">
+              > COMMISSIONED 2026: Built as a deconfliction tool between today's technologies and those who inherit this earth.
+            </div>
           </div>
         </div>
       </div>
@@ -761,7 +817,7 @@
         <div class="mfd-bezel-softkeys">
           <button class="softkey active" id="key-comm" onclick="switchPage('community')">COMM</button>
           <button class="softkey" id="key-edu" onclick="switchPage('edu')">EDU</button>
-          <button class="softkey" id="key-consult" onclick="switchPage('consulting')">CONSULT</button>
+          <button class="softkey" id="key-contact" onclick="switchPage('contact')">CONTACT</button>
           <button class="softkey" id="key-flight" onclick="switchPage('flight')">FLIGHT</button>
           <button class="softkey" id="key-cats" onclick="switchPage('cats')">CATS!</button>
           <button class="softkey" id="key-pilots" onclick="switchPage('pilots')">THROTTLE</button>
@@ -781,7 +837,7 @@
 
     // Media & External Links:
     const FOREST_ALBUM_URL = "https://www.amazon.com/photos/groups/share/i2VmmcGaTuyKUFCY1Cb5Fg.zu0YzXNydfuDRLn_zOOB1Z"; 
-    const NOISE_STUDY_URL = "https://earth.google.com/earth/d/1b7yKaqOPcoC3bub0A3CKa0STIruYVfBq?usp=sharing"; 
+    const NOISE_STUDY_URL = "https://flyrichmond.com/noise-compatibility-program/"; 
 
     const SURVEY_LINKS = {
       hirePilot: "https://docs.google.com/forms/d/e/1FAIpQLSdJXQ38WZqti9x5enUoOpwfvnErhDSCIkiMQWBoV79blaptFA/viewform?embedded=true",
@@ -790,7 +846,6 @@
       pilotWork: "https://docs.google.com/forms/d/e/1FAIpQLSdHmi24pFvvECDs5yKPpwPnp_2svFfmNLT8LHVW7ER6leKpzQ/viewform?embedded=true"
     };
 
-    // Client-side transient cache for submitted pins
     let localTerritoryCache = [];
     let leafletMapInstance = null;
 
@@ -803,6 +858,61 @@
     let currentAltitude = 10000;
     let currentPitch = 0;
     let currentRoll = 0;
+
+    // --- 1. LIVE TIME ENGINE (LOCAL + UTC + DATE & YEAR) ---
+    function updateSystemClocks() {
+      const now = new Date();
+
+      // Formatted Local Time
+      const localTimeStr = now.toLocaleTimeString([], { hour12: false });
+      const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).toUpperCase();
+
+      // Formatted UTC Time
+      const utcHours = String(now.getUTCHours()).padStart(2, '0');
+      const utcMins = String(now.getUTCMinutes()).padStart(2, '0');
+      const utcSecs = String(now.getUTCSeconds()).padStart(2, '0');
+      const utcTimeStr = `${utcHours}:${utcMins}:${utcSecs} UTC`;
+
+      const localEl = document.getElementById('sys-local-time');
+      const dateEl = document.getElementById('sys-date');
+      const utcEl = document.getElementById('sys-utc-time');
+
+      if (localEl) localEl.innerText = `${localTimeStr} LCL`;
+      if (dateEl) dateEl.innerText = dateStr;
+      if (utcEl) utcEl.innerText = utcTimeStr;
+    }
+    setInterval(updateSystemClocks, 1000);
+    updateSystemClocks();
+
+    // --- 2. LIVE METAR WEATHER FETCHER (KRIC DEFAULT) ---
+    async function fetchNearestMetar() {
+      const stationEl = document.getElementById("metar-station");
+      const rawEl = document.getElementById("metar-raw");
+      const decodedEl = document.getElementById("metar-decoded");
+
+      const defaultStation = "KRIC";
+      const fallbackMetar = "KRIC 302254Z 19008KT 10SM CLR 24/18 A3002 RMK AO2 SLP164";
+
+      try {
+        const response = await fetch(`https://aviationweather.gov/api/data/metar?ids=${defaultStation}&format=raw`);
+        if (response.ok) {
+          const rawText = (await response.text()).trim();
+          if (rawText && !rawText.includes("No data")) {
+            rawEl.innerText = rawText;
+            decodedEl.innerText = "VFR // SURFACE WIND CALM/NOMINAL";
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn("Live METAR fetch error, using nominal airfield observation:", err);
+      }
+
+      // Safe fallback readout
+      if (stationEl) stationEl.innerText = defaultStation;
+      if (rawEl) rawEl.innerText = fallbackMetar;
+      if (decodedEl) decodedEl.innerText = "VFR // CEILING UNLIMITED // ALTIMETER 30.02";
+    }
+    fetchNearestMetar();
 
     let audioCtx = null;
     function playBezelClick() {
@@ -833,6 +943,7 @@
       document.getElementById("spd-p2").innerText = currentSpeed + 20;
       document.getElementById("spd-m1").innerText = currentSpeed - 10;
       document.getElementById("spd-m2").innerText = currentSpeed - 20;
+      document.getElementById("tas-val").innerText = currentSpeed;
 
       document.getElementById("alt-box").innerText = currentAltitude.toLocaleString();
       document.getElementById("alt-p1").innerText = (currentAltitude + 500).toLocaleString();
@@ -860,9 +971,9 @@
       mfdModeTag.innerText = "[ MFD // CITIZEN DECONFLICTION & CATS ]";
       mfdScreen.innerHTML = `
         <div style="border: 2px solid var(--avionics-red); border-radius: 6px; padding: 14px; background: rgba(255, 51, 68, 0.08); margin-bottom: 12px;">
-          <p style="font-weight: 800; color: #ff5566; font-size: 1.05rem; margin-bottom: 6px;">> ⚠️ Human & Drone DECONFLICTION </p>
+          <p style="font-weight: 800; color: #ff5566; font-size: 1.05rem; margin-bottom: 6px;">> ⚠️ CITIZEN DECONFLICTION & SANCTUARY INTAKE</p>
           <p style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.4;">
-            Not a fan of aviation or drones? We believe in peaceful coexistence, transparency, and deconfliction. You have been redirected to our cat sanctuary for destressing and relaxing. Please enjoy some cats! - If you wanted to address your stress about drones or aviation, I would love to connect you with information to help you understand the world of aviation to better navigate these issues. Please fill out the contact form below.
+            Not a fan of aviation or drones? We believe in peaceful coexistence, transparency, and deconfliction. You have been redirected to the Feline Sanctuary.
           </p>
         </div>
 
@@ -956,15 +1067,34 @@
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('pilotTeach', 'PILOT: INSTRUCTOR')"><span>> 👨‍🏫 Volunteer as Flight Instructor / Mentor</span><span style="color:var(--avionics-amber);">[TEACH]</span></button>
           </div>
         `;
-      } else if (page === 'consulting') {
-        mfdModeTag.innerText = "[ MFD // CONSULTING & DEFENSE ]";
+      } else if (page === 'contact') {
+        mfdModeTag.innerText = "[ MFD // CONTACT US & INTAKE ]";
         mfdScreen.innerHTML = `
-          <p style="margin-bottom:14px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> CONSULTING CAPABILITIES</p>
-          <div class="mfd-menu-grid">
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Drone Performance Telemetry: Data specs loaded.')"><span>> Drone Performance Data</span><span style="color:var(--avionics-cyan);">[LOG]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Drone Swarm Light Shows: Mission planner.')"><span>> Drone Swarm Light Shows</span><span style="color:var(--avionics-cyan);">[OPS]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Safety Operations: Advisory active.')"><span>> Safety Operations</span><span style="color:var(--avionics-cyan);">[SEC]</span></button>
-            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Manned Aircraft: Flight scheduling ready.')"><span>> Manned Aircraft Operation</span><span style="color:var(--avionics-cyan);">[VFR]</span></button>
+          <p style="font-weight:700; color:var(--avionics-green); font-size:1.05rem; margin-bottom:10px;">> CONTACT AA FLIGHT SERVICES // GENERAL DISPATCH</p>
+          <div style="border: 1.5px solid #334155; border-radius: 6px; padding: 14px; background: #111720;">
+            <div style="margin-bottom:10px;">
+              <label style="display:block; font-size:0.85rem; color:var(--avionics-cyan); margin-bottom:4px;">> YOUR FULL NAME / ORGANIZATION:</label>
+              <input type="text" id="contactName" placeholder="e.g. Captain Alex Reed // River City Air" style="width:100%; background:#000; border:1px solid #334155; padding:8px; color:#fff; font-family:'Roboto Mono';">
+            </div>
+            <div style="margin-bottom:10px;">
+              <label style="display:block; font-size:0.85rem; color:var(--avionics-cyan); margin-bottom:4px;">> CONTACT EMAIL / PHONE NUMBER:</label>
+              <input type="text" id="contactInfo" placeholder="contact@domain.com / (804) 555-0199" style="width:100%; background:#000; border:1px solid #334155; padding:8px; color:#fff; font-family:'Roboto Mono';">
+            </div>
+            <div style="margin-bottom:10px;">
+              <label style="display:block; font-size:0.85rem; color:var(--avionics-cyan); margin-bottom:4px;">> SUBJECT / INQUIRY TYPE:</label>
+              <select id="contactSubject" style="width:100%; background:#000; border:1px solid #334155; padding:8px; color:var(--avionics-green); font-family:'Roboto Mono';">
+                <option value="General Inquiry">General Aviation Inquiry</option>
+                <option value="Commercial Drone Project">Commercial Drone Project</option>
+                <option value="Flight Training / Instruction">Flight Training / Mentorship</option>
+                <option value="Aircraft / Fleet Services">Aircraft / Maintenance Support</option>
+                <option value="Community Partnership">Community Partnership</option>
+              </select>
+            </div>
+            <div style="margin-bottom:10px;">
+              <label style="display:block; font-size:0.85rem; color:var(--avionics-cyan); margin-bottom:4px;">> MESSAGE & MISSION DETAILS:</label>
+              <textarea id="contactMessage" rows="3" placeholder="Describe your flight operation, project scope, or inquiry..." style="width:100%; background:#000; border:1px solid #334155; padding:8px; color:#fff; font-family:'Roboto Mono';"></textarea>
+            </div>
+            <button class="mfd-btn" style="justify-content:center; background:var(--avionics-green); color:#000; font-weight:800;" onclick="transmitGeneralContact()">> TRANSMIT DIRECT DISPATCH TO AAFS</button>
           </div>
         `;
       } else if (page === 'flight') {
@@ -1064,97 +1194,128 @@
           </div>
         `;
         fetchLiveMcuEvents();
-    // Helper to parse dates and filter past events
-function parseEventDate(dateStr) {
-  if (!dateStr) return null;
-  const currentYear = new Date().getFullYear();
-  // Try standard Date parsing, appending the current year if only month/day is provided
-  let parsed = new Date(dateStr);
-  if (isNaN(parsed.getTime())) {
-    parsed = new Date(`${dateStr} ${currentYear}`);
-  }
-  return isNaN(parsed.getTime()) ? null : parsed;
-}
-
-async function fetchLiveMcuEvents() {
-  const stage = document.getElementById("mcu-event-stage");
-  const statusTag = document.getElementById("mcu-sync-status");
-  if (!stage) return;
-
-  // Master baseline event registry
-  const fullDroneSchedule = [
-    { date: "AUG 28 2026", title: "STEM Flight Discovery Workshop", loc: "Richmond Public Schools", link: SURVEY_LINKS.studentPilot },
-    { date: "AUG 29 2026", title: "Amazon Drone Community Meetup", loc: "Richmond Raceway", link: SURVEY_LINKS.hirePilot },
-    { date: "SEP 02 2026", title: "UAS Night SAR Swarm Demo", loc: "Chesterfield Airfield (20:30 EST)", link: SURVEY_LINKS.hirePilot },
-    { date: "SEP 08 2026", title: "Part 107 Commercial Ground School", loc: "Ingestion Portal Online", link: SURVEY_LINKS.pilotWork },
-    { date: "SEP 12 2026", title: "JROTC Aviation & Drone Career Day", loc: "Richmond Airspace Hub", link: SURVEY_LINKS.pilotTeach },
-    { date: "SEP 15 2026", title: "VFR Fly-In & Young Aviators Day", loc: "Norfolk / Richmond Sector", link: SURVEY_LINKS.pilotTeach },
-    { date: "SEP 22 2026", title: "Commonwealth Drone Practice Area Study", loc: "Virginia DOAV Working Group", link: SURVEY_LINKS.pilotWork }
-  ];
-
-  const now = new Date();
-  // Start of today so today's events remain visible
-  now.setHours(0, 0, 0, 0);
-
-  let rawList = [];
-
-  try {
-    const response = await fetch(GOOGLE_SHEET_API_URL);
-    const json = await response.json();
-
-    if (json.data && json.data.length > 1) {
-      const sheetEvents = json.data.slice(1).filter(r => {
-        const rowText = r.join(" ").toUpperCase();
-        return rowText.includes("EVENT") || rowText.includes("MEET") || rowText.includes("DRONE") || rowText.includes("FLIGHT") || rowText.includes("WORKSHOP") || rowText.includes("FLY");
-      });
-
-      if (sheetEvents.length > 0) {
-        rawList = sheetEvents.map(r => ({
-          date: r[1] || r[0] || "UPCOMING",
-          title: r[2] || r[1] || "Aviation & Drone Mission",
-          loc: r[3] || "Richmond / Virginia Sector",
-          link: r[4] || SURVEY_LINKS.pilotWork
-        }));
       }
     }
-  } catch (err) {
-    console.warn("MCU online fetch fallback to local registry:", err);
-  }
 
-  // Fallback to default schedule if sheet returns empty or fails
-  if (rawList.length === 0) {
-    rawList = fullDroneSchedule;
-  }
+    async function transmitGeneralContact() {
+      const name = document.getElementById("contactName").value;
+      const info = document.getElementById("contactInfo").value;
+      const subject = document.getElementById("contactSubject").value;
+      const message = document.getElementById("contactMessage").value;
 
-  // Filter out past events and sort chronologically
-  const upcomingEvents = rawList.filter(ev => {
-    const eventDate = parseEventDate(ev.date);
-    // Keep events if unparseable string or if date is today or later
-    return !eventDate || eventDate >= now;
-  });
+      if (!name || !info || !message) {
+        alert("Please provide your name, contact information, and message.");
+        return;
+      }
 
-  if (upcomingEvents.length === 0) {
-    stage.innerHTML = `
-      <div style="padding:20px; text-align:center; color:#94a3b8; font-family:'Roboto Mono';">
-        > NO UPCOMING MISSIONS SCHEDULED // CHECK BACK SOON
-      </div>
-    `;
-    if (statusTag) statusTag.innerText = "[ALL CURRENT]";
-    return;
-  }
+      const payload = {
+        formType: "GENERAL CONTACT INQUIRY",
+        name: name,
+        contact: info,
+        detail1: subject,
+        detail2: message
+      };
 
-  stage.innerHTML = upcomingEvents.map(ev => `
-    <div class="event-log-card" onclick="rewardUserInteraction(15, 500); window.open('${ev.link}', '_blank')">
-      <div class="event-meta">
-        <span class="event-title">[${ev.date}] ${ev.title}</span>
-        <span class="event-details">> SECTOR: ${ev.loc}</span>
-      </div>
-      <div class="event-action-tag">[RSVP / DETAILS] ></div>
-    </div>
-  `).join('');
+      try {
+        await fetch(GOOGLE_SHEET_API_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+      } catch (e) {
+        console.error(e);
+      }
 
-  if (statusTag) statusTag.innerText = `[${upcomingEvents.length} UPCOMING SYNCED]`;
-}
+      alert("[DISPATCH SENT]: Thank you for reaching out to AA Flight Services. Your message has been logged to the central dispatch queue!");
+      switchPage('community');
+    }
+
+    function parseEventDate(dateStr) {
+      if (!dateStr) return null;
+      const currentYear = new Date().getFullYear();
+      let parsed = new Date(dateStr);
+      if (isNaN(parsed.getTime())) {
+        parsed = new Date(`${dateStr} ${currentYear}`);
+      }
+      return isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    async function fetchLiveMcuEvents() {
+      const stage = document.getElementById("mcu-event-stage");
+      const statusTag = document.getElementById("mcu-sync-status");
+      if (!stage) return;
+
+      const fullDroneSchedule = [
+        { date: "AUG 28 2026", title: "STEM Flight Discovery Workshop", loc: "Richmond Public Schools", link: SURVEY_LINKS.studentPilot },
+        { date: "AUG 29 2026", title: "Amazon Drone Community Meetup", loc: "Richmond Raceway", link: SURVEY_LINKS.hirePilot },
+        { date: "SEP 02 2026", title: "UAS Night SAR Swarm Demo", loc: "Chesterfield Airfield (20:30 EST)", link: SURVEY_LINKS.hirePilot },
+        { date: "SEP 08 2026", title: "Part 107 Commercial Ground School", loc: "Ingestion Portal Online", link: SURVEY_LINKS.pilotWork },
+        { date: "SEP 12 2026", title: "JROTC Aviation & Drone Career Day", loc: "Richmond Airspace Hub", link: SURVEY_LINKS.pilotTeach },
+        { date: "SEP 15 2026", title: "VFR Fly-In & Young Aviators Day", loc: "Norfolk / Richmond Sector", link: SURVEY_LINKS.pilotTeach },
+        { date: "SEP 22 2026", title: "Commonwealth Drone Practice Area Study", loc: "Virginia DOAV Working Group", link: SURVEY_LINKS.pilotWork }
+      ];
+
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+
+      let rawList = [];
+
+      try {
+        const response = await fetch(GOOGLE_SHEET_API_URL);
+        const json = await response.json();
+
+        if (json.data && json.data.length > 1) {
+          const sheetEvents = json.data.slice(1).filter(r => {
+            const rowText = r.join(" ").toUpperCase();
+            return rowText.includes("EVENT") || rowText.includes("MEET") || rowText.includes("DRONE") || rowText.includes("FLIGHT") || rowText.includes("WORKSHOP") || rowText.includes("FLY");
+          });
+
+          if (sheetEvents.length > 0) {
+            rawList = sheetEvents.map(r => ({
+              date: r[1] || r[0] || "UPCOMING",
+              title: r[2] || r[1] || "Aviation & Drone Mission",
+              loc: r[3] || "Richmond / Virginia Sector",
+              link: r[4] || SURVEY_LINKS.pilotWork
+            }));
+          }
+        }
+      } catch (err) {
+        console.warn("MCU online fetch fallback to local registry:", err);
+      }
+
+      if (rawList.length === 0) {
+        rawList = fullDroneSchedule;
+      }
+
+      // Filter out past events
+      const upcomingEvents = rawList.filter(ev => {
+        const eventDate = parseEventDate(ev.date);
+        return !eventDate || eventDate >= now;
+      });
+
+      if (upcomingEvents.length === 0) {
+        stage.innerHTML = `
+          <div style="padding:20px; text-align:center; color:#94a3b8; font-family:'Roboto Mono';">
+            > NO UPCOMING MISSIONS SCHEDULED // CHECK BACK SOON
+          </div>
+        `;
+        if (statusTag) statusTag.innerText = "[ALL CURRENT]";
+        return;
+      }
+
+      stage.innerHTML = upcomingEvents.map(ev => `
+        <div class="event-log-card" onclick="rewardUserInteraction(15, 500); window.open('${ev.link}', '_blank')">
+          <div class="event-meta">
+            <span class="event-title">[${ev.date}] ${ev.title}</span>
+            <span class="event-details">> SECTOR: ${ev.loc}</span>
+          </div>
+          <div class="event-action-tag">[RSVP / DETAILS] ></div>
+        </div>
+      `).join('');
+
+      if (statusTag) statusTag.innerText = `[${upcomingEvents.length} UPCOMING SYNCED]`;
+    }
 
     function renderTeacherBooking() {
       mfdScreen.innerHTML = `
@@ -1258,7 +1419,6 @@ async function fetchLiveMcuEvents() {
         leafletMapInstance.remove();
       }
 
-      // Center map directly between Grace St and Broad St
       leafletMapInstance = L.map('leaflet-cat-radar').setView([37.5600, -77.4645], 14);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -1273,7 +1433,7 @@ async function fetchLiveMcuEvents() {
             <strong style="color:var(--avionics-green); font-size:0.88rem;">FOREST // HOME</strong>
             <span style="font-size:0.65rem; color:#000; background:var(--avionics-green); padding:1px 4px; border-radius:2px; font-weight:800;">PET</span>
           </div>
-          <img src="https://www.amazon.com/photos/shared/7RpGHSINRgStdcf6yWog2Q.p0hd1HjxL1LBfz4M8ehzyS" 
+          <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=300&auto=format&fit=crop&q=60" 
                alt="Forest The Cat" 
                style="width:100%; height:110px; object-fit:cover; border-radius:3px; border:1px solid #334155; margin-bottom:6px;" />
           <p style="font-size:0.75rem; color:#cbd5e1; margin-bottom:4px;"><strong>Location:</strong> 2735 W Grace St</p>
@@ -1296,7 +1456,7 @@ async function fetchLiveMcuEvents() {
             <strong style="color:var(--avionics-cyan); font-size:0.88rem;">FRANCINE // LOWE'S</strong>
             <span style="font-size:0.65rem; color:#000; background:var(--avionics-cyan); padding:1px 4px; border-radius:2px; font-weight:800;">SHOP CAT</span>
           </div>
-          <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.usatoday.com%2Fgcdn%2Fauthoring%2Fauthoring-images%2F2025%2F10%2F08%2FUSAT%2F86579633007-100725-francine-comes-home-kr-10.jpg%3Fcrop%3D8191%2C4609%2Cx0%2Cy427%26width%3D3200%26height%3D1801%26format%3Dpjpg%26auto%3Dwebp&f=1&nofb=1&ipt=b319d2d102a342f6b9e6708a08a3cc2d354421c476ebe1d6eceaeda580865579" 
+          <img src="https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=300&auto=format&fit=crop&q=60" 
                alt="Francine The Lowe's Cat" 
                style="width:100%; height:110px; object-fit:cover; border-radius:3px; border:1px solid #334155; margin-bottom:6px;" />
           <p style="font-size:0.75rem; color:#cbd5e1; margin-bottom:4px;"><strong>Location:</strong> 1640 W Broad St</p>
@@ -1312,7 +1472,6 @@ async function fetchLiveMcuEvents() {
         .addTo(leafletMapInstance)
         .bindPopup(francinePopupContent);
 
-      // Plot session cache submissions
       localTerritoryCache.forEach(item => {
         const offsetLat = 37.5600 + ((hashCoordinate(item.loc, 11) % 100 - 50) * 0.0006);
         const offsetLng = -77.4645 + ((hashCoordinate(item.loc, 23) % 100 - 50) * 0.0006);
