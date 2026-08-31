@@ -1064,82 +1064,97 @@
           </div>
         `;
         fetchLiveMcuEvents();
+    // Helper to parse dates and filter past events
+function parseEventDate(dateStr) {
+  if (!dateStr) return null;
+  const currentYear = new Date().getFullYear();
+  // Try standard Date parsing, appending the current year if only month/day is provided
+  let parsed = new Date(dateStr);
+  if (isNaN(parsed.getTime())) {
+    parsed = new Date(`${dateStr} ${currentYear}`);
+  }
+  return isNaN(parsed.getTime()) ? null : parsed;
+}
+
+async function fetchLiveMcuEvents() {
+  const stage = document.getElementById("mcu-event-stage");
+  const statusTag = document.getElementById("mcu-sync-status");
+  if (!stage) return;
+
+  // Master baseline event registry
+  const fullDroneSchedule = [
+    { date: "AUG 28 2026", title: "STEM Flight Discovery Workshop", loc: "Richmond Public Schools", link: SURVEY_LINKS.studentPilot },
+    { date: "AUG 29 2026", title: "Amazon Drone Community Meetup", loc: "Richmond Raceway", link: SURVEY_LINKS.hirePilot },
+    { date: "SEP 02 2026", title: "UAS Night SAR Swarm Demo", loc: "Chesterfield Airfield (20:30 EST)", link: SURVEY_LINKS.hirePilot },
+    { date: "SEP 08 2026", title: "Part 107 Commercial Ground School", loc: "Ingestion Portal Online", link: SURVEY_LINKS.pilotWork },
+    { date: "SEP 12 2026", title: "JROTC Aviation & Drone Career Day", loc: "Richmond Airspace Hub", link: SURVEY_LINKS.pilotTeach },
+    { date: "SEP 15 2026", title: "VFR Fly-In & Young Aviators Day", loc: "Norfolk / Richmond Sector", link: SURVEY_LINKS.pilotTeach },
+    { date: "SEP 22 2026", title: "Commonwealth Drone Practice Area Study", loc: "Virginia DOAV Working Group", link: SURVEY_LINKS.pilotWork }
+  ];
+
+  const now = new Date();
+  // Start of today so today's events remain visible
+  now.setHours(0, 0, 0, 0);
+
+  let rawList = [];
+
+  try {
+    const response = await fetch(GOOGLE_SHEET_API_URL);
+    const json = await response.json();
+
+    if (json.data && json.data.length > 1) {
+      const sheetEvents = json.data.slice(1).filter(r => {
+        const rowText = r.join(" ").toUpperCase();
+        return rowText.includes("EVENT") || rowText.includes("MEET") || rowText.includes("DRONE") || rowText.includes("FLIGHT") || rowText.includes("WORKSHOP") || rowText.includes("FLY");
+      });
+
+      if (sheetEvents.length > 0) {
+        rawList = sheetEvents.map(r => ({
+          date: r[1] || r[0] || "UPCOMING",
+          title: r[2] || r[1] || "Aviation & Drone Mission",
+          loc: r[3] || "Richmond / Virginia Sector",
+          link: r[4] || SURVEY_LINKS.pilotWork
+        }));
       }
     }
+  } catch (err) {
+    console.warn("MCU online fetch fallback to local registry:", err);
+  }
 
-    async function fetchLiveMcuEvents() {
-      const stage = document.getElementById("mcu-event-stage");
-      const statusTag = document.getElementById("mcu-sync-status");
-      if (!stage) return;
+  // Fallback to default schedule if sheet returns empty or fails
+  if (rawList.length === 0) {
+    rawList = fullDroneSchedule;
+  }
 
-      try {
-        const response = await fetch(GOOGLE_SHEET_API_URL);
-        const json = await response.json();
+  // Filter out past events and sort chronologically
+  const upcomingEvents = rawList.filter(ev => {
+    const eventDate = parseEventDate(ev.date);
+    // Keep events if unparseable string or if date is today or later
+    return !eventDate || eventDate >= now;
+  });
 
-        const fullDroneSchedule = [
-          { date: "AUG 28", title: "STEM Flight Discovery Workshop", loc: "Richmond Public Schools", link: "https://docs.google.com/forms/d/e/1FAIpQLScYXKl_eTJplwOlGb1z0cLVbJcK-99k8LGneeJ5Q55zvVXZbQ/viewform" },
-          { date: "AUG 29", title: "Amazon Drone Community Meetup", loc: "Richmond Raceway", link: "https://docs.google.com/forms/d/e/1FAIpQLSdJXQ38WZqti9x5enUoOpwfvnErhDSCIkiMQWBoV79blaptFA/viewform" },
-          { date: "SEP 02", title: "UAS Night SAR Swarm Demo", loc: "Chesterfield Airfield (20:30 EST)", link: "https://docs.google.com/forms/d/e/1FAIpQLSdJXQ38WZqti9x5enUoOpwfvnErhDSCIkiMQWBoV79blaptFA/viewform" },
-          { date: "SEP 08", title: "Part 107 Commercial Ground School", loc: "Ingestion Portal Online", link: "https://docs.google.com/forms/d/e/1FAIpQLSdHmi24pFvvECDs5yKPpwPnp_2svFfmNLT8LHVW7ER6leKpzQ/viewform" },
-          { date: "SEP 12", title: "JROTC Aviation & Drone Career Day", loc: "Richmond Airspace Hub", link: "https://docs.google.com/forms/d/e/1FAIpQLSebU_PdiQX3HvnzkvZyUKgEnZniE-NoZ3TLj5Q2MXqtcSc8Jw/viewform" },
-          { date: "SEP 15", title: "VFR Fly-In & Young Aviators Day", loc: "Norfolk / Richmond Sector", link: "https://docs.google.com/forms/d/e/1FAIpQLSebU_PdiQX3HvnzkvZyUKgEnZniE-NoZ3TLj5Q2MXqtcSc8Jw/viewform" },
-          { date: "SEP 22", title: "Commonwealth Drone Practice Area Study", loc: "Virginia DOAV Working Group", link: "https://docs.google.com/forms/d/e/1FAIpQLSdHmi24pFvvECDs5yKPpwPnp_2svFfmNLT8LHVW7ER6leKpzQ/viewform" }
-        ];
+  if (upcomingEvents.length === 0) {
+    stage.innerHTML = `
+      <div style="padding:20px; text-align:center; color:#94a3b8; font-family:'Roboto Mono';">
+        > NO UPCOMING MISSIONS SCHEDULED // CHECK BACK SOON
+      </div>
+    `;
+    if (statusTag) statusTag.innerText = "[ALL CURRENT]";
+    return;
+  }
 
-        let eventList = [];
+  stage.innerHTML = upcomingEvents.map(ev => `
+    <div class="event-log-card" onclick="rewardUserInteraction(15, 500); window.open('${ev.link}', '_blank')">
+      <div class="event-meta">
+        <span class="event-title">[${ev.date}] ${ev.title}</span>
+        <span class="event-details">> SECTOR: ${ev.loc}</span>
+      </div>
+      <div class="event-action-tag">[RSVP / DETAILS] ></div>
+    </div>
+  `).join('');
 
-        if (json.data && json.data.length > 1) {
-          const eventsFromSheet = json.data.slice(1).filter(r => {
-            const joined = r.join(" ").toUpperCase();
-            return joined.includes("EVENT") || joined.includes("MEET") || joined.includes("DRONE") || joined.includes("FLIGHT");
-          });
-
-          if (eventsFromSheet.length > 0) {
-            eventList = eventsFromSheet.map(r => ({
-              date: r[1] || r[0] || "UPCOMING",
-              title: r[2] || r[1] || "Aviation & Drone Mission",
-              loc: r[3] || "Richmond / Virginia Sector",
-              link: r[4] || SURVEY_LINKS.pilotWork
-            }));
-          }
-        }
-
-        if (eventList.length === 0) {
-          eventList = fullDroneSchedule;
-        }
-
-        stage.innerHTML = eventList.map(ev => `
-          <div class="event-log-card" onclick="rewardUserInteraction(15, 500); window.open('${ev.link}', '_blank')">
-            <div class="event-meta">
-              <span class="event-title">[${ev.date}] ${ev.title}</span>
-              <span class="event-details">> SECTOR: ${ev.loc}</span>
-            </div>
-            <div class="event-action-tag">[RSVP / DETAILS] ></div>
-          </div>
-        `).join('');
-
-        if (statusTag) statusTag.innerText = `[${eventList.length} EVENTS SYNCED]`;
-
-      } catch (err) {
-        if (statusTag) statusTag.innerText = "[LOCAL VA DRONE LOG]";
-        stage.innerHTML = `
-          <div class="event-log-card" onclick="window.open('${SURVEY_LINKS.studentPilot}', '_blank')">
-            <div class="event-meta">
-              <span class="event-title">[AUG 28] STEM Flight Discovery Workshop</span>
-              <span class="event-details">> SECTOR: Richmond Public Schools</span>
-            </div>
-            <div class="event-action-tag">[RSVP / DETAILS] ></div>
-          </div>
-          <div class="event-log-card" onclick="window.open('${SURVEY_LINKS.hirePilot}', '_blank')">
-            <div class="event-meta">
-              <span class="event-title">[AUG 29] Amazon Drone Community Meetup</span>
-              <span class="event-details">> SECTOR: Richmond Raceway</span>
-            </div>
-            <div class="event-action-tag">[RSVP / DETAILS] ></div>
-          </div>
-        `;
-      }
-    }
+  if (statusTag) statusTag.innerText = `[${upcomingEvents.length} UPCOMING SYNCED]`;
+}
 
     function renderTeacherBooking() {
       mfdScreen.innerHTML = `
