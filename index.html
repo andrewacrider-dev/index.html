@@ -1063,18 +1063,18 @@
         mfdScreen.innerHTML = `
           <p style="margin-bottom:14px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> AVIATION EDUCATION & CLASSROOM OUTREACH</p>
           <div class="mfd-menu-grid">
-            <button class="mfd-btn" style="border-color: var(--avionics-cyan);" onclick="rewardUserInteraction(10, 500); window.open(PRESENTATION_DECK_URL, '_blank')">
-              <span>> 📊 Educational Overview & Architecture Deck</span><span style="color:var(--avionics-cyan);">[SLIDES / DECK] ↗</span>
-            </button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderTeacherBooking()"><span>> 🏫 Book a Flight / Drone Demo for Classroom</span><span style="color:var(--avionics-cyan);">[TEACHERS]</span></button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('studentPilot', 'STUDENT: LEARN PILOTING')"><span>> 🎓 Become a Pilot (Student Portal)</span><span style="color:var(--avionics-green);">[STUDENTS]</span></button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('pilotTeach', 'PILOT: INSTRUCTOR')"><span>> 👨‍🏫 Volunteer as Flight Instructor / Mentor</span><span style="color:var(--avionics-amber);">[TEACH]</span></button>
+            <button class="mfd-btn" style="border-color: var(--avionics-cyan);" onclick="rewardUserInteraction(10, 500); window.open(PRESENTATION_DECK_URL, '_blank')">
+              <span>> 📊 Educational Overview & Architecture Deck</span><span style="color:var(--avionics-cyan);">[SLIDES / DECK] ↗</span>
+            </button>
           </div>
         `;
       } else if (page === 'consult') {
         mfdModeTag.innerText = "[ MFD // CONSULTING INTAKE & DISPATCH ]";
         mfdScreen.innerHTML = `
-          <p style="font-weight:700; color:var(--avionics-green); font-size:1.05rem; margin-bottom:10px;">> CONSULTING INTAKE // GENERAL DISPATCH</p>
+          <p style="font-weight:700; color:var(--avionics-green); font-size:1.05rem; margin-bottom:10px;">> CONTACT & CONSULTING INTAKE // GENERAL DISPATCH</p>
           <div style="border: 1.5px solid #334155; border-radius: 6px; padding: 14px; background: #111720;">
             <div style="margin-bottom:10px;">
               <label style="display:block; font-size:0.85rem; color:var(--avionics-cyan); margin-bottom:4px;">> YOUR FULL NAME / ORGANIZATION:</label>
