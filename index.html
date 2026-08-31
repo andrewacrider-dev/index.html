@@ -1049,13 +1049,13 @@
         mfdScreen.innerHTML = `
           <p style="margin-bottom:14px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> COMMUNITY & CAREER NODES</p>
           <div class="mfd-menu-grid">
-            <button class="mfd-btn" style="border-color: var(--avionics-cyan);" onclick="rewardUserInteraction(10, 500); window.open(PRESENTATION_DECK_URL, '_blank')">
-              <span>> 📊 Strategic Airspace & Systems Briefing</span><span style="color:var(--avionics-cyan);">[SLIDES / DECK] ↗</span>
-            </button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('pilotWork', 'FIND A JOB IN AVIATION')"><span>> Find A Job in Aviation</span><span style="color:var(--avionics-green);">[CAREERS]</span></button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('hirePilot', 'HIRE A PILOT / MECHANIC')"><span>> Hire a Pilot / Mechanic</span><span style="color:var(--avionics-cyan);">[HIRING]</span></button>
             <button class="mfd-btn" onclick="switchPage('mcu')"><span>> Master Calendar & Drone Events</span><span style="color:var(--avionics-cyan);">[MCU LOG]</span></button>
             <button class="mfd-btn" onclick="switchPage('edu')"><span>> Aviation Education & STEM Portal</span><span style="color:var(--avionics-green);">[EDU]</span></button>
+            <button class="mfd-btn" style="border-color: var(--avionics-cyan);" onclick="rewardUserInteraction(10, 500); window.open(PRESENTATION_DECK_URL, '_blank')">
+              <span>> 📊 Classroom Presentation Slidedeck</span><span style="color:var(--avionics-cyan);">[SLIDES / DECK] ↗</span>
+            </button>
           </div>
         `;
       } else if (page === 'edu') {
@@ -1067,7 +1067,7 @@
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('studentPilot', 'STUDENT: LEARN PILOTING')"><span>> 🎓 Become a Pilot (Student Portal)</span><span style="color:var(--avionics-green);">[STUDENTS]</span></button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('pilotTeach', 'PILOT: INSTRUCTOR')"><span>> 👨‍🏫 Volunteer as Flight Instructor / Mentor</span><span style="color:var(--avionics-amber);">[TEACH]</span></button>
             <button class="mfd-btn" style="border-color: var(--avionics-cyan);" onclick="rewardUserInteraction(10, 500); window.open(PRESENTATION_DECK_URL, '_blank')">
-              <span>> 📊 Educational Overview & Architecture Deck</span><span style="color:var(--avionics-cyan);">[SLIDES / DECK] ↗</span>
+              <span>> 📊 Classroom Presentation Slidedeck</span><span style="color:var(--avionics-cyan);">[SLIDES / DECK] ↗</span>
             </button>
           </div>
         `;
