@@ -633,6 +633,31 @@
       border-radius: 6px;
       background: #ffffff;
     }
+
+    .event-log-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 12px 0;
+  max-height: 350px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.event-log-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.event-log-container::-webkit-scrollbar-track {
+  background: #05080c;
+  border-radius: 3px;
+}
+
+.event-log-container::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border: 1px solid var(--avionics-green);
+  border-radius: 3px;
+}
   </style>
 </head>
 <body>
