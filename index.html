@@ -835,9 +835,10 @@
   <script>
     const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyio6BYtMxwDNJH90M7TgfPlQhJxvkaCAvnMDrnR3u08nQxDPS_BzEjggKnyplvc46H/exec";
 
-    // Media & External Links:
+    // Media, External Studies & Presentation Links:
     const FOREST_ALBUM_URL = "https://www.amazon.com/photos/groups/share/i2VmmcGaTuyKUFCY1Cb5Fg.zu0YzXNydfuDRLn_zOOB1Z"; 
     const NOISE_STUDY_URL = "https://flyrichmond.com/noise-compatibility-program/"; 
+    const PRESENTATION_DECK_URL = "https://docs.google.com/presentation/d/1e1ld-50PBIsdsnJj5Rfybq2v14E-qN6ZDy-eaT3f3qY/edit?usp=sharing";
 
     const SURVEY_LINKS = {
       hirePilot: "https://docs.google.com/forms/d/e/1FAIpQLSdJXQ38WZqti9x5enUoOpwfvnErhDSCIkiMQWBoV79blaptFA/viewform?embedded=true",
@@ -1048,6 +1049,9 @@
         mfdScreen.innerHTML = `
           <p style="margin-bottom:14px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> COMMUNITY & CAREER NODES</p>
           <div class="mfd-menu-grid">
+            <button class="mfd-btn" style="border-color: var(--avionics-cyan);" onclick="rewardUserInteraction(10, 500); window.open(PRESENTATION_DECK_URL, '_blank')">
+              <span>> 📊 Strategic Airspace & Systems Briefing</span><span style="color:var(--avionics-cyan);">[SLIDES / DECK] ↗</span>
+            </button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('pilotWork', 'FIND A JOB IN AVIATION')"><span>> Find A Job in Aviation</span><span style="color:var(--avionics-green);">[CAREERS]</span></button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('hirePilot', 'HIRE A PILOT / MECHANIC')"><span>> Hire a Pilot / Mechanic</span><span style="color:var(--avionics-cyan);">[HIRING]</span></button>
             <button class="mfd-btn" onclick="switchPage('mcu')"><span>> Master Calendar & Drone Events</span><span style="color:var(--avionics-cyan);">[MCU LOG]</span></button>
@@ -1059,6 +1063,9 @@
         mfdScreen.innerHTML = `
           <p style="margin-bottom:14px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> AVIATION EDUCATION & CLASSROOM OUTREACH</p>
           <div class="mfd-menu-grid">
+            <button class="mfd-btn" style="border-color: var(--avionics-cyan);" onclick="rewardUserInteraction(10, 500); window.open(PRESENTATION_DECK_URL, '_blank')">
+              <span>> 📊 Educational Overview & Architecture Deck</span><span style="color:var(--avionics-cyan);">[SLIDES / DECK] ↗</span>
+            </button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderTeacherBooking()"><span>> 🏫 Book a Flight / Drone Demo for Classroom</span><span style="color:var(--avionics-cyan);">[TEACHERS]</span></button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('studentPilot', 'STUDENT: LEARN PILOTING')"><span>> 🎓 Become a Pilot (Student Portal)</span><span style="color:var(--avionics-green);">[STUDENTS]</span></button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('pilotTeach', 'PILOT: INSTRUCTOR')"><span>> 👨‍🏫 Volunteer as Flight Instructor / Mentor</span><span style="color:var(--avionics-amber);">[TEACH]</span></button>
@@ -1282,7 +1289,7 @@
         { date: "SEP 08 2026", title: "Part 107 Commercial Ground School", loc: "Ingestion Portal Online", link: SURVEY_LINKS.pilotWork },
         { date: "SEP 12 2026", title: "JROTC Aviation & Drone Career Day", loc: "Richmond Airspace Hub", link: SURVEY_LINKS.pilotTeach },
         { date: "SEP 15 2026", title: "VFR Fly-In & Young Aviators Day", loc: "Norfolk / Richmond Sector", link: SURVEY_LINKS.pilotTeach },
-      
+        { date: "SEP 22 2026", title: "Commonwealth Drone Practice Area Study", loc: "Virginia DOAV Working Group", link: SURVEY_LINKS.pilotWork }
       ];
 
       const now = new Date();
