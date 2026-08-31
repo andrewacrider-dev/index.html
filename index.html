@@ -817,7 +817,7 @@
         <div class="mfd-bezel-softkeys">
           <button class="softkey active" id="key-comm" onclick="switchPage('community')">COMM</button>
           <button class="softkey" id="key-edu" onclick="switchPage('edu')">EDU</button>
-          <button class="softkey" id="key-contact" onclick="switchPage('contact')">CONTACT</button>
+          <button class="softkey" id="key-consult" onclick="switchPage('consult')">CONSULT</button>
           <button class="softkey" id="key-flight" onclick="switchPage('flight')">FLIGHT</button>
           <button class="softkey" id="key-cats" onclick="switchPage('cats')">CATS!</button>
           <button class="softkey" id="key-pilots" onclick="switchPage('pilots')">THROTTLE</button>
@@ -863,11 +863,9 @@
     function updateSystemClocks() {
       const now = new Date();
 
-      // Formatted Local Time
       const localTimeStr = now.toLocaleTimeString([], { hour12: false });
       const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).toUpperCase();
 
-      // Formatted UTC Time
       const utcHours = String(now.getUTCHours()).padStart(2, '0');
       const utcMins = String(now.getUTCMinutes()).padStart(2, '0');
       const utcSecs = String(now.getUTCSeconds()).padStart(2, '0');
@@ -907,7 +905,6 @@
         console.warn("Live METAR fetch error, using nominal airfield observation:", err);
       }
 
-      // Safe fallback readout
       if (stationEl) stationEl.innerText = defaultStation;
       if (rawEl) rawEl.innerText = fallbackMetar;
       if (decodedEl) decodedEl.innerText = "VFR // CEILING UNLIMITED // ALTIMETER 30.02";
@@ -1067,10 +1064,10 @@
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); renderSurvey('pilotTeach', 'PILOT: INSTRUCTOR')"><span>> 👨‍🏫 Volunteer as Flight Instructor / Mentor</span><span style="color:var(--avionics-amber);">[TEACH]</span></button>
           </div>
         `;
-      } else if (page === 'contact') {
-        mfdModeTag.innerText = "[ MFD // CONTACT US & INTAKE ]";
+      } else if (page === 'consult') {
+        mfdModeTag.innerText = "[ MFD // CONSULTING INTAKE & DISPATCH ]";
         mfdScreen.innerHTML = `
-          <p style="font-weight:700; color:var(--avionics-green); font-size:1.05rem; margin-bottom:10px;">> CONTACT AA FLIGHT SERVICES // GENERAL DISPATCH</p>
+          <p style="font-weight:700; color:var(--avionics-green); font-size:1.05rem; margin-bottom:10px;">> CONSULTING INTAKE // GENERAL DISPATCH</p>
           <div style="border: 1.5px solid #334155; border-radius: 6px; padding: 14px; background: #111720;">
             <div style="margin-bottom:10px;">
               <label style="display:block; font-size:0.85rem; color:var(--avionics-cyan); margin-bottom:4px;">> YOUR FULL NAME / ORGANIZATION:</label>
@@ -1081,12 +1078,13 @@
               <input type="text" id="contactInfo" placeholder="contact@domain.com / (804) 555-0199" style="width:100%; background:#000; border:1px solid #334155; padding:8px; color:#fff; font-family:'Roboto Mono';">
             </div>
             <div style="margin-bottom:10px;">
-              <label style="display:block; font-size:0.85rem; color:var(--avionics-cyan); margin-bottom:4px;">> SUBJECT / INQUIRY TYPE:</label>
+              <label style="display:block; font-size:0.85rem; color:var(--avionics-cyan); margin-bottom:4px;">> CONSULTING INQUIRY TYPE:</label>
               <select id="contactSubject" style="width:100%; background:#000; border:1px solid #334155; padding:8px; color:var(--avionics-green); font-family:'Roboto Mono';">
-                <option value="General Inquiry">General Aviation Inquiry</option>
+                <option value="General Consultation">General Aviation Consultation</option>
                 <option value="Commercial Drone Project">Commercial Drone Project</option>
                 <option value="Flight Training / Instruction">Flight Training / Mentorship</option>
                 <option value="Aircraft / Fleet Services">Aircraft / Maintenance Support</option>
+                <option value="Safety & Defense Operations">Safety & Defense Operations</option>
                 <option value="Community Partnership">Community Partnership</option>
               </select>
             </div>
@@ -1098,14 +1096,18 @@
           </div>
         `;
       } else if (page === 'flight') {
-        mfdModeTag.innerText = "[ MFD // FLIGHT OPERATIONS ]";
+        mfdModeTag.innerText = "[ MFD // FLIGHT OPERATIONS & CAPABILITIES ]";
         mfdScreen.innerHTML = `
-          <p style="margin-bottom:14px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> COMMERCIAL FLIGHT PATHS</p>
+          <p style="margin-bottom:14px; font-weight:700; color:var(--avionics-green); font-size:1.1rem;">> COMMERCIAL FLIGHT PATHS & CAPABILITIES</p>
           <div class="mfd-menu-grid">
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Construction Mapping: LiDAR and Photogrammetry loaded.')"><span>> Construction & Surveying</span><span style="color:var(--avionics-cyan);">[AIR]</span></button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Cinema & Film: Heavy-lift team.')"><span>> Film & Cinema Operations</span><span style="color:var(--avionics-cyan);">[CAM]</span></button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('E-Commerce: Delivery routing active.')"><span>> E-Commerce Logistics</span><span style="color:var(--avionics-cyan);">[CARGO]</span></button>
             <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Event Planes: Flyover booking online.')"><span>> Have Our Plane at Your Event</span><span style="color:var(--avionics-cyan);">[BOOK]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Drone Performance Telemetry: Data specs loaded.')"><span>> Drone Performance Data</span><span style="color:var(--avionics-cyan);">[LOG]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Drone Swarm Light Shows: Mission planner.')"><span>> Drone Swarm Light Shows</span><span style="color:var(--avionics-cyan);">[OPS]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Safety Operations: Advisory active.')"><span>> Safety Operations</span><span style="color:var(--avionics-cyan);">[SEC]</span></button>
+            <button class="mfd-btn" onclick="rewardUserInteraction(10, 500); alert('Manned Aircraft: Flight scheduling ready.')"><span>> Manned Aircraft Operation</span><span style="color:var(--avionics-cyan);">[VFR]</span></button>
           </div>
         `;
       } else if (page === 'cats') {
@@ -1209,7 +1211,7 @@
       }
 
       const payload = {
-        formType: "GENERAL CONTACT INQUIRY",
+        formType: "GENERAL CONSULTING INQUIRY",
         name: name,
         contact: info,
         detail1: subject,
@@ -1227,7 +1229,7 @@
         console.error(e);
       }
 
-      alert("[DISPATCH SENT]: Thank you for reaching out to AA Flight Services. Your message has been logged to the central dispatch queue!");
+      alert("[DISPATCH SENT]: Thank you for reaching out to AA Flight Services. Your consulting request has been logged to the central dispatch queue!");
       switchPage('community');
     }
 
@@ -1253,7 +1255,7 @@
         { date: "SEP 08 2026", title: "Part 107 Commercial Ground School", loc: "Ingestion Portal Online", link: SURVEY_LINKS.pilotWork },
         { date: "SEP 12 2026", title: "JROTC Aviation & Drone Career Day", loc: "Richmond Airspace Hub", link: SURVEY_LINKS.pilotTeach },
         { date: "SEP 15 2026", title: "VFR Fly-In & Young Aviators Day", loc: "Norfolk / Richmond Sector", link: SURVEY_LINKS.pilotTeach },
-     
+        { date: "SEP 22 2026", title: "Commonwealth Drone Practice Area Study", loc: "Virginia DOAV Working Group", link: SURVEY_LINKS.pilotWork }
       ];
 
       const now = new Date();
@@ -1288,7 +1290,6 @@
         rawList = fullDroneSchedule;
       }
 
-      // Filter out past events
       const upcomingEvents = rawList.filter(ev => {
         const eventDate = parseEventDate(ev.date);
         return !eventDate || eventDate >= now;
