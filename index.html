@@ -855,7 +855,8 @@
   <script>
     const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyio6BYtMxwDNJH90M7TgfPlQhJxvkaCAvnMDrnR3u08nQxDPS_BzEjggKnyplvc46H/exec";
 
-    // Media, External Studies, Albums & Persistent Photo Destinations:
+    // Media, External Studies, NASA ASRS, Albums & Persistent Photo Destinations:
+    const NASA_ASRS_URL = "https://asrs.arc.nasa.gov/";
     const FOREST_PHOTO_PAGE = "https://photos.app.goo.gl/RfDueLprUsuoQ6tdA";
     const FRANCINE_PHOTO_PAGE = "https://photos.app.goo.gl/895W2rGmJCoJGjk99";
     const NOISE_STUDY_URL = "https://flyrichmond.com/noise-compatibility-program/"; 
@@ -974,35 +975,28 @@
       document.getElementById("alt-m1").innerText = (Math.max(0, currentAltitude - 500)).toLocaleString();
       document.getElementById("alt-m2").innerText = (Math.max(0, currentAltitude - 1000)).toLocaleString();
 
-      // Synthetic vision reacts directly to Pitch, Roll, and Yaw
       const pitchPx = -currentPitch * 3.5;
       const yawPx = currentYaw * 3.0;
       syntheticHorizon.style.transform = `translate(${yawPx}px, ${pitchPx}px) rotate(${-currentRoll}deg)`;
 
-      // Update PFD annunciator tag
       const pSign = currentPitch >= 0 ? "+" : "";
       const rSign = currentRoll >= 0 ? "+" : "";
       const ySign = currentYaw >= 0 ? "+" : "";
       const navTag = document.getElementById("nav-mode-tag");
       if (navTag) navTag.innerText = `P:${pSign}${currentPitch}° R:${rSign}${currentRoll}° Y:${ySign}${currentYaw}°`;
 
-      // Synchronize Flight Controls Levers (if controls page active)
       updateControlLeverPositions();
     }
 
     // Game Control Logic: Key clicks mapping
     function handleGameKey(keyName) {
       if (keyName === 'edu') {
-        // EDU = +10 Power
         syncFlightDeck(+10, +250, 0, 0, 0);
       } else if (keyName === 'comm') {
-        // COMM = +10 Pitch
         syncFlightDeck(0, +300, +10, 0, 0);
       } else if (keyName === 'cats') {
-        // CATS = +10 Roll
         syncFlightDeck(0, 0, 0, +10, 0);
       } else {
-        // Every other click = -10 Roll
         syncFlightDeck(0, 0, 0, -10, 0);
       }
 
@@ -1036,26 +1030,36 @@
       }, 350);
     }
 
-    // Emergency Deconfliction
+    // Emergency Deconfliction & Safety Reporting
     function triggerEmergencyDeconfliction() {
       playBezelClick();
       if (isMapExpanded) toggleExpandedMap();
       setActiveKey('cats');
-      mfdModeTag.innerText = "[ MFD // CITIZEN DECONFLICTION & CATS ]";
+      mfdModeTag.innerText = "[ MFD // CITIZEN DECONFLICTION & SAFETY ]";
       mfdScreen.innerHTML = `
         <div style="border: 2px solid var(--avionics-red); border-radius: 6px; padding: 14px; background: rgba(255, 51, 68, 0.08); margin-bottom: 12px;">
-          <p style="font-weight: 800; color: #ff5566; font-size: 1.05rem; margin-bottom: 6px;">> ⚠️ </p>
+          <p style="font-weight: 800; color: #ff5566; font-size: 1.05rem; margin-bottom: 6px;">> ⚠️ CITIZEN DECONFLICTION & SANCTUARY INTAKE</p>
           <p style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.4;">
             Not a fan of aviation or drones? We believe in peaceful coexistence, transparency, and deconfliction. You have been redirected to the Feline Sanctuary.
           </p>
         </div>
 
         <div class="mfd-menu-grid">
-          <button class="mfd-btn" style="border-color: var(--avionics-magenta);" onclick="window.open(FOREST_PHOTO_PAGE, '_blank')"><span>> View Forest The Cat (Stress Relief)</span><span style="color:var(--avionics-magenta);">[FOREST 🐾]</span></button>
-          <button class="mfd-btn" style="border-color: var(--avionics-red);" onclick="renderNoiseComplaintForm()"><span>> File a NASA Aviation Saety Form </span><span style="color:var(--avionics-red);">[LINK]</span></button>
-          <button class="mfd-btn" style="border-color: var(--avionics-cyan);" onclick="window.open(NOISE_STUDY_URL, '_blank')"><span>> View Richmond Airport Noise Study</span><span style="color:var(--avionics-cyan);">[STUDY DATA]</span></button>
-          <button class="mfd-btn" onclick="switchPage('cats')"><span>> Return to Cat Community Map</span><span style="color:var(--avionics-green);">[CATS!]</span></button>
-          <button class="mfd-btn" style="border-color: var(--avionics-red);" onclick="renderNoiseComplaintForm()"><span>> File a Drone / Aircraft Flight Complaint</span><span style="color:var(--avionics-red);">[REPORT]</span></button>
+          <button class="mfd-btn" style="border-color: var(--avionics-cyan);" onclick="rewardUserInteraction(10, 500); window.open(NASA_ASRS_URL, '_blank')">
+            <span>> File NASA Safety Report (ASRS)</span><span style="color:var(--avionics-cyan);">[NASA ASRS] ↗</span>
+          </button>
+          <button class="mfd-btn" style="border-color: var(--avionics-magenta);" onclick="window.open(FOREST_PHOTO_PAGE, '_blank')">
+            <span>> View Forest The Cat (Stress Relief)</span><span style="color:var(--avionics-magenta);">[FOREST 🐾]</span>
+          </button>
+          <button class="mfd-btn" style="border-color: var(--avionics-red);" onclick="renderNoiseComplaintForm()">
+            <span>> File a Drone / Aircraft Flight Complaint</span><span style="color:var(--avionics-red);">[LOCAL REPORT]</span>
+          </button>
+          <button class="mfd-btn" style="border-color: var(--avionics-cyan);" onclick="window.open(NOISE_STUDY_URL, '_blank')">
+            <span>> View Richmond Airport Noise Study</span><span style="color:var(--avionics-cyan);">[STUDY DATA]</span>
+          </button>
+          <button class="mfd-btn" onclick="switchPage('cats')">
+            <span>> Return to Feline Community Map</span><span style="color:var(--avionics-green);">[CATS!]</span>
+          </button>
         </div>
       `;
     }
@@ -1082,7 +1086,6 @@
       `;
     }
 
-    
     async function transmitNoiseComplaint() {
       const name = document.getElementById("complainantName").value || "Anonymous Citizen";
       const loc = document.getElementById("complainantLoc").value;
@@ -1236,7 +1239,7 @@
             <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
               <button class="mfd-btn" style="padding:10px; font-size:0.85rem;" onclick="window.open(FOREST_PHOTO_PAGE, '_blank')"><span>> Pictures of Forest</span><span style="color:var(--avionics-magenta);">[FOREST 🐾]</span></button>
               <button class="mfd-btn" style="padding:10px; font-size:0.85rem;" onclick="window.open('https://www.instagram.com/rva_cats/', '_blank')"><span>> RVA Cats IG</span><span style="color:var(--avionics-cyan);">[LINK]</span></button>
-              <button class="mfd-btn" style="padding:10px; font-size:0.85rem;" onclick="renderCatReport()"><span>> Put your friend on the map! </span><span style="color:var(--avionics-green);">[ADD]</span></button>
+              <button class="mfd-btn" style="padding:10px; font-size:0.85rem;" onclick="renderCatReport()"><span>> Report Sighting</span><span style="color:var(--avionics-green);">[ADD]</span></button>
             </div>
           </div>
 
