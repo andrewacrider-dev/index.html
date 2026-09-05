@@ -1037,32 +1037,40 @@
       setActiveKey('cats');
       mfdModeTag.innerText = "[ MFD // CITIZEN DECONFLICTION & SAFETY ]";
       mfdScreen.innerHTML = `
-        <div style="border: 2px solid var(--avionics-red); border-radius: 6px; padding: 14px; background: rgba(255, 51, 68, 0.08); margin-bottom: 12px;">
-          <p style="font-weight: 800; color: #ff5566; font-size: 1.05rem; margin-bottom: 6px;">> ⚠️ CITIZEN DECONFLICTION & SANCTUARY INTAKE</p>
-          <p style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.4;">
-            Not a fan of aviation or drones? We believe in peaceful coexistence, transparency, and deconfliction. You have been redirected to the Feline Sanctuary.
-          </p>
+      <div style="border: 2px solid var(--avionics-red); border-radius: 6px; padding: 14px; background: rgba(255, 51, 68, 0.08); margin-bottom: 12px;">
+      <p style="font-weight: 800; color: #ff5566; font-size: 1.05rem; margin-bottom: 6px;">> ⚠️ CITIZEN DECONFLICTION & SANCTUARY INTAKE</p>
+      <p style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.4;">
+        Not a fan of aviation or drones? We believe in peaceful coexistence, transparency, and deconfliction. You have been redirected to the Feline Sanctuary.
+        </p>
         </div>
 
-        <div class="mfd-menu-grid">
-          <button class="mfd-btn" style="border-color: var(--avionics-cyan);" onclick="rewardUserInteraction(10, 500); window.open(NASA_ASRS_URL, '_blank')">
-            <span>> File NASA Safety Report (ASRS)</span><span style="color:var(--avionics-cyan);">[NASA ASRS] ↗</span>
-          </button>
-          <button class="mfd-btn" style="border-color: var(--avionics-magenta);" onclick="window.open(FOREST_PHOTO_PAGE, '_blank')">
-            <span>> View Forest The Cat (Stress Relief)</span><span style="color:var(--avionics-magenta);">[FOREST 🐾]</span>
-          </button>
-          <button class="mfd-btn" style="border-color: var(--avionics-red);" onclick="renderNoiseComplaintForm()">
-            <span>> File a Drone / Aircraft Flight Complaint</span><span style="color:var(--avionics-red);">[LOCAL REPORT]</span>
-          </button>
-          <button class="mfd-btn" style="border-color: var(--avionics-cyan);" onclick="window.open(NOISE_STUDY_URL, '_blank')">
-            <span>> View Richmond Airport Noise Study</span><span style="color:var(--avionics-cyan);">[STUDY DATA]</span>
-          </button>
-          <button class="mfd-btn" onclick="switchPage('cats')">
-            <span>> Return to Feline Community Map</span><span style="color:var(--avionics-green);">[CATS!]</span>
-          </button>
-        </div>
-      `;
-    }
+     <div class="mfd-menu-grid">
+      <!-- Direct HTML link to ensure seamless browser tab dispatch -->
+      <a href="https://asrs.arc.nasa.gov/" 
+         target="_blank" 
+         rel="noopener noreferrer" 
+         class="mfd-btn" 
+         style="text-decoration: none; border-color: var(--avionics-cyan);"
+         onclick="playBezelClick();">
+        <span>> File NASA Safety Report (ASRS)</span>
+        <span style="color:var(--avionics-cyan);">[NASA ASRS] ↗</span>
+        </a>
+
+        <button class="mfd-btn" style="border-color: var(--avionics-magenta);" onclick="window.open(FOREST_PHOTO_PAGE, '_blank')">
+        <span>> View Forest The Cat (Stress Relief)</span><span style="color:var(--avionics-magenta);">[FOREST 🐾]</span>
+        </button>
+      <button class="mfd-btn" style="border-color: var(--avionics-red);" onclick="renderNoiseComplaintForm()">
+        <span>> File a Drone / Aircraft Flight Complaint</span><span style="color:var(--avionics-red);">[LOCAL REPORT]</span>
+      </button>
+      <button class="mfd-btn" style="border-color: var(--avionics-cyan);" onclick="window.open(NOISE_STUDY_URL, '_blank')">
+        <span>> View Richmond Airport Noise Study</span><span style="color:var(--avionics-cyan);">[STUDY DATA]</span>
+      </button>
+      <button class="mfd-btn" onclick="switchPage('cats')">
+        <span>> Return to Feline Community Map</span><span style="color:var(--avionics-green);">[CATS!]</span>
+      </button>
+    </div>
+  `;
+}
 
     function renderNoiseComplaintForm() {
       mfdScreen.innerHTML = `
