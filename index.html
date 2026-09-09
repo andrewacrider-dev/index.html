@@ -1440,18 +1440,6 @@
       const stage = document.getElementById("mcu-event-stage");
       const statusTag = document.getElementById("mcu-sync-status");
       if (!stage) return;
-
-      const fullDroneSchedule = [
-        { date: "AUG 28 2026", title: "STEM Flight Discovery Workshop", loc: "Richmond Public Schools", link: SURVEY_LINKS.studentPilot },
-        { date: "AUG 29 2026", title: "Amazon Drone Community Meetup", loc: "Richmond Raceway", link: SURVEY_LINKS.hirePilot },
-        { date: "SEP 02 2026", title: "UAS Night SAR Swarm Demo", loc: "Chesterfield Airfield (20:30 EST)", link: SURVEY_LINKS.hirePilot },
-        { date: "SEP 08 2026", title: "Part 107 Commercial Ground School", loc: "Ingestion Portal Online", link: SURVEY_LINKS.pilotWork },
-        { date: "SEP 12 2026", title: "JROTC Aviation & Drone Career Day", loc: "Richmond Airspace Hub", link: SURVEY_LINKS.pilotTeach },
-        { date: "SEP 15 2026", title: "VFR Fly-In & Young Aviators Day", loc: "Norfolk / Richmond Sector", link: SURVEY_LINKS.pilotTeach },
-        { date: "SEP 22 2026", title: "Commonwealth Drone Practice Area Study", loc: "Virginia DOAV Working Group", link: SURVEY_LINKS.pilotWork }
-      ];
-
-      const now = new Date();
       now.setHours(0, 0, 0, 0);
 
       let rawList = [];
