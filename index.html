@@ -4,21 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dynon SkyView Touch Avionics Suite // Codex</title>
+  <!-- Leaflet GIS Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   <style>
     :root {
-      --sv-dark: #070a0e;
-      --sv-bezel: #161f2b;
-      --sv-bezel-border: #273547;
+      --sv-dark: #05080c;
+      --sv-bezel: #121924;
+      --sv-bezel-border: #2b3b4f;
       --sv-sky: #0284c7;
       --sv-ground: #713f12;
       --sv-green: #22c55e;
       --sv-amber: #f59e0b;
       --sv-orange: #ea580c;
       --sv-magenta: #ec4899;
-      --sv-white: #f8fafc;
-      --sv-cyan: #06b6d4;
+      --sv-white: #ffffff;
+      --sv-cyan: #00f0ff;
       --sv-danger: #ef4444;
-      --sv-vsi-bg: rgba(15, 23, 42, 0.9);
+      --sv-vsi-bg: rgba(10, 16, 26, 0.95);
     }
 
     * {
@@ -32,7 +34,7 @@
       background-color: var(--sv-dark);
       color: var(--sv-white);
       font-family: 'Courier New', Courier, monospace;
-      padding: 16px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -41,7 +43,7 @@
 
     .cockpit-deck {
       width: 100%;
-      max-width: 1240px;
+      max-width: 1260px;
       display: flex;
       flex-direction: column;
       gap: 14px;
@@ -52,17 +54,17 @@
       background: var(--sv-bezel);
       border: 2px solid var(--sv-bezel-border);
       border-radius: 6px;
-      padding: 10px 18px;
+      padding: 10px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
       flex-wrap: wrap;
       gap: 10px;
     }
 
     .brand-id {
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       font-weight: 900;
       letter-spacing: 1.5px;
       color: #ffffff;
@@ -73,8 +75,8 @@
 
     .telemetry-row {
       display: flex;
-      gap: 18px;
-      font-size: 0.85rem;
+      gap: 16px;
+      font-size: 0.9rem;
       font-weight: bold;
     }
 
@@ -83,14 +85,10 @@
       text-decoration: underline;
     }
 
-    .telemetry-row a:hover {
-      color: #ffffff;
-    }
-
     /* SCREEN GRID */
     .screen-grid {
       display: grid;
-      grid-template-columns: 1.25fr 0.75fr;
+      grid-template-columns: 1.28fr 0.72fr;
       gap: 14px;
     }
 
@@ -107,7 +105,7 @@
     .bezel-top {
       background: var(--sv-bezel);
       color: #94a3b8;
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       font-weight: bold;
       padding: 6px 12px;
       display: flex;
@@ -117,7 +115,7 @@
 
     /* PFD VIEWPORT */
     .pfd-viewport {
-      height: 440px;
+      height: 450px;
       position: relative;
       overflow: hidden;
       background: #000;
@@ -128,16 +126,16 @@
 
     #skyview-horizon {
       position: absolute;
-      width: 1000px;
-      height: 1000px;
-      top: -280px;
-      left: calc(50% - 500px);
+      width: 1100px;
+      height: 1100px;
+      top: -325px;
+      left: calc(50% - 550px);
       transition: transform 0.04s linear;
       background: linear-gradient(to bottom, var(--sv-sky) 0%, var(--sv-sky) 50%, var(--sv-ground) 50%, var(--sv-ground) 100%);
       z-index: 1;
     }
 
-    /* REFINED GRADUATED PITCH RUNGS */
+    /* PITCH RUNGS */
     .pitch-graduations {
       position: absolute;
       inset: 0;
@@ -153,8 +151,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      color: rgba(255, 255, 255, 0.85);
-      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.75rem;
       font-weight: bold;
     }
 
@@ -173,9 +171,9 @@
 
     .pitch-zero {
       top: calc(50% - 1px);
-      width: 240px;
+      width: 260px;
       height: 2px;
-      background: rgba(255, 255, 255, 0.6);
+      background: rgba(255, 255, 255, 0.7);
     }
 
     .pitch-m10 { top: calc(50% + 50px); width: 110px; }
@@ -184,12 +182,12 @@
     .pitch-m20 { top: calc(50% + 100px); width: 140px; }
     .pitch-m20::before, .pitch-m20::after { width: 45px; border-top: 2px dashed #ffffff; background: transparent; }
 
-    /* DYNON ORANGE WATERLINE REFERENCE SYMBOL */
+    /* DYNON ORANGE WATERLINE SYMBOL */
     .waterline-symbol {
       position: absolute;
       z-index: 6;
-      width: 170px;
-      height: 10px;
+      width: 180px;
+      height: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -197,22 +195,22 @@
     }
 
     .waterline-wing {
-      width: 52px;
-      height: 7px;
+      width: 55px;
+      height: 8px;
       background: var(--sv-orange);
       border: 1.5px solid #000;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.8);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.8);
     }
 
     .waterline-pip {
-      width: 8px;
-      height: 8px;
+      width: 10px;
+      height: 10px;
       background: var(--sv-orange);
       border: 1.5px solid #000;
       border-radius: 50%;
     }
 
-    /* HOLLOW TRANSPARENT WIREFRAME MAGENTA HEART BORESIGHT */
+    /* HOLLOW WIREFRAME MAGENTA HEART */
     .boresight-heart-anchor {
       position: absolute;
       z-index: 8;
@@ -223,9 +221,9 @@
     }
 
     .heart-wireframe {
-      width: 44px;
-      height: 44px;
-      filter: drop-shadow(0 0 5px var(--sv-magenta));
+      width: 48px;
+      height: 48px;
+      filter: drop-shadow(0 0 6px var(--sv-magenta));
     }
 
     .heart-wireframe svg {
@@ -237,92 +235,97 @@
       stroke-linejoin: round;
     }
 
-    /* SPEED TAPE MODULE */
+    /* HIGH-CONTRAST SPEED TAPE */
     .speed-tape-module {
       position: absolute;
-      left: 14px;
-      top: 24px;
-      bottom: 56px;
-      width: 76px;
-      background: rgba(11, 17, 26, 0.92);
-      border: 1.5px solid #475569;
-      border-radius: 3px;
+      left: 12px;
+      top: 20px;
+      bottom: 54px;
+      width: 90px;
+      background: rgba(10, 16, 26, 0.94);
+      border: 2px solid #64748b;
+      border-radius: 4px;
       z-index: 10;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 6px 3px;
+      padding: 6px 4px;
     }
 
     .target-bug-box {
-      font-size: 0.7rem;
-      font-weight: bold;
+      font-size: 0.75rem;
+      font-weight: 900;
       color: var(--sv-cyan);
       background: #000;
-      border: 1px solid var(--sv-cyan);
-      padding: 2px 4px;
-      border-radius: 2px;
+      border: 1.5px solid var(--sv-cyan);
+      padding: 2px 6px;
+      border-radius: 3px;
     }
 
     .speed-trend-bar {
       position: absolute;
       left: 3px;
-      width: 4px;
+      width: 5px;
       background: var(--sv-magenta);
       border-radius: 2px;
       transition: height 0.08s linear, top 0.08s linear;
     }
 
     .current-readout-window {
-      font-size: 1.25rem;
+      font-size: 1.7rem;
       font-weight: 900;
       background: #000000;
       color: #ffffff;
-      border: 2px solid var(--sv-cyan);
+      border: 2.5px solid var(--sv-cyan);
       padding: 4px 6px;
-      border-radius: 3px;
-      box-shadow: 0 0 8px rgba(6, 182, 212, 0.4);
+      border-radius: 4px;
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
     }
 
-    /* ALTITUDE TAPE & VSI MODULE */
+    .tape-rung {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #94a3b8;
+    }
+
+    /* HIGH-CONTRAST ALTITUDE TAPE & VSI */
     .alt-tape-module {
       position: absolute;
-      right: 14px;
-      top: 24px;
-      bottom: 56px;
+      right: 12px;
+      top: 20px;
+      bottom: 54px;
       display: flex;
       gap: 4px;
       z-index: 10;
     }
 
     .alt-main-tape {
-      width: 86px;
-      background: rgba(11, 17, 26, 0.92);
-      border: 1.5px solid #475569;
-      border-radius: 3px;
+      width: 100px;
+      background: rgba(10, 16, 26, 0.94);
+      border: 2px solid #64748b;
+      border-radius: 4px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 6px 3px;
+      padding: 6px 4px;
     }
 
-    /* VERTICAL SPEED INDICATOR (VSI) */
     .vsi-module {
-      width: 28px;
+      width: 30px;
       background: var(--sv-vsi-bg);
-      border: 1px solid #475569;
-      border-radius: 3px;
+      border: 2px solid #64748b;
+      border-radius: 4px;
       position: relative;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 4px 0;
-      font-size: 0.65rem;
-      font-weight: bold;
-      color: #94a3b8;
+      padding: 6px 0;
+      font-size: 0.7rem;
+      font-weight: 900;
+      color: #cbd5e1;
     }
 
     .vsi-zero-mark {
@@ -331,7 +334,7 @@
       left: 0;
       right: 0;
       height: 2px;
-      background: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.6);
     }
 
     .vsi-pointer {
@@ -340,9 +343,9 @@
       top: 50%;
       width: 0;
       height: 0;
-      border-top: 5px solid transparent;
-      border-bottom: 5px solid transparent;
-      border-right: 8px solid var(--sv-white);
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      border-right: 10px solid var(--sv-white);
       transform: translateY(-50%);
       transition: top 0.08s ease-out;
     }
@@ -351,12 +354,12 @@
     .compass-tape-container {
       position: absolute;
       bottom: 4px;
-      left: 96px;
-      right: 124px;
+      left: 110px;
+      right: 140px;
       height: 44px;
-      background: rgba(7, 11, 17, 0.92);
-      border: 1.5px solid #475569;
-      border-radius: 3px;
+      background: rgba(7, 11, 17, 0.94);
+      border: 2px solid #475569;
+      border-radius: 4px;
       z-index: 10;
       overflow: hidden;
       display: flex;
@@ -368,8 +371,8 @@
       position: absolute;
       display: flex;
       gap: 22px;
-      font-size: 0.8rem;
-      font-weight: bold;
+      font-size: 0.85rem;
+      font-weight: 900;
       color: #cbd5e1;
       transition: transform 0.04s linear;
       white-space: nowrap;
@@ -401,17 +404,17 @@
       background: #000;
       border: 1.5px solid var(--sv-cyan);
       color: #fff;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       font-weight: 900;
       padding: 1px 6px;
       border-radius: 2px;
     }
 
-    /* MFD VIEWPORT */
+    /* MFD VIEWPORT & GIS MAP */
     .mfd-viewport {
-      height: 440px;
+      height: 450px;
       background: #020408;
-      padding: 14px;
+      padding: 12px;
       overflow-y: auto;
     }
 
@@ -423,7 +426,28 @@
     .mfd-tab.active {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
+    }
+
+    #gis-tactical-map {
+      width: 100%;
+      height: 250px;
+      border: 1.5px solid var(--sv-cyan);
+      border-radius: 4px;
+      background: #03080e;
+      z-index: 1;
+    }
+
+    /* TACTICAL MAP POPUPS */
+    .leaflet-popup-content-wrapper {
+      background: #070d14 !important;
+      color: #39ff14 !important;
+      font-family: 'Courier New', Courier, monospace !important;
+      border: 1px solid #00f0ff !important;
+      border-radius: 4px !important;
+    }
+    .leaflet-popup-tip {
+      background: #070d14 !important;
     }
 
     .softkey-row {
@@ -453,7 +477,7 @@
       border: 2px dashed var(--sv-danger);
       background: rgba(239, 68, 68, 0.08);
       border-radius: 4px;
-      padding: 12px;
+      padding: 8px 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -463,7 +487,7 @@
       background: var(--sv-danger);
       color: #fff;
       border: none;
-      padding: 8px 12px;
+      padding: 6px 12px;
       font-family: inherit;
       font-weight: bold;
       cursor: pointer;
@@ -475,17 +499,40 @@
       color: #cbd5e1;
     }
 
-    .community-card {
-      border: 1px dashed var(--sv-cyan);
-      background: rgba(6, 182, 212, 0.04);
+    /* DISPATCH TILES */
+    .portal-link-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .portal-card {
+      background: rgba(6, 182, 212, 0.06);
+      border: 1px solid var(--sv-cyan);
       border-radius: 4px;
-      padding: 12px;
+      padding: 10px;
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
       gap: 6px;
     }
 
-    /* DIRECT FLIGHT CONTROLS QUADRANT */
+    .portal-card a {
+      color: #000;
+      background: var(--sv-cyan);
+      font-weight: 900;
+      text-decoration: none;
+      padding: 4px 8px;
+      text-align: center;
+      border-radius: 2px;
+      font-size: 0.75rem;
+    }
+
+    .portal-card a:hover {
+      background: #ffffff;
+    }
+
+    /* CONTROLS QUADRANT */
     .controls-deck {
       display: grid;
       grid-template-columns: 240px 1fr;
@@ -585,6 +632,8 @@
       margin-bottom: 10px;
       font-weight: bold;
       color: var(--sv-green);
+      flex-wrap: wrap;
+      gap: 6px;
     }
 
     .mcu-container {
@@ -619,6 +668,7 @@
       font-weight: bold;
       font-size: 0.8rem;
       border-radius: 2px;
+      white-space: nowrap;
     }
 
     .cockpit-footer {
@@ -638,6 +688,7 @@
     @media (max-width: 900px) {
       .screen-grid { grid-template-columns: 1fr; }
       .controls-deck { grid-template-columns: 1fr; }
+      .portal-link-grid { grid-template-columns: 1fr; }
       .mcu-entry { grid-template-columns: 1fr; gap: 6px; }
     }
   </style>
@@ -694,23 +745,26 @@
             </div>
           </div>
 
-          <!-- AIRSPEED TAPE WITH SELECTED BUG & 6-SEC TREND -->
+          <!-- HIGH-CONTRAST SPEED TAPE -->
           <div class="speed-tape-module">
             <div class="target-bug-box">SEL 120</div>
+            <span class="tape-rung" id="speed-top-rung">130</span>
             <div id="speed-trend-vector" class="speed-trend-bar" style="top: 50%; height: 0px;"></div>
             <div id="pfd-speed-readout" class="current-readout-window">115</div>
-            <span style="font-size:0.7rem; color:#94a3b8; font-weight: bold;">KTS</span>
+            <span class="tape-rung" id="speed-bot-rung">100</span>
+            <span style="font-size:0.75rem; color:#cbd5e1; font-weight: 900;">KTS</span>
           </div>
 
-          <!-- ALTITUDE TAPE WITH SELECTED BUG & VSI -->
+          <!-- HIGH-CONTRAST ALTITUDE TAPE & VSI -->
           <div class="alt-tape-module">
             <div class="alt-main-tape">
               <div class="target-bug-box">SEL 4500</div>
+              <span class="tape-rung" id="alt-top-rung">3700</span>
               <div id="pfd-alt-readout" class="current-readout-window">3500</div>
-              <span style="font-size:0.7rem; color:#94a3b8; font-weight: bold;">ALT FT</span>
+              <span class="tape-rung" id="alt-bot-rung">3300</span>
+              <span style="font-size:0.75rem; color:#cbd5e1; font-weight: 900;">ALT FT</span>
             </div>
 
-            <!-- VERTICAL SPEED INDICATOR (VSI: -2000 to +2000 FPM) -->
             <div class="vsi-module" title="Vertical Speed Indicator (FPM x 1000)">
               <span>+2</span>
               <span>+1</span>
@@ -737,32 +791,63 @@
       <!-- MFD -->
       <section class="display-bezel" aria-label="Multi-Function Display">
         <div class="bezel-top">
-          <span id="mfd-screen-title">MFD 1 // MAP RADAR</span>
+          <span id="mfd-screen-title">MFD 1 // TACTICAL MAP (GIS)</span>
           <span>PAGE 1</span>
         </div>
 
         <div class="mfd-viewport">
+          <!-- VIEW 1: TACTICAL GIS MAP WITH FOREST & FRANCINE -->
           <div id="mfd-view-map" class="mfd-tab active">
             <div class="disconnect-panel">
               <div>
                 <strong style="color: var(--sv-danger);">EMERGENCY OVERRIDE</strong>
-                <div style="font-size: 0.75rem; color: #94a3b8;">Sever community tracking feed immediately</div>
+                <div style="font-size: 0.72rem; color: #94a3b8;">Sever community tracking feed immediately</div>
               </div>
-              <button type="button" id="emergency-disconnect-btn" class="btn-emergency">DECONFLICT (DISCONNECT)</button>
+              <button type="button" id="emergency-disconnect-btn" class="btn-emergency">DECONFLICT</button>
             </div>
 
-            <div id="community-map-box" class="community-card">
-              <div style="font-weight: bold; color: var(--sv-cyan);">ACTIVE TELEMETRY MONITORS</div>
-              <div style="font-size: 0.85rem;">• Forest The Cat: Sector Link Active</div>
-              <div style="font-size: 0.85rem;">• Francine: Ground Spotter Active</div>
-              <div style="font-size: 0.85rem;">• Richmond Cats Instagram Feed: Linked (@richmondcats)</div>
-            </div>
+            <!-- LIVE LEAFLET GIS ENGINE -->
+            <div id="gis-tactical-map"></div>
 
-            <div id="override-status-line" style="font-size: 0.8rem; color: var(--sv-green);">
-              FEED STATUS: SENSORS NOMINAL // STREAM ACTIVE
+            <div id="override-status-line" style="font-size: 0.75rem; color: var(--sv-green);">
+              TACTICAL GRID: 2 TARGETS LOCKED // RICHMOND URBAN CORRIDOR
             </div>
           </div>
 
+          <!-- VIEW 2: AVIATION PORTALS & RECRUITMENT -->
+          <div id="mfd-view-portals" class="mfd-tab">
+            <div style="font-weight: 900; color: var(--sv-cyan); font-size: 0.85rem;">
+              DIRECT DISPATCH & RECRUITMENT PORTALS
+            </div>
+            <div class="portal-link-grid">
+              <div class="portal-card">
+                <span style="font-size:0.75rem; font-weight:bold;">Careers in Aviation (Elementary)</span>
+                <a href="https://docs.google.com/presentation/d/1e1ld-50PBIsdsnJj5Rfybq2v14E-qN6ZDy-eaT3f3qY/edit#slide=id.p" target="_blank" rel="noopener noreferrer">[LAUNCH SLIDES]</a>
+              </div>
+              <div class="portal-card">
+                <span style="font-size:0.75rem; font-weight:bold;">RVA Local News Beat</span>
+                <a href="https://docs.google.com/spreadsheets/d/1FCIT_JYLimxUzXI-pdGHT_1zql9nAe3F-vQcCsz70Pg/edit?gid=2060302602#gid=2060302602" target="_blank" rel="noopener noreferrer">[OPEN SHEET]</a>
+              </div>
+              <div class="portal-card">
+                <span style="font-size:0.75rem; font-weight:bold;">Get Hired in Aviation</span>
+                <a href="https://docs.google.com/forms/d/10_SKjSf9pc7dtaOp2QL0Fj5OqFMTN9jbo5JA1O6KnTY/viewform" target="_blank" rel="noopener noreferrer">[APPLY]</a>
+              </div>
+              <div class="portal-card">
+                <span style="font-size:0.75rem; font-weight:bold;">I Want to Volunteer</span>
+                <a href="https://docs.google.com/forms/d/1fwb6tQpHIdalDk3xGAKDaB6t9FPrVjpasWAIpMQ4cHU/viewform" target="_blank" rel="noopener noreferrer">[VOLUNTEER]</a>
+              </div>
+              <div class="portal-card">
+                <span style="font-size:0.75rem; font-weight:bold;">I Want to Become a Pilot</span>
+                <a href="https://docs.google.com/forms/d/15Uv6A_JdWY2v39cq7ywort0aQ0UMaTkHQ-S87ctu3_A/viewform" target="_blank" rel="noopener noreferrer">[FLIGHT STUDENT]</a>
+              </div>
+              <div class="portal-card">
+                <span style="font-size:0.75rem; font-weight:bold;">I Need to Hire a Pilot</span>
+                <a href="https://docs.google.com/forms/d/1hde3OihwU_oW2Et8IHzP9RSSEcU4whfqF7zVh304Ll4/viewform" target="_blank" rel="noopener noreferrer">[HIRE CREW]</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- VIEW 3: METAR OBSERVATION -->
           <div id="mfd-view-metar" class="mfd-tab">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
               <span style="color: var(--sv-amber); font-weight: bold;">KRIC METAR OBSERVATION</span>
@@ -771,6 +856,7 @@
             <pre id="metar-raw-box" style="white-space: pre-wrap; font-size: 0.85rem; color: #ffffff; line-height: 1.5; background: #000; padding: 10px; border: 1px solid #334155; border-radius: 4px;">METAR KRIC 101054Z 22006KT 10SM SCT250 22/19 A3000 RMK AO2 SLP164 T02170189</pre>
           </div>
 
+          <!-- VIEW 4: ENGINE & SYS -->
           <div id="mfd-view-engine" class="mfd-tab">
             <div style="color: var(--sv-cyan); font-weight: bold;">ENGINE & AVIONICS TELEMETRY</div>
             <div style="margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.85rem;">
@@ -782,21 +868,13 @@
               <div>VSI RATE: <span id="mfd-vsi-val" style="color:#fff;">0 FPM</span></div>
             </div>
           </div>
-
-          <div id="mfd-view-safety" class="mfd-tab">
-            <div style="color: var(--sv-green); font-weight: bold;">PILOT SAFETY & NASA ASRS DISPATCH</div>
-            <p style="font-size: 0.85rem; margin-top: 8px; color: #cbd5e1; line-height: 1.4;">
-              Aviation Safety Reporting System (ASRS) confidentially records voluntary safety reports.<br><br>
-              <a href="https://asrs.arc.nasa.gov/" target="_blank" rel="noopener noreferrer" class="mcu-link-btn">[FILE NASA ASRS REPORT]</a>
-            </p>
-          </div>
         </div>
 
         <div class="softkey-row">
           <button type="button" class="softkey active" data-target="mfd-view-map">MAP</button>
+          <button type="button" class="softkey" data-target="mfd-view-portals">PORTALS</button>
           <button type="button" class="softkey" data-target="mfd-view-metar">METAR</button>
           <button type="button" class="softkey" data-target="mfd-view-engine">ENGINE</button>
-          <button type="button" class="softkey" data-target="mfd-view-safety">SAFETY</button>
         </div>
       </section>
 
@@ -824,7 +902,7 @@
         <div class="fmc-screen" id="fmc-log-terminal">
           <div>> ROCKWELL COLLINS FMS VER 4.2</div>
           <div>> ACTIVE FLIGHT PLAN: KRIC -> DIRECT DECONFLICTION</div>
-          <div style="color: var(--sv-amber);">> PFD FLIGHT CONTROLS ACTIVE & CALIBRATED.</div>
+          <div style="color: var(--sv-amber);">> GIS TARGETS: FOREST (GRACE ST) & FRANCINE (BROAD ST) ACTIVE.</div>
         </div>
       </div>
     </section>
@@ -832,8 +910,8 @@
     <!-- LIVE MCU GOOGLE SHEET DIRECT LINK -->
     <section class="mcu-section">
       <div class="mcu-header">
-        <span>MCU TELEMETRY LOG [LIVE GOOGLE SHEET: MCU]</span>
-        <span id="mcu-status-badge" style="font-size: 0.85rem;">SYNC: 60S INTERVAL</span>
+        <span>MCU TELEMETRY LOG [LIVE GOOGLE SHEET: GID 1499083496]</span>
+        <a href="https://docs.google.com/spreadsheets/d/1tscWByPbdTPM6SHB4dNimrzRu7FQUbrNWX5SyX06d8U/edit?gid=1499083496#gid=1499083496" target="_blank" rel="noopener noreferrer" class="mcu-link-btn">[OPEN SPREADSHEET]</a>
       </div>
       <div id="mcu-stream-box" class="mcu-container">
         <div style="color: var(--sv-amber);">> SYNCHRONIZING WITH GOOGLE SPREADSHEET...</div>
@@ -849,11 +927,12 @@
 
   </div>
 
-  <!-- SELF-CONTAINED JAVASCRIPT LOGIC -->
+  <!-- Leaflet GIS Map Script -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-      // 1. ZULU CLOCK
+      // 1. ZULU MASTER CLOCK
       try {
         const zuluEl = document.getElementById('top-zulu-clock');
         function updateClock() {
@@ -866,7 +945,11 @@
         console.warn('Clock bypass:', err);
       }
 
-      // 2. MFD SOFTKEYS SWITCHER
+      // 2. MFD SOFTKEYS & GIS MAP INITIALIZATION
+      let map = null;
+      let forestMarker = null;
+      let francineMarker = null;
+
       try {
         const softkeys = document.querySelectorAll('.softkey');
         const views = document.querySelectorAll('.mfd-tab');
@@ -885,34 +968,75 @@
             if (titleEl) {
               titleEl.textContent = `MFD 1 // ${btn.textContent} SECTOR`;
             }
+
+            // Invalidate map size when switching back to map tab
+            if (targetId === 'mfd-view-map' && map) {
+              setTimeout(() => map.invalidateSize(), 100);
+            }
           });
         });
+
+        // Initialize Tactical Map centered on Richmond between Grace & Broad St
+        const mapContainer = document.getElementById('gis-tactical-map');
+        if (mapContainer && typeof L !== 'undefined') {
+          map = L.map('gis-tactical-map').setView([37.5558, -77.4655], 14);
+
+          // Dark Carto/OSM Tiles
+          L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+            subdomains: 'abcd',
+            maxZoom: 19
+          }).addTo(map);
+
+          // Marker 1: Forest The Cat (2735 W Grace St)
+          const forestIcon = L.divIcon({
+            className: 'custom-cat-pin',
+            html: '<div style="background:#00f0ff; width:14px; height:14px; border-radius:50%; border:2px solid #ffffff; box-shadow:0 0 8px #00f0ff;"></div>',
+            iconSize: [14, 14]
+          });
+          forestMarker = L.marker([37.5583, -77.4728], { icon: forestIcon }).addTo(map);
+          forestMarker.bindPopup('<strong>FOREST THE CAT</strong><br>2735 W Grace St, Richmond, VA<br><span style="color:#00f0ff;">SECTOR WATCH: ACTIVE</span>');
+
+          // Marker 2: Francine (Lowe\'s on Broad St)
+          const francineIcon = L.divIcon({
+            className: 'custom-cat-pin',
+            html: '<div style="background:#ec4899; width:14px; height:14px; border-radius:50%; border:2px solid #ffffff; box-shadow:0 0 8px #ec4899;"></div>',
+            iconSize: [14, 14]
+          });
+          francineMarker = L.marker([37.5532, -77.4582], { icon: francineIcon }).addTo(map);
+          francineMarker.bindPopup('<strong>FRANCINE (LOWE\'S)</strong><br>W Broad St Corridor<br><span style="color:#ec4899;">GARDEN PATROL: ACTIVE</span>');
+        }
       } catch (err) {
-        console.warn('Softkeys bypass:', err);
+        console.warn('Map initialization bypassed:', err);
       }
 
-      // 3. EMERGENCY MAP DECONFLICTION TOGGLE
+      // 3. EMERGENCY OVERRIDE TOGGLE
       try {
         const toggleBtn = document.getElementById('emergency-disconnect-btn');
-        const mapBox = document.getElementById('community-map-box');
         const statusLine = document.getElementById('override-status-line');
         let disconnected = false;
 
-        if (toggleBtn && mapBox) {
+        if (toggleBtn) {
           toggleBtn.addEventListener('click', () => {
             disconnected = !disconnected;
             if (disconnected) {
-              mapBox.style.display = 'none';
-              toggleBtn.textContent = 'RESTORE STREAM';
+              if (forestMarker && map) map.removeLayer(forestMarker);
+              if (francineMarker && map) map.removeLayer(francineMarker);
+              toggleBtn.textContent = 'RESTORE';
               toggleBtn.classList.add('disconnected');
-              statusLine.textContent = 'OVERRIDE ACTIVE: COMMUNITY SENSORS DISCONNECTED';
-              statusLine.style.color = 'var(--sv-danger)';
+              if (statusLine) {
+                statusLine.textContent = 'OVERRIDE ENGAGED: TARGET BEACONS SEVERED';
+                statusLine.style.color = 'var(--sv-danger)';
+              }
             } else {
-              mapBox.style.display = 'flex';
-              toggleBtn.textContent = 'DECONFLICT (DISCONNECT)';
+              if (forestMarker && map) forestMarker.addTo(map);
+              if (francineMarker && map) francineMarker.addTo(map);
+              toggleBtn.textContent = 'DECONFLICT';
               toggleBtn.classList.remove('disconnected');
-              statusLine.textContent = 'FEED STATUS: SENSORS NOMINAL // STREAM ACTIVE';
-              statusLine.style.color = 'var(--sv-green)';
+              if (statusLine) {
+                statusLine.textContent = 'TACTICAL GRID: 2 TARGETS LOCKED // RICHMOND URBAN CORRIDOR';
+                statusLine.style.color = 'var(--sv-green)';
+              }
             }
           });
         }
@@ -920,7 +1044,7 @@
         console.warn('Emergency disconnect bypass:', err);
       }
 
-      // 4. LIVE INTERACTIVE FLIGHT DYNAMICS & CONTROL SURFACES
+      // 4. LIVE FLIGHT KINEMATICS & HIGH-VISIBILITY TAPES
       let flightState = {
         pitch: 0,
         roll: 0,
@@ -934,6 +1058,10 @@
       const horizon = document.getElementById('skyview-horizon');
       const speedVal = document.getElementById('pfd-speed-readout');
       const altVal = document.getElementById('pfd-alt-readout');
+      const speedTopRung = document.getElementById('speed-top-rung');
+      const speedBotRung = document.getElementById('speed-bot-rung');
+      const altTopRung = document.getElementById('alt-top-rung');
+      const altBotRung = document.getElementById('alt-bot-rung');
       const rpmVal = document.getElementById('dyn-rpm');
       const vsiNeedle = document.getElementById('vsi-needle');
       const mfdVsi = document.getElementById('mfd-vsi-val');
@@ -1012,8 +1140,16 @@
           horizon.style.transform = `translateY(${currentPitch * 5}px) rotate(${currentRoll}deg)`;
         }
 
-        if (altVal) altVal.textContent = Math.round(flightState.altitude);
-        if (speedVal) speedVal.textContent = Math.round(flightState.ias);
+        const roundedAlt = Math.round(flightState.altitude);
+        const roundedIas = Math.round(flightState.ias);
+
+        if (altVal) altVal.textContent = roundedAlt;
+        if (speedVal) speedVal.textContent = roundedIas;
+        if (speedTopRung) speedTopRung.textContent = roundedIas + 15;
+        if (speedBotRung) speedBotRung.textContent = Math.max(0, roundedIas - 15);
+        if (altTopRung) altTopRung.textContent = roundedAlt + 200;
+        if (altBotRung) altBotRung.textContent = Math.max(0, roundedAlt - 200);
+
         if (rpmVal) rpmVal.textContent = Math.round(1400 + (flightState.throttle * 15.5));
         if (mfdVsi) mfdVsi.textContent = `${flightState.vsi} FPM`;
 
@@ -1042,7 +1178,7 @@
 
       }, 40);
 
-      // 5. NOAA AVIATION METAR API (FULL ENTIRE OBSERVATION STREAM)
+      // 5. NOAA AVIATION METAR API
       async function fetchLiveMetar() {
         const topLink = document.getElementById('top-metar-link');
         const rawBox = document.getElementById('metar-raw-box');
@@ -1057,16 +1193,16 @@
             if (rawBox) rawBox.textContent = text;
           }
         } catch (e) {
-          console.warn('METAR fetch encountered network fallback:', e);
+          console.warn('METAR network fallback applied');
         }
       }
       fetchLiveMetar();
       setInterval(fetchLiveMetar, 300000);
 
-      // 6. LIVE GOOGLE SHEET INTEGRATION (MCU TAB)
-      const MCU_SHEET_ID = '1tscWByPbdTPM6SHB4dNimrzRu7FQUbrNWX5SyX06d8U';
-      const MCU_TAB = 'MCU';
-      const MCU_ENDPOINT = `https://docs.google.com/spreadsheets/d/${MCU_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(MCU_TAB)}`;
+      // 6. LIVE GOOGLE SHEET VIA GID 1499083496
+      const SHEET_ID = '1tscWByPbdTPM6SHB4dNimrzRu7FQUbrNWX5SyX06d8U';
+      const SHEET_GID = '1499083496';
+      const MCU_ENDPOINT = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${SHEET_GID}`;
 
       async function pullGoogleSheetMCU() {
         const target = document.getElementById('mcu-stream-box');
@@ -1084,7 +1220,7 @@
           target.innerHTML = '';
 
           if (!rows || rows.length === 0) {
-            target.innerHTML = '<div>> NO MCU LOGS IN SPREADSHEET</div>';
+            target.innerHTML = '<div>> NO MCU LOGS FOUND IN SPREADSHEET</div>';
             return;
           }
 
