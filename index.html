@@ -3,165 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AA-Flight Services | Professional Dashboard</title>
-    <!-- Tailwind CSS for modern styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>AA Flight Services | Premium Business Travel</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .aa-gradient { background: linear-gradient(135deg, #003580 0%, #005eb8 100%); }
-        .tab-active { border-bottom: 3px solid #005eb8; color: #005eb8; font-weight: 600; }
+        :root {
+            --aa-blue: #0078d2;
+            --aa-red: #c30019;
+            --aa-silver: #f5f7f9;
+            --aa-navy: #1a2b49;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--aa-silver);
+            color: var(--aa-navy);
+        }
+
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .hero-section {
+            background: linear-gradient(rgba(26, 43, 73, 0.7), rgba(26, 43, 73, 0.7)), 
+                        url('https://images.unsplash.com/photo-1436491865332-7a61a109c0f3?auto=format&fit=crop&q=80&w=2070');
+            background-size: cover;
+            background-position: center;
+            padding: 100px 0;
+            color: white;
+        }
+
+        .booking-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            margin-top: -60px;
+            color: var(--aa-navy);
+        }
+
+        .btn-aa-primary {
+            background-color: var(--aa-blue);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-weight: 600;
+        }
+
+        .btn-aa-primary:hover {
+            background-color: #005fa3;
+            color: white;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            color: var(--aa-blue);
+            margin-bottom: 15px;
+        }
+
+        .footer {
+            background-color: var(--aa-navy);
+            color: white;
+            padding: 50px 0;
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900">
+<body>
 
-    <!-- Navigation Bar -->
-    <nav class="bg-white shadow-sm border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <div class="flex items-center space-x-2">
-                    <div class="w-8 h-8 aa-gradient rounded-full flex items-center justify-center text-white font-bold">AA</div>
-                    <span class="text-xl font-bold tracking-tight text-blue-900">Flight Services</span>
-                </div>
-                <div class="hidden md:flex space-x-8 text-sm font-medium text-gray-600 underline-offset-4">
-                    <a href="#" class="hover:text-blue-600 transition">Book</a>
-                    <a href="#" class="hover:text-blue-600 transition">Manage Trips</a>
-                    <a href="#" class="hover:text-blue-600 transition">AAdvantage®</a>
-                    <a href="#" class="hover:text-blue-600 transition">Flight Status</a>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <button class="text-sm font-semibold text-gray-700 px-4 py-2 hover:bg-gray-100 rounded-md">Log In</button>
-                    <button class="bg-blue-600 text-white text-sm font-semibold px-5 py-2 rounded-md hover:bg-blue-700 transition shadow-sm">Sign Up</button>
-                </div>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#" style="color: var(--aa-blue);">
+                <i class="fas fa-plane-departure me-2"></i>AA FLIGHT SERVICES
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#search">Book</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#about">About Business</a></li>
+                    <li class="nav-item"><a class="btn btn-aa-primary ms-lg-3" href="#">Sign In</a></li>
+                </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section with Search Widget -->
-    <header class="aa-gradient pt-12 pb-32 px-4">
-        <div class="max-w-5xl mx-auto text-center text-white">
-            <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Where would you like to go?</h1>
-            <p class="text-blue-100 text-lg mb-8">Plan your next journey with AA-Flight Services.</p>
+    <!-- Hero Section -->
+    <header class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-3 fw-bold">Elevate Your Business Travel</h1>
+            <p class="lead">Seamless connectivity and world-class service tailored for your enterprise.</p>
         </div>
     </header>
 
-    <!-- Interactive Booking Widget -->
-    <main class="max-w-5xl mx-auto px-4 -mt-20">
-        <div class="bg-white rounded-xl shadow-xl overflow-hidden">
-            <!-- Tabs -->
-            <div class="flex border-b border-gray-100 text-sm md:text-base">
-                <button id="tab-book" onclick="switchTab('book')" class="flex-1 py-4 text-center tab-active transition hover:bg-gray-50">Book Flight</button>
-                <button id="tab-status" onclick="switchTab('status')" class="flex-1 py-4 text-center text-gray-500 transition hover:bg-gray-50">Flight Status</button>
-                <button id="tab-trips" onclick="switchTab('trips')" class="flex-1 py-4 text-center text-gray-500 transition hover:bg-gray-50">My Trips</button>
-            </div>
+    <!-- Booking Section -->
+    <section id="search" class="container mb-5">
+        <div class="booking-card">
+            <form class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">From</label>
+                    <input type="text" class="form-control" placeholder="Origin City or Airport">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">To</label>
+                    <input type="text" class="form-control" placeholder="Destination City">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold">Departure</label>
+                    <input type="date" class="form-control">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold">Passengers</label>
+                    <select class="form-select">
+                        <option>1 Adult</option>
+                        <option>2 Adults</option>
+                        <option>Business Group</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-aa-primary w-100">Search Flights</button>
+                </div>
+            </form>
+        </div>
+    </section>
 
-            <!-- Content Area -->
-            <div class="p-6 md:p-8" id="search-content">
-                <!-- Search Form (Default) -->
-                <div id="form-book" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div class="md:col-span-1">
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">From</label>
-                        <input type="text" placeholder="Origin City/Airport" class="w-full border border-gray-200 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none">
-                    </div>
-                    <div class="md:col-span-1">
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">To</label>
-                        <input type="text" placeholder="Destination City/Airport" class="w-full border border-gray-200 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none">
-                    </div>
-                    <div class="md:col-span-1">
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Depart Date</label>
-                        <input type="date" class="w-full border border-gray-200 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none">
-                    </div>
-                    <div class="md:col-span-1 flex items-end">
-                        <button class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition shadow-md uppercase text-sm tracking-widest">
-                            Search Flights
-                        </button>
+    <!-- Services Section -->
+    <section id="services" class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Business Account Services</h2>
+                <div class="mx-auto" style="width: 60px; height: 3px; background: var(--aa-red);"></div>
+            </div>
+            <div class="row text-center g-4">
+                <div class="col-md-4">
+                    <div class="p-4 bg-white rounded shadow-sm">
+                        <i class="fas fa-briefcase feature-icon"></i>
+                        <h4>Corporate Solutions</h4>
+                        <p>Managed travel for teams of all sizes with dedicated account managers.</p>
                     </div>
                 </div>
-
-                <!-- Flight Status Form (Hidden by default) -->
-                <div id="form-status" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Flight Number</label>
-                        <input type="text" placeholder="e.g. AA123" class="w-full border border-gray-200 rounded-lg p-3 outline-none">
+                <div class="col-md-4">
+                    <div class="p-4 bg-white rounded shadow-sm">
+                        <i class="fas fa-chart-line feature-icon"></i>
+                        <h4>Priority Logistics</h4>
+                        <p>Expedited check-in and luggage handling for all business account members.</p>
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Date</label>
-                        <input type="date" class="w-full border border-gray-200 rounded-lg p-3 outline-none">
-                    </div>
-                    <div class="flex items-end">
-                        <button class="w-full bg-blue-800 text-white font-bold py-3 rounded-lg hover:bg-blue-900 transition">Track Status</button>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-4 bg-white rounded shadow-sm">
+                        <i class="fas fa-headset feature-icon"></i>
+                        <h4>24/7 Concierge</h4>
+                        <p>Real-time flight monitoring and instant rebooking via our AI assistant.</p>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Secondary Services Grid -->
-        <section class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition cursor-pointer">
-                <div class="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center text-blue-600 mb-4">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
-                </div>
-                <h3 class="text-lg font-bold mb-2">Easy Check-in</h3>
-                <p class="text-gray-500 text-sm">Check in 24 hours before your flight and get your mobile boarding pass.</p>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition cursor-pointer">
-                <div class="bg-green-100 w-12 h-12 rounded-lg flex items-center justify-center text-green-600 mb-4">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                </div>
-                <h3 class="text-lg font-bold mb-2">AAdvantage® Points</h3>
-                <p class="text-gray-500 text-sm">Earn and redeem miles for flights, upgrades, and premium vacation experiences.</p>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition cursor-pointer">
-                <div class="bg-red-100 w-12 h-12 rounded-lg flex items-center justify-center text-red-600 mb-4">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </div>
-                <h3 class="text-lg font-bold mb-2">Travel Advisory</h3>
-                <p class="text-gray-500 text-sm">Real-time updates on weather, airport regulations, and international travel requirements.</p>
-            </div>
-        </section>
-    </main>
+    </section>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 py-12">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <p class="text-gray-400 text-sm">© 2024 AA-Flight Services. An American Airlines Project Concept.</p>
-            <div class="flex justify-center space-x-6 mt-4">
-                <a href="#" class="text-gray-400 hover:text-blue-600">Privacy Policy</a>
-                <a href="#" class="text-gray-400 hover:text-blue-600">Terms of Service</a>
-                <a href="#" class="text-gray-400 hover:text-blue-600">Contact Support</a>
+    <footer class="footer mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold mb-3">AA Flight Services</h5>
+                    <p class="text-secondary">Official portal for AA business flight management and corporate logistics. Connect your world with ours.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h6 class="fw-bold">Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-secondary text-decoration-none">My Account</a></li>
+                        <li><a href="#" class="text-secondary text-decoration-none">Flight Status</a></li>
+                        <li><a href="#" class="text-secondary text-decoration-none">Cargo Info</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h6 class="fw-bold">Support</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-secondary text-decoration-none">Help Center</a></li>
+                        <li><a href="#" class="text-secondary text-decoration-none">Accessibility</a></li>
+                        <li><a href="#" class="text-secondary text-decoration-none">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="fw-bold">Follow Us</h6>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-white"><i class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-facebook fa-lg"></i></a>
+                    </div>
+                </div>
             </div>
+            <hr class="mt-4 border-secondary">
+            <p class="text-center text-secondary small">© 2024 AA Flight Services Project. For demonstration purposes only.</p>
         </div>
     </footer>
 
-    <!-- Interactive Logic -->
-    <script>
-        function switchTab(tab) {
-            const tabs = ['book', 'status', 'trips'];
-            tabs.forEach(t => {
-                const btn = document.getElementById(`tab-${t}`);
-                const form = document.getElementById(`form-${t}`);
-                
-                if (t === tab) {
-                    btn.classList.add('tab-active');
-                    btn.classList.remove('text-gray-500');
-                    if(form) form.classList.remove('hidden');
-                } else {
-                    btn.classList.remove('tab-active');
-                    btn.classList.add('text-gray-500');
-                    if(form) form.classList.add('hidden');
-                }
-            });
-        }
-    </script>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-
-    
-
-
-
-
- 
-      
