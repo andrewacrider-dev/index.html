@@ -3,21 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Avionics Codex // Dynon SkyView Touch Glass Cockpit</title>
+  <title>Dynon SkyView Touch Avionics Suite // Codex</title>
   <style>
     :root {
-      --sv-dark: #05080c;
-      --sv-bezel: #151d27;
-      --sv-bezel-border: #2c3b4e;
+      --sv-dark: #070a0e;
+      --sv-bezel: #161f2b;
+      --sv-bezel-border: #273547;
       --sv-sky: #0284c7;
-      --sv-ground: #78350f;
+      --sv-ground: #713f12;
       --sv-green: #22c55e;
       --sv-amber: #f59e0b;
+      --sv-orange: #ea580c;
       --sv-magenta: #ec4899;
       --sv-white: #f8fafc;
       --sv-cyan: #06b6d4;
       --sv-danger: #ef4444;
-      --sv-hud-line: rgba(255, 255, 255, 0.7);
+      --sv-vsi-bg: rgba(15, 23, 42, 0.9);
     }
 
     * {
@@ -43,15 +44,15 @@
       max-width: 1240px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
     }
 
-    /* ANNUNCIATOR / MASTER STATUS BANNER */
+    /* TOP ANNUNCIATOR BAR */
     .annunciator-bar {
       background: var(--sv-bezel);
       border: 2px solid var(--sv-bezel-border);
       border-radius: 6px;
-      padding: 12px 18px;
+      padding: 10px 18px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -61,9 +62,9 @@
     }
 
     .brand-id {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 900;
-      letter-spacing: 2px;
+      letter-spacing: 1.5px;
       color: #ffffff;
       display: flex;
       align-items: center;
@@ -72,8 +73,8 @@
 
     .telemetry-row {
       display: flex;
-      gap: 20px;
-      font-size: 0.9rem;
+      gap: 18px;
+      font-size: 0.85rem;
       font-weight: bold;
     }
 
@@ -81,11 +82,11 @@
       color: var(--sv-cyan);
     }
 
-    /* PRIMARY INSTRUMENT GRID */
+    /* SCREEN GRID */
     .screen-grid {
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 16px;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 14px;
     }
 
     .display-bezel {
@@ -95,13 +96,13 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9);
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.95);
     }
 
     .bezel-top {
       background: var(--sv-bezel);
       color: #94a3b8;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: bold;
       padding: 6px 12px;
       display: flex;
@@ -109,9 +110,9 @@
       border-bottom: 1px solid var(--sv-bezel-border);
     }
 
-    /* PFD (PRIMARY FLIGHT DISPLAY) */
+    /* PFD VIEWPORT */
     .pfd-viewport {
-      height: 420px;
+      height: 440px;
       position: relative;
       overflow: hidden;
       background: #000;
@@ -122,46 +123,91 @@
 
     #skyview-horizon {
       position: absolute;
-      width: 960px;
-      height: 960px;
-      top: -270px;
-      left: calc(50% - 480px);
-      transition: transform 0.05s ease-out;
+      width: 1000px;
+      height: 1000px;
+      top: -280px;
+      left: calc(50% - 500px);
+      transition: transform 0.04s linear;
       background: linear-gradient(to bottom, var(--sv-sky) 0%, var(--sv-sky) 50%, var(--sv-ground) 50%, var(--sv-ground) 100%);
       z-index: 1;
     }
 
-    .pitch-ladder {
+    /* REFINED GRADUATED PITCH RUNGS (NO SOLID REPEATING STRIPES) */
+    .pitch-graduations {
       position: absolute;
       inset: 0;
-      background: repeating-linear-gradient(
-        to bottom,
-        transparent,
-        transparent 38px,
-        var(--sv-hud-line) 38px,
-        var(--sv-hud-line) 40px
-      );
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       pointer-events: none;
     }
 
-    /* STANDARD CIVILIAN BORESIGHT WINGS */
-    .reticle-arms {
+    .pitch-line {
       position: absolute;
-      width: 140px;
-      height: 4px;
       display: flex;
       justify-content: space-between;
-      z-index: 5;
+      align-items: center;
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.7rem;
+      font-weight: bold;
     }
 
-    .reticle-arm {
-      width: 40px;
-      height: 6px;
-      background: var(--sv-amber);
-      border: 1px solid #000;
+    .pitch-line::before, .pitch-line::after {
+      content: "";
+      display: block;
+      height: 2px;
+      background: #ffffff;
     }
 
-    /* HOLLOW TRANSPARENT WIREFRAME MAGENTA HEART */
+    .pitch-p20 { top: calc(50% - 100px); width: 140px; }
+    .pitch-p20::before, .pitch-p20::after { width: 45px; }
+
+    .pitch-p10 { top: calc(50% - 50px); width: 110px; }
+    .pitch-p10::before, .pitch-p10::after { width: 35px; }
+
+    .pitch-zero {
+      top: calc(50% - 1px);
+      width: 240px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.6);
+    }
+
+    .pitch-m10 { top: calc(50% + 50px); width: 110px; }
+    .pitch-m10::before, .pitch-m10::after { width: 35px; border-top: 2px dashed #ffffff; background: transparent; }
+
+    .pitch-m20 { top: calc(50% + 100px); width: 140px; }
+    .pitch-m20::before, .pitch-m20::after { width: 45px; border-top: 2px dashed #ffffff; background: transparent; }
+
+    /* PROMINENT DYNON ORANGE HORIZONTAL WATERLINE SYMBOL */
+    .waterline-symbol {
+      position: absolute;
+      z-index: 6;
+      width: 170px;
+      height: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .waterline-wing {
+      width: 52px;
+      height: 7px;
+      background: var(--sv-orange);
+      border: 1.5px solid #000;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
+
+    .waterline-pip {
+      width: 8px;
+      height: 8px;
+      background: var(--sv-orange);
+      border: 1.5px solid #000;
+      border-radius: 50%;
+    }
+
+    /* HOLLOW TRANSPARENT WIREFRAME MAGENTA HEART BORESIGHT */
     .boresight-heart-anchor {
       position: absolute;
       z-index: 8;
@@ -172,8 +218,8 @@
     }
 
     .heart-wireframe {
-      width: 46px;
-      height: 46px;
+      width: 44px;
+      height: 44px;
       filter: drop-shadow(0 0 5px var(--sv-magenta));
     }
 
@@ -186,40 +232,181 @@
       stroke-linejoin: round;
     }
 
-    /* SPEED & ALTITUDE TAPES */
-    .sky-tape {
+    /* AIRSPEED TAPE WITH TREND & BUG */
+    .speed-tape-module {
       position: absolute;
+      left: 14px;
       top: 24px;
-      bottom: 24px;
-      width: 70px;
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid #475569;
+      bottom: 56px;
+      width: 72px;
+      background: rgba(11, 17, 26, 0.9);
+      border: 1.5px solid #475569;
+      border-radius: 3px;
       z-index: 10;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 4px;
+      padding: 6px 2px;
     }
 
-    .sky-tape-speed { left: 16px; }
-    .sky-tape-alt { right: 16px; }
-
-    .tape-box {
-      font-size: 1.25rem;
+    .target-bug-box {
+      font-size: 0.7rem;
       font-weight: bold;
+      color: var(--sv-cyan);
+      background: #000;
+      border: 1px solid var(--sv-cyan);
+      padding: 2px 4px;
+      border-radius: 2px;
+    }
+
+    .speed-trend-bar {
+      position: absolute;
+      left: 2px;
+      width: 4px;
+      background: var(--sv-magenta);
+      border-radius: 2px;
+      transition: height 0.1s linear, top 0.1s linear;
+    }
+
+    .current-readout-window {
+      font-size: 1.25rem;
+      font-weight: 900;
       background: #000000;
       color: #ffffff;
-      border: 1px solid var(--sv-cyan);
-      padding: 4px 8px;
+      border: 2px solid var(--sv-cyan);
+      padding: 4px 6px;
       border-radius: 3px;
+      box-shadow: 0 0 8px rgba(6, 182, 212, 0.4);
     }
 
-    /* MFD (MULTI-FUNCTION DISPLAY) */
+    /* ALTITUDE TAPE WITH TARGET BUG, TREND & VSI */
+    .alt-tape-module {
+      position: absolute;
+      right: 14px;
+      top: 24px;
+      bottom: 56px;
+      display: flex;
+      gap: 4px;
+      z-index: 10;
+    }
+
+    .alt-main-tape {
+      width: 82px;
+      background: rgba(11, 17, 26, 0.9);
+      border: 1.5px solid #475569;
+      border-radius: 3px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 2px;
+    }
+
+    /* VERTICAL SPEED INDICATOR (VSI) */
+    .vsi-module {
+      width: 28px;
+      background: var(--sv-vsi-bg);
+      border: 1px solid #475569;
+      border-radius: 3px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+      font-size: 0.65rem;
+      font-weight: bold;
+      color: #94a3b8;
+    }
+
+    .vsi-zero-mark {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    .vsi-pointer {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      width: 0;
+      height: 0;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-right: 8px solid var(--sv-white);
+      transform: translateY(-50%);
+      transition: top 0.1s ease-out;
+    }
+
+    /* DYNON SKYVIEW COMPASS HEADING TAPE */
+    .compass-tape-container {
+      position: absolute;
+      bottom: 4px;
+      left: 90px;
+      right: 114px;
+      height: 44px;
+      background: rgba(7, 11, 17, 0.92);
+      border: 1.5px solid #475569;
+      border-radius: 3px;
+      z-index: 10;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .compass-ribbon {
+      position: absolute;
+      display: flex;
+      gap: 22px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      color: #cbd5e1;
+      transition: transform 0.05s linear;
+      white-space: nowrap;
+    }
+
+    .compass-lubber-line {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--sv-white);
+      z-index: 15;
+    }
+
+    .heading-bug-triangle {
+      position: absolute;
+      top: 0;
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 8px solid var(--sv-magenta);
+      z-index: 14;
+    }
+
+    .heading-readout-badge {
+      position: absolute;
+      top: -24px;
+      background: #000;
+      border: 1.5px solid var(--sv-cyan);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 900;
+      padding: 1px 6px;
+      border-radius: 2px;
+    }
+
+    /* MFD VIEWPORT & CONTROLS */
     .mfd-viewport {
-      height: 420px;
+      height: 440px;
       background: #020408;
-      padding: 16px;
+      padding: 14px;
       overflow-y: auto;
     }
 
@@ -250,7 +437,6 @@
       font-size: 0.8rem;
       font-weight: bold;
       cursor: pointer;
-      transition: all 0.1s ease;
     }
 
     .softkey:hover, .softkey.active {
@@ -258,7 +444,6 @@
       color: #ffffff;
     }
 
-    /* EMERGENCY DECONFLICTION CONTROL */
     .disconnect-panel {
       border: 2px dashed var(--sv-danger);
       background: rgba(239, 68, 68, 0.08);
@@ -273,12 +458,11 @@
       background: var(--sv-danger);
       color: #fff;
       border: none;
-      padding: 8px 14px;
+      padding: 8px 12px;
       font-family: inherit;
       font-weight: bold;
       cursor: pointer;
       border-radius: 3px;
-      transition: background 0.2s ease;
     }
 
     .btn-emergency.disconnected {
@@ -290,36 +474,57 @@
       border: 1px dashed var(--sv-cyan);
       background: rgba(6, 182, 212, 0.04);
       border-radius: 4px;
-      padding: 14px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
-    /* CONTROLS QUADRANT & FMC */
+    /* DIRECT HARDWARE FLIGHT CONTROLS QUADRANT */
     .controls-deck {
       display: grid;
-      grid-template-columns: 220px 1fr;
-      gap: 16px;
+      grid-template-columns: 240px 1fr;
+      gap: 14px;
     }
 
-    .throttle-quadrant {
+    .control-quadrant {
       background: var(--sv-bezel);
       border: 2px solid var(--sv-bezel-border);
       border-radius: 6px;
-      padding: 16px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 10px;
     }
 
+    .flight-stick-pad {
+      width: 140px;
+      height: 100px;
+      background: #0b1118;
+      border: 1.5px solid #334155;
+      border-radius: 4px;
+      position: relative;
+      cursor: crosshair;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .stick-pip {
+      width: 14px;
+      height: 14px;
+      background: var(--sv-amber);
+      border: 1.5px solid #ffffff;
+      border-radius: 50%;
+      position: absolute;
+      pointer-events: none;
+    }
+
     .throttle-slider {
       -webkit-appearance: none;
-      writing-mode: vertical-lr;
-      direction: rtl;
-      width: 24px;
-      height: 160px;
+      width: 100%;
+      height: 10px;
       background: #0b1118;
       border: 1px solid #334155;
       border-radius: 4px;
@@ -329,10 +534,10 @@
     .throttle-slider::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 44px;
-      height: 22px;
+      width: 26px;
+      height: 18px;
       background: var(--sv-sky);
-      border: 2px solid #ffffff;
+      border: 1.5px solid #ffffff;
       border-radius: 3px;
       cursor: pointer;
     }
@@ -341,20 +546,20 @@
       background: var(--sv-bezel);
       border: 2px solid var(--sv-bezel-border);
       border-radius: 6px;
-      padding: 16px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
 
     .fmc-screen {
       background: #000000;
       border: 1px solid var(--sv-cyan);
       border-radius: 4px;
-      padding: 12px;
+      padding: 10px;
       font-size: 0.85rem;
       line-height: 1.4;
-      min-height: 130px;
+      min-height: 120px;
       color: var(--sv-green);
     }
 
@@ -363,7 +568,7 @@
       background: #030704;
       border: 2px solid var(--sv-green);
       border-radius: 6px;
-      padding: 16px;
+      padding: 14px;
       box-shadow: 0 0 14px rgba(34, 197, 94, 0.15);
     }
 
@@ -371,8 +576,8 @@
       display: flex;
       justify-content: space-between;
       border-bottom: 1px solid rgba(34, 197, 94, 0.3);
-      padding-bottom: 8px;
-      margin-bottom: 12px;
+      padding-bottom: 6px;
+      margin-bottom: 10px;
       font-weight: bold;
       color: var(--sv-green);
     }
@@ -381,14 +586,14 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      max-height: 420px;
+      max-height: 380px;
       overflow-y: auto;
     }
 
     .mcu-entry {
       display: grid;
       grid-template-columns: 140px 1.4fr 1.2fr auto;
-      gap: 12px;
+      gap: 10px;
       align-items: baseline;
       padding: 8px;
       background-color: rgba(34, 197, 94, 0.04);
@@ -396,28 +601,10 @@
       border-bottom: 1px dashed rgba(34, 197, 94, 0.2);
     }
 
-    .mcu-date {
-      color: #86efac;
-      font-weight: bold;
-      font-size: 0.9rem;
-    }
-
-    .mcu-name {
-      color: #ffffff;
-      font-weight: bold;
-    }
-
-    .mcu-meta {
-      color: #70d670;
-      font-size: 0.85rem;
-    }
-
-    .mcu-tags {
-      display: inline-block;
-      font-size: 0.75rem;
-      color: #a3e635;
-      opacity: 0.85;
-    }
+    .mcu-date { color: #86efac; font-weight: bold; font-size: 0.85rem; }
+    .mcu-name { color: #ffffff; font-weight: bold; }
+    .mcu-meta { color: #70d670; font-size: 0.85rem; }
+    .mcu-tags { font-size: 0.75rem; color: #a3e635; opacity: 0.85; }
 
     .mcu-link-btn {
       background-color: var(--sv-green);
@@ -429,17 +616,11 @@
       border-radius: 2px;
     }
 
-    .mcu-link-btn:hover {
-      background-color: #ffffff;
-      color: #000000;
-    }
-
-    /* FOOTER & CHESAPEAKE BAY CARBON OFFSET SECTION */
     .cockpit-footer {
       background: var(--sv-bezel);
       border: 1px solid var(--sv-bezel-border);
       border-radius: 6px;
-      padding: 14px 18px;
+      padding: 12px 16px;
       font-size: 0.8rem;
       color: #94a3b8;
       display: flex;
@@ -447,12 +628,6 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 10px;
-    }
-
-    .offset-link {
-      color: var(--sv-green);
-      text-decoration: underline;
-      font-weight: bold;
     }
 
     @media (max-width: 900px) {
@@ -466,7 +641,7 @@
 
   <div class="cockpit-deck">
 
-    <!-- MASTER ANNUNCIATOR BAR -->
+    <!-- MASTER ANNUNCIATOR -->
     <header class="annunciator-bar">
       <div class="brand-id">DYNON SKYVIEW TOUCH // AVIONICS CODEX</div>
       <div class="telemetry-row">
@@ -476,27 +651,37 @@
       </div>
     </header>
 
-    <!-- MAIN INSTRUMENTS GRID -->
+    <!-- INSTRUMENTS SUITE -->
     <main class="screen-grid">
 
-      <!-- PFD (PRIMARY FLIGHT DISPLAY) -->
+      <!-- PFD -->
       <section class="display-bezel" aria-label="Primary Flight Display">
         <div class="bezel-top">
-          <span>PFD 1 // SYNTHETIC VISION ATTITUDE</span>
-          <span style="color: var(--sv-magenta);">BORESIGHT: HOLLOW HEART RETICLE</span>
+          <span>PFD 1 // DYNON SYNTHETIC VISION</span>
+          <span style="color: var(--sv-magenta);">BORESIGHT: WIREFRAME HEART</span>
         </div>
 
-        <div class="pfd-viewport">
+        <div class="pfd-viewport" id="pfd-interactive-zone">
+          <!-- HORIZON DISC -->
           <div id="skyview-horizon">
-            <div class="pitch-ladder"></div>
+            <!-- REFINED GRADUATED PITCH LADDER -->
+            <div class="pitch-graduations">
+              <div class="pitch-line pitch-p20"><span>20</span><span>20</span></div>
+              <div class="pitch-line pitch-p10"><span>10</span><span>10</span></div>
+              <div class="pitch-zero"></div>
+              <div class="pitch-line pitch-m10"><span>10</span><span>10</span></div>
+              <div class="pitch-line pitch-m20"><span>20</span><span>20</span></div>
+            </div>
           </div>
 
-          <div class="reticle-arms">
-            <div class="reticle-arm"></div>
-            <div class="reticle-arm"></div>
+          <!-- PROMINENT DYNON ORANGE WATERLINE SYMBOL -->
+          <div class="waterline-symbol">
+            <div class="waterline-wing"></div>
+            <div class="waterline-pip"></div>
+            <div class="waterline-wing"></div>
           </div>
 
-          <!-- TRANSPARENT HEART BORESIGHT (Full pitch lines view) -->
+          <!-- HOLLOW WIREFRAME MAGENTA HEART (Transparent view of pitch) -->
           <div class="boresight-heart-anchor">
             <div class="heart-wireframe">
               <svg viewBox="0 0 32 32">
@@ -505,21 +690,47 @@
             </div>
           </div>
 
-          <div class="sky-tape sky-tape-speed">
-            <span style="font-size:0.75rem; color:#94a3b8;">IAS</span>
-            <span id="pfd-speed-readout" class="tape-box">112</span>
-            <span style="font-size:0.75rem; color:#94a3b8;">KT</span>
+          <!-- AIRSPEED TAPE WITH SELECTED BUG & 6-SEC TREND -->
+          <div class="speed-tape-module">
+            <div class="target-bug-box">SEL 120</div>
+            <div id="speed-trend-vector" class="speed-trend-bar" style="top: 50%; height: 0px;"></div>
+            <div id="pfd-speed-readout" class="current-readout-window">115</div>
+            <span style="font-size:0.7rem; color:#94a3b8; font-weight: bold;">KTS</span>
           </div>
 
-          <div class="sky-tape sky-tape-alt">
-            <span style="font-size:0.75rem; color:#94a3b8;">ALT</span>
-            <span id="pfd-alt-readout" class="tape-box">3500</span>
-            <span style="font-size:0.75rem; color:#94a3b8;">FT</span>
+          <!-- ALTITUDE TAPE WITH SELECTED BUG & VSI -->
+          <div class="alt-tape-module">
+            <div class="alt-main-tape">
+              <div class="target-bug-box">SEL 4500</div>
+              <div id="pfd-alt-readout" class="current-readout-window">3500</div>
+              <span style="font-size:0.7rem; color:#94a3b8; font-weight: bold;">ALT FT</span>
+            </div>
+
+            <!-- VERTICAL SPEED INDICATOR (VSI SCALE: -2000 to +2000 FPM) -->
+            <div class="vsi-module" title="Vertical Speed Indicator (FPM x 1000)">
+              <span>+2</span>
+              <span>+1</span>
+              <div class="vsi-zero-mark"></div>
+              <span>-1</span>
+              <span>-2</span>
+              <div id="vsi-needle" class="vsi-pointer"></div>
+            </div>
+          </div>
+
+          <!-- COMPASS HEADING TAPE RIBBON -->
+          <div class="compass-tape-container">
+            <div class="heading-readout-badge" id="current-hdg-badge">090°</div>
+            <div class="compass-lubber-line"></div>
+            <div class="heading-bug-triangle"></div>
+            <div id="compass-tape" class="compass-ribbon">
+              <span>030</span><span>060</span><span>E</span><span>120</span><span>150</span>
+              <span>S</span><span>210</span><span>240</span><span>W</span><span>300</span><span>330</span><span>N</span>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- MFD (MULTI-FUNCTION DISPLAY) -->
+      <!-- MFD -->
       <section class="display-bezel" aria-label="Multi-Function Display">
         <div class="bezel-top">
           <span id="mfd-screen-title">MFD 1 // MAP RADAR</span>
@@ -531,13 +742,13 @@
             <div class="disconnect-panel">
               <div>
                 <strong style="color: var(--sv-danger);">EMERGENCY OVERRIDE</strong>
-                <div style="font-size: 0.75rem; color: #94a3b8;">Disconnect tracking layer immediately</div>
+                <div style="font-size: 0.75rem; color: #94a3b8;">Sever community tracking feed immediately</div>
               </div>
               <button type="button" id="emergency-disconnect-btn" class="btn-emergency">DECONFLICT (DISCONNECT)</button>
             </div>
 
             <div id="community-map-box" class="community-card">
-              <div style="font-weight: bold; color: var(--sv-cyan);">COMMUNITY AIRSPACE MONITORS</div>
+              <div style="font-weight: bold; color: var(--sv-cyan);">ACTIVE TELEMETRY MONITORS</div>
               <div style="font-size: 0.85rem;">• Forest The Cat: Sector Link Active</div>
               <div style="font-size: 0.85rem;">• Francine: Ground Spotter Active</div>
               <div style="font-size: 0.85rem;">• Richmond Cats Instagram Feed: Linked (@richmondcats)</div>
@@ -549,26 +760,26 @@
           </div>
 
           <div id="mfd-view-metar" class="mfd-tab">
-            <div style="color: var(--sv-amber); font-weight: bold; margin-bottom: 6px;">KRIC SURFACE WEATHER OBSERVATION</div>
+            <div style="color: var(--sv-amber); font-weight: bold; margin-bottom: 6px;">KRIC SURFACE OBSERVATION</div>
             <pre id="metar-raw-box" style="white-space: pre-wrap; font-size: 0.85rem; color: #ffffff; line-height: 1.4;">CONNECTING TO NOAA AVIATION WEATHER API...</pre>
           </div>
 
           <div id="mfd-view-engine" class="mfd-tab">
             <div style="color: var(--sv-cyan); font-weight: bold;">ENGINE & AVIONICS TELEMETRY</div>
-            <div style="margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.85rem;">
+            <div style="margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.85rem;">
               <div>TACH RPM: <span id="dyn-rpm" style="color:#fff;">2450</span></div>
               <div>OIL TEMP: <span style="color:#fff;">188°F</span></div>
               <div>OIL PRESS: <span style="color:#fff;">54 PSI</span></div>
               <div>FUEL FLOW: <span style="color:#fff;">5.2 GPH</span></div>
               <div>BUS VOLTS: <span style="color:#fff;">14.2 V</span></div>
-              <div>EGT: <span style="color:#fff;">1320°F</span></div>
+              <div>VSI RATE: <span id="mfd-vsi-val" style="color:#fff;">0 FPM</span></div>
             </div>
           </div>
 
           <div id="mfd-view-safety" class="mfd-tab">
-            <div style="color: var(--sv-green); font-weight: bold;">PILOT SAFETY & REPORTING DISPATCH</div>
+            <div style="color: var(--sv-green); font-weight: bold;">PILOT SAFETY & NASA ASRS DISPATCH</div>
             <p style="font-size: 0.85rem; margin-top: 8px; color: #cbd5e1; line-height: 1.4;">
-              Aviation Safety Reporting System (ASRS) confidentially records voluntary reports of safety-related events and incidents.<br><br>
+              Aviation Safety Reporting System (ASRS) confidentially records voluntary safety reports.<br><br>
               <a href="https://asrs.arc.nasa.gov/" target="_blank" rel="noopener noreferrer" class="mcu-link-btn">[FILE NASA ASRS REPORT]</a>
             </p>
           </div>
@@ -584,20 +795,29 @@
 
     </main>
 
-    <!-- THROTTLE & COLLINS-STYLE FMC -->
+    <!-- INTERACTIVE CONTROLS & FMC -->
     <section class="controls-deck">
-      <div class="throttle-quadrant">
-        <label for="throttle-fader" style="font-size: 0.8rem; font-weight: bold;">THROTTLE</label>
-        <input type="range" id="throttle-fader" class="throttle-slider" min="0" max="100" value="65">
-        <span id="throttle-pct-text" style="font-weight: bold; color: var(--sv-cyan);">65%</span>
+      <div class="control-quadrant">
+        <label style="font-size: 0.75rem; font-weight: bold; color: #94a3b8;">INTERACTIVE FLIGHT STICK (CLICK/DRAG)</label>
+        <div class="flight-stick-pad" id="flight-stick-pad" title="Click and drag or use Arrow Keys">
+          <div class="stick-pip" id="stick-pip"></div>
+        </div>
+        <div style="width: 100%;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: bold; margin-bottom: 4px;">
+            <span>THROTTLE</span>
+            <span id="throttle-val-text" style="color: var(--sv-cyan);">65%</span>
+          </div>
+          <input type="range" id="throttle-fader" class="throttle-slider" min="0" max="100" value="65">
+        </div>
+        <div style="font-size: 0.65rem; color: #64748b; text-align: center;">KEYBOARD: ARROWS = PITCH/ROLL | W/S = THROTTLE</div>
       </div>
 
       <div class="fmc-console">
-        <div style="font-weight: bold; color: #ffffff;">ROCKWELL COLLINS STYLE FMC TERMINAL</div>
+        <div style="font-weight: bold; color: #ffffff; font-size: 0.9rem;">ROCKWELL COLLINS STYLE FMC TERMINAL</div>
         <div class="fmc-screen" id="fmc-log-terminal">
-          <div>> ROCKWELL COLLINS FMS RUNNING</div>
-          <div>> ROUTE: KRIC TO RICHMOND METRO</div>
-          <div style="color: var(--sv-amber);">> ALL SUBSYSTEMS REPORTING VERIFIED LINK.</div>
+          <div>> ROCKWELL COLLINS FMS VER 4.2</div>
+          <div>> ACTIVE FLIGHT PLAN: KRIC -> DIRECT DECONFLICTION</div>
+          <div style="color: var(--sv-amber);">> PFD FLIGHT CONTROLS ACTIVE & CALIBRATED.</div>
         </div>
       </div>
     </section>
@@ -613,16 +833,16 @@
       </div>
     </section>
 
-    <!-- ENVIRONMENT & CARBON OFFSET FOOTER -->
+    <!-- CARBON OFFSET FOOTER -->
     <footer class="cockpit-footer">
       <div>CHESAPEAKE BAY PROJECT OFFSET: <span style="color: #ffffff; font-weight: bold;">0.16 kg CO2e / Year</span></div>
-      <div>COMMISSION: <a href="https://www.cbf.org/" target="_blank" rel="noopener noreferrer" class="offset-link">Chesapeake Bay Foundation (Oyster Restoration)</a></div>
+      <div>COMMISSION: <a href="https://www.cbf.org/" target="_blank" rel="noopener noreferrer" style="color: var(--sv-green); text-decoration: underline; font-weight: bold;">Chesapeake Bay Foundation (Oyster Restoration)</a></div>
       <div>PILOT DEV BUILD 2026 // RICHMOND, VA</div>
     </footer>
 
   </div>
 
-  <!-- SCRIPT ENGINE (SELF-CONTAINED & PROTECTED) -->
+  <!-- SELF-CONTAINED JAVASCRIPT LOGIC -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
 
@@ -693,37 +913,140 @@
         console.warn('Emergency disconnect bypass:', err);
       }
 
-      // 4. THROTTLE & PFD ATTITUDE KINEMATICS
-      try {
-        const throttle = document.getElementById('throttle-fader');
-        const throttleText = document.getElementById('throttle-pct-text');
-        const horizon = document.getElementById('skyview-horizon');
-        const speedVal = document.getElementById('pfd-speed-readout');
-        const altVal = document.getElementById('pfd-alt-readout');
-        const rpmVal = document.getElementById('dyn-rpm');
+      // 4. LIVE INTERACTIVE FLIGHT DYNAMICS & COMPASS/VSI KINEMATICS
+      let flightState = {
+        pitch: 0,
+        roll: 0,
+        heading: 90,
+        ias: 115,
+        altitude: 3500,
+        vsi: 0,
+        throttle: 65
+      };
 
-        if (throttle) {
-          throttle.addEventListener('input', (e) => {
-            const v = parseInt(e.target.value, 10);
-            if (throttleText) throttleText.textContent = `${v}%`;
-            if (speedVal) speedVal.textContent = Math.round(55 + (v * 0.95));
-            if (rpmVal) rpmVal.textContent = Math.round(1400 + (v * 15.5));
-          });
+      const horizon = document.getElementById('skyview-horizon');
+      const speedVal = document.getElementById('pfd-speed-readout');
+      const altVal = document.getElementById('pfd-alt-readout');
+      const rpmVal = document.getElementById('dyn-rpm');
+      const vsiNeedle = document.getElementById('vsi-needle');
+      const mfdVsi = document.getElementById('mfd-vsi-val');
+      const compassTape = document.getElementById('compass-tape');
+      const hdgBadge = document.getElementById('current-hdg-badge');
+      const speedTrend = document.getElementById('speed-trend-vector');
+      const throttleInput = document.getElementById('throttle-fader');
+      const throttleText = document.getElementById('throttle-val-text');
+      const stickPad = document.getElementById('flight-stick-pad');
+      const stickPip = document.getElementById('stick-pip');
+
+      // Update control surfaces from throttle
+      if (throttleInput) {
+        throttleInput.addEventListener('input', (e) => {
+          flightState.throttle = parseInt(e.target.value, 10);
+          if (throttleText) throttleText.textContent = `${flightState.throttle}%`;
+        });
+      }
+
+      // Interactive Click & Drag Flight Stick
+      let isDraggingStick = false;
+      if (stickPad && stickPip) {
+        const updateStick = (clientX, clientY) => {
+          const rect = stickPad.getBoundingClientRect();
+          let x = (clientX - rect.left) / rect.width - 0.5;
+          let y = (clientY - rect.top) / rect.height - 0.5;
+          x = Math.max(-0.5, Math.min(0.5, x));
+          y = Math.max(-0.5, Math.min(0.5, y));
+
+          stickPip.style.transform = `translate(${x * 120}px, ${y * 80}px)`;
+          flightState.roll = x * 60; // Max ±30 deg bank
+          flightState.pitch = -y * 30; // Max ±15 deg pitch
+        };
+
+        stickPad.addEventListener('mousedown', (e) => { isDraggingStick = true; updateStick(e.clientX, e.clientY); });
+        window.addEventListener('mousemove', (e) => { if (isDraggingStick) updateStick(e.clientX, e.clientY); });
+        window.addEventListener('mouseup', () => {
+          if (isDraggingStick) {
+            isDraggingStick = false;
+            stickPip.style.transform = 'translate(0px, 0px)';
+            flightState.roll = 0;
+            flightState.pitch = 0;
+          }
+        });
+      }
+
+      // Keyboard Controls (Arrows for flight, W/S for throttle)
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowUp') flightState.pitch = Math.max(-20, flightState.pitch - 1);
+        if (e.key === 'ArrowDown') flightState.pitch = Math.min(20, flightState.pitch + 1);
+        if (e.key === 'ArrowLeft') flightState.roll = Math.max(-35, flightState.roll - 2);
+        if (e.key === 'ArrowRight') flightState.roll = Math.min(35, flightState.roll + 2);
+        if (e.key.toLowerCase() === 'w') {
+          flightState.throttle = Math.min(100, flightState.throttle + 2);
+          if (throttleInput) throttleInput.value = flightState.throttle;
+          if (throttleText) throttleText.textContent = `${flightState.throttle}%`;
+        }
+        if (e.key.toLowerCase() === 's') {
+          flightState.throttle = Math.max(0, flightState.throttle - 2);
+          if (throttleInput) throttleInput.value = flightState.throttle;
+          if (throttleText) throttleText.textContent = `${flightState.throttle}%`;
+        }
+      });
+
+      // Master Flight Physics Loop (50 Hz)
+      setInterval(() => {
+        // Natural gentle air turbulence
+        const turbulence = Math.sin(Date.now() / 1500) * 1.5;
+        const currentPitch = flightState.pitch + turbulence;
+        const currentRoll = flightState.roll;
+
+        // Vertical Speed is directly proportional to pitch angle and engine power
+        flightState.vsi = Math.round((currentPitch * 100) + ((flightState.throttle - 60) * 15));
+        flightState.altitude += (flightState.vsi / 1200);
+
+        // Airspeed calculation (Climbs reduce speed, throttle increases speed)
+        const targetSpeed = Math.round(55 + (flightState.throttle * 0.95) - (currentPitch * 1.8));
+        flightState.ias += (targetSpeed - flightState.ias) * 0.05;
+
+        // Turn rate based on roll
+        flightState.heading = (flightState.heading + (currentRoll * 0.02) + 360) % 360;
+
+        // Render Artificial Horizon
+        if (horizon) {
+          horizon.style.transform = `translateY(${currentPitch * 5}px) rotate(${currentRoll}deg)`;
         }
 
-        setInterval(() => {
-          const pitch = Math.sin(Date.now() / 2400) * 10;
-          const roll = Math.cos(Date.now() / 3200) * 5;
-          if (horizon) {
-            horizon.style.transform = `translateY(${pitch}px) rotate(${roll}deg)`;
+        // Render Tapes
+        if (altVal) altVal.textContent = Math.round(flightState.altitude);
+        if (speedVal) speedVal.textContent = Math.round(flightState.ias);
+        if (rpmVal) rpmVal.textContent = Math.round(1400 + (flightState.throttle * 15.5));
+        if (mfdVsi) mfdVsi.textContent = `${flightState.vsi} FPM`;
+
+        // Render VSI Needle (-2000 to +2000 FPM mapped to needle travel)
+        if (vsiNeedle) {
+          const clampedVSI = Math.max(-2000, Math.min(2000, flightState.vsi));
+          const vsiPercentage = (clampedVSI / 2000) * 45; // percentage displacement
+          vsiNeedle.style.top = `${50 - vsiPercentage}%`;
+        }
+
+        // Render Speed Trend Bar (6-second prediction)
+        if (speedTrend) {
+          const accel = (targetSpeed - flightState.ias) * 3;
+          if (accel >= 0) {
+            speedTrend.style.top = '25%';
+            speedTrend.style.height = `${Math.min(30, accel)}px`;
+          } else {
+            speedTrend.style.top = '55%';
+            speedTrend.style.height = `${Math.min(30, Math.abs(accel))}px`;
           }
-          if (altVal) {
-            altVal.textContent = Math.round(3500 + (pitch * 8));
-          }
-        }, 50);
-      } catch (err) {
-        console.warn('PFD kinematics bypass:', err);
-      }
+        }
+
+        // Render Dynon Heading Compass Ribbon
+        if (compassTape && hdgBadge) {
+          const hdgRound = Math.round(flightState.heading);
+          hdgBadge.textContent = `${String(hdgRound).padStart(3, '0')}°`;
+          compassTape.style.transform = `translateX(${-((hdgRound / 360) * 200)}px)`;
+        }
+
+      }, 40);
 
       // 5. NOAA AVIATION METAR API (KRIC)
       async function fetchLiveMetar() {
