@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynon SkyView Touch Avionics Suite // Codex</title>
+  <title>Flight Services // Avionics Command Deck</title>
   <!-- Leaflet GIS Map CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   <style>
@@ -83,6 +83,10 @@
     .telemetry-row a {
       color: var(--sv-cyan);
       text-decoration: underline;
+    }
+
+    .telemetry-row a:hover {
+      color: #ffffff;
     }
 
     /* SCREEN GRID */
@@ -182,7 +186,7 @@
     .pitch-m20 { top: calc(50% + 100px); width: 140px; }
     .pitch-m20::before, .pitch-m20::after { width: 45px; border-top: 2px dashed #ffffff; background: transparent; }
 
-    /* DYNON ORANGE WATERLINE SYMBOL */
+    /* ORANGE WATERLINE REFERENCE SYMBOL */
     .waterline-symbol {
       position: absolute;
       z-index: 6;
@@ -210,7 +214,7 @@
       border-radius: 50%;
     }
 
-    /* HOLLOW WIREFRAME MAGENTA HEART */
+    /* HOLLOW WIREFRAME MAGENTA HEART BORESIGHT */
     .boresight-heart-anchor {
       position: absolute;
       z-index: 8;
@@ -499,7 +503,7 @@
       color: #cbd5e1;
     }
 
-    /* DISPATCH TILES */
+    /* DISPATCH PORTAL TILES */
     .portal-link-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -699,7 +703,7 @@
 
     <!-- MASTER ANNUNCIATOR -->
     <header class="annunciator-bar">
-      <div class="brand-id">DYNON SKYVIEW TOUCH // AVIONICS CODEX</div>
+      <div class="brand-id">FLIGHT SERVICES // AVIONICS COMMAND DECK</div>
       <div class="telemetry-row">
         <div>AIRSPACE: <span>KRIC</span></div>
         <div>METAR: <a id="top-metar-link" href="https://aviationweather.gov/data/metar/?id=KRIC" target="_blank" rel="noopener noreferrer">METAR KRIC 101054Z 22006KT 10SM SCT250 22/19 A3000</a></div>
@@ -713,7 +717,7 @@
       <!-- PFD -->
       <section class="display-bezel" aria-label="Primary Flight Display">
         <div class="bezel-top">
-          <span>PFD 1 // DYNON SYNTHETIC VISION</span>
+          <span>PFD 1 // PRIMARY FLIGHT DISPLAY</span>
           <span style="color: var(--sv-magenta);">BORESIGHT: WIREFRAME HEART</span>
         </div>
 
@@ -729,7 +733,7 @@
             </div>
           </div>
 
-          <!-- DYNON ORANGE WATERLINE SYMBOL -->
+          <!-- ORANGE WATERLINE SYMBOL -->
           <div class="waterline-symbol">
             <div class="waterline-wing"></div>
             <div class="waterline-pip"></div>
@@ -791,12 +795,12 @@
       <!-- MFD -->
       <section class="display-bezel" aria-label="Multi-Function Display">
         <div class="bezel-top">
-          <span id="mfd-screen-title">MFD 1 // TACTICAL MAP (GIS)</span>
+          <span id="mfd-screen-title">MFD 1 // REGIONAL DISPATCH & MAP</span>
           <span>PAGE 1</span>
         </div>
 
         <div class="mfd-viewport">
-          <!-- VIEW 1: TACTICAL GIS MAP WITH FOREST & FRANCINE -->
+          <!-- VIEW 1: GIS MAP WITH FOREST & FRANCINE -->
           <div id="mfd-view-map" class="mfd-tab active">
             <div class="disconnect-panel">
               <div>
@@ -810,7 +814,7 @@
             <div id="gis-tactical-map"></div>
 
             <div id="override-status-line" style="font-size: 0.75rem; color: var(--sv-green);">
-              TACTICAL GRID: 2 TARGETS LOCKED // RICHMOND URBAN CORRIDOR
+              DISPATCH GRID: 2 TARGETS LOCKED // RICHMOND URBAN CORRIDOR
             </div>
           </div>
 
@@ -898,11 +902,11 @@
       </div>
 
       <div class="fmc-console">
-        <div style="font-weight: bold; color: #ffffff; font-size: 0.9rem;">ROCKWELL COLLINS STYLE FMC TERMINAL</div>
+        <div style="font-weight: bold; color: #ffffff; font-size: 0.9rem;">COLLINS-STYLE FMS DISPATCH TERMINAL</div>
         <div class="fmc-screen" id="fmc-log-terminal">
-          <div>> ROCKWELL COLLINS FMS VER 4.2</div>
+          <div>> COLLINS FMS VER 4.2 RUNNING</div>
           <div>> ACTIVE FLIGHT PLAN: KRIC -> DIRECT DECONFLICTION</div>
-          <div style="color: var(--sv-amber);">> GIS TARGETS: FOREST (GRACE ST) & FRANCINE (BROAD ST) ACTIVE.</div>
+          <div style="color: var(--sv-amber);">> OBSERVER TARGETS: FOREST (GRACE ST) & FRANCINE (BROAD ST) ACTIVE.</div>
         </div>
       </div>
     </section>
@@ -969,7 +973,6 @@
               titleEl.textContent = `MFD 1 // ${btn.textContent} SECTOR`;
             }
 
-            // Invalidate map size when switching back to map tab
             if (targetId === 'mfd-view-map' && map) {
               setTimeout(() => map.invalidateSize(), 100);
             }
@@ -1034,7 +1037,7 @@
               toggleBtn.textContent = 'DECONFLICT';
               toggleBtn.classList.remove('disconnected');
               if (statusLine) {
-                statusLine.textContent = 'TACTICAL GRID: 2 TARGETS LOCKED // RICHMOND URBAN CORRIDOR';
+                statusLine.textContent = 'DISPATCH GRID: 2 TARGETS LOCKED // RICHMOND URBAN CORRIDOR';
                 statusLine.style.color = 'var(--sv-green)';
               }
             }
@@ -1199,10 +1202,36 @@
       fetchLiveMetar();
       setInterval(fetchLiveMetar, 300000);
 
-      // 6. LIVE GOOGLE SHEET VIA GID 1499083496
+      // 6. LIVE GOOGLE SHEET VIA GID 1499083496 & VERIFIED EVENT LINK ROUTING
       const SHEET_ID = '1tscWByPbdTPM6SHB4dNimrzRu7FQUbrNWX5SyX06d8U';
       const SHEET_GID = '1499083496';
       const MCU_ENDPOINT = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${SHEET_GID}`;
+
+      const EVENT_LINKS = {
+        'oceana': 'https://www.oceanaairshow.com/',
+        'wings, wheels & keels': 'https://www.wingswheelskeels.com/index.html',
+        'wings wheels': 'https://www.wingswheelskeels.com/index.html',
+        'helicopter': 'https://www.virginiahelicopterassociation.org/',
+        'williamsburg': 'https://www.virginiahelicopterassociation.org/',
+        'arium': 'https://aerium.org/fall26/',
+        'aerium': 'https://aerium.org/fall26/',
+        'culpeper': 'https://www.culpeperairfest.com/',
+        'leesburg': 'https://www.leesburgva.gov/departments/parks-recreation/events/leesburg-airshow',
+        'oshkosh': 'https://www.eaa.org/airventure'
+      };
+
+      function resolveEventUrl(name, notes) {
+        if (notes && (notes.startsWith('http://') || notes.startsWith('https://'))) {
+          return notes;
+        }
+        const lowerName = (name || '').toLowerCase();
+        for (const [key, url] of Object.entries(EVENT_LINKS)) {
+          if (lowerName.includes(key)) {
+            return url;
+          }
+        }
+        return null;
+      }
 
       async function pullGoogleSheetMCU() {
         const target = document.getElementById('mcu-stream-box');
@@ -1239,22 +1268,24 @@
 
             if (!date && !name) return;
 
+            const eventUrl = resolveEventUrl(name, notes);
+            const locStr = [location, state].filter(Boolean).join(', ');
+
             const div = document.createElement('div');
             div.className = 'mcu-entry';
 
-            let actionMarkup = '';
-            if (notes.startsWith('http://') || notes.startsWith('https://')) {
-              actionMarkup = `<a href="${notes}" target="_blank" rel="noopener noreferrer" class="mcu-link-btn">[VERIFY]</a>`;
-            } else if (notes) {
-              actionMarkup = `<span class="mcu-meta">${notes}</span>`;
-            }
+            const nameMarkup = eventUrl
+              ? `<a href="${eventUrl}" target="_blank" rel="noopener noreferrer" style="color:#ffffff; font-weight:bold; text-decoration:underline;">${name}</a>`
+              : `<span class="mcu-name">${name}</span>`;
 
-            const locStr = [location, state].filter(Boolean).join(', ');
+            const actionMarkup = eventUrl
+              ? `<a href="${eventUrl}" target="_blank" rel="noopener noreferrer" class="mcu-link-btn">[VERIFY EVENT]</a>`
+              : (notes ? `<span class="mcu-meta">${notes}</span>` : '');
 
             div.innerHTML = `
               <span class="mcu-date">${date}</span>
               <div>
-                <div class="mcu-name">${name}</div>
+                <div>${nameMarkup}</div>
                 ${tags ? `<span class="mcu-tags">[${tags}]</span>` : ''}
               </div>
               <div class="mcu-meta">
