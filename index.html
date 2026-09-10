@@ -3,210 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AA Flight Services | Premium Business Travel</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>My API-Powered Chart</title>
+
+    <!-- 1. Load the Google Charts API -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     
-    <style>
-        :root {
-            --aa-blue: #0078d2;
-            --aa-red: #c30019;
-            --aa-silver: #f5f7f9;
-            --aa-navy: #1a2b49;
-        }
+    <!-- 2. Load jQuery (Required for the AJAX-style data fetching) -->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--aa-silver);
-            color: var(--aa-navy);
-        }
+    <script type="text/javascript">
+        // Load the Visualization API and the corechart package
+        google.charts.load('current', {'packages':['corechart']});
 
-        .navbar {
-            background-color: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
+        // Set a callback to run when the Google Visualization API is loaded
+        google.charts.setOnLoadCallback(drawChart);
 
-        .hero-section {
-            background: linear-gradient(rgba(26, 43, 73, 0.7), rgba(26, 43, 73, 0.7)), 
-                        url('https://images.unsplash.com/photo-1436491865332-7a61a109c0f3?auto=format&fit=crop&q=80&w=2070');
-            background-size: cover;
-            background-position: center;
-            padding: 100px 0;
-            color: white;
-        }
+        function drawChart() {
+            /* 
+               3. THE JSON INTERFACE (Simulated API)
+               In a real-world scenario, 'jsonData' would come from a URL like 'api/data.json'.
+               For your GitHub version, we define the JSON structure here so it works instantly.
+            */
+            var mockApiResponse = {
+                "cols": [
+                    {"id":"","label":"Topping","pattern":"","type":"string"},
+                    {"id":"","label":"Slices","pattern":"","type":"number"}
+                ],
+                "rows": [
+                    {"c":[{"v":"Mushrooms","f":null},{"v":3,"f":null}]},
+                    {"c":[{"v":"Onions","f":null},{"v":1,"f":null}]},
+                    {"c":[{"v":"Olives","f":null},{"v":1,"f":null}]},
+                    {"c":[{"v":"Zucchini","f":null},{"v":1,"f":null}]},
+                    {"c":[{"v":"Pepperoni","f":null},{"v":2,"f":null}]}
+                ]
+            };
 
-        .booking-card {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            margin-top: -60px;
-            color: var(--aa-navy);
-        }
+            // Convert our JSON object into a Google DataTable
+            var data = new google.visualization.DataTable(mockApiResponse);
 
-        .btn-aa-primary {
-            background-color: var(--aa-blue);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-weight: 600;
-        }
+            // 4. Set Chart Options
+            var options = {
+                title: 'My Pizza Consumption (API Data)',
+                width: '100%',
+                height: 400,
+                is3D: true
+            };
 
-        .btn-aa-primary:hover {
-            background-color: #005fa3;
-            color: white;
+            // 5. Instantiate and draw the chart
+            var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
         }
-
-        .feature-icon {
-            font-size: 2rem;
-            color: var(--aa-blue);
-            margin-bottom: 15px;
-        }
-
-        .footer {
-            background-color: var(--aa-navy);
-            color: white;
-            padding: 50px 0;
-        }
-    </style>
+    </script>
 </head>
 <body>
+    <h1>My Website Data Visualization</h1>
+    <p>This chart is powered by a JSON interface and the Google Charts API.</p>
+    
+    <!-- This is the container where the chart will be rendered -->
+    <div id="chart_div" style="border: 1px solid #ccc;"></div>
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg sticky-top">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="#" style="color: var(--aa-blue);">
-                <i class="fas fa-plane-departure me-2"></i>AA FLIGHT SERVICES
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#search">Book</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#about">About Business</a></li>
-                    <li class="nav-item"><a class="btn btn-aa-primary ms-lg-3" href="#">Sign In</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <header class="hero-section text-center">
-        <div class="container">
-            <h1 class="display-3 fw-bold">Elevate Your Business Travel</h1>
-            <p class="lead">Seamless connectivity and world-class service tailored for your enterprise.</p>
-        </div>
-    </header>
-
-    <!-- Booking Section -->
-    <section id="search" class="container mb-5">
-        <div class="booking-card">
-            <form class="row g-3">
-                <div class="col-md-3">
-                    <label class="form-label fw-bold">From</label>
-                    <input type="text" class="form-control" placeholder="Origin City or Airport">
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label fw-bold">To</label>
-                    <input type="text" class="form-control" placeholder="Destination City">
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label fw-bold">Departure</label>
-                    <input type="date" class="form-control">
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label fw-bold">Passengers</label>
-                    <select class="form-select">
-                        <option>1 Adult</option>
-                        <option>2 Adults</option>
-                        <option>Business Group</option>
-                    </select>
-                </div>
-                <div class="col-md-2 d-flex align-items-end">
-                    <button type="submit" class="btn btn-aa-primary w-100">Search Flights</button>
-                </div>
-            </form>
-        </div>
-    </section>
-
-    <!-- Services Section -->
-    <section id="services" class="py-5">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="fw-bold">Business Account Services</h2>
-                <div class="mx-auto" style="width: 60px; height: 3px; background: var(--aa-red);"></div>
-            </div>
-            <div class="row text-center g-4">
-                <div class="col-md-4">
-                    <div class="p-4 bg-white rounded shadow-sm">
-                        <i class="fas fa-briefcase feature-icon"></i>
-                        <h4>Corporate Solutions</h4>
-                        <p>Managed travel for teams of all sizes with dedicated account managers.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="p-4 bg-white rounded shadow-sm">
-                        <i class="fas fa-chart-line feature-icon"></i>
-                        <h4>Priority Logistics</h4>
-                        <p>Expedited check-in and luggage handling for all business account members.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="p-4 bg-white rounded shadow-sm">
-                        <i class="fas fa-headset feature-icon"></i>
-                        <h4>24/7 Concierge</h4>
-                        <p>Real-time flight monitoring and instant rebooking via our AI assistant.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer mt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4 mb-4">
-                    <h5 class="fw-bold mb-3">AA Flight Services</h5>
-                    <p class="text-secondary">Official portal for AA business flight management and corporate logistics. Connect your world with ours.</p>
-                </div>
-                <div class="col-md-2 mb-4">
-                    <h6 class="fw-bold">Quick Links</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-secondary text-decoration-none">My Account</a></li>
-                        <li><a href="#" class="text-secondary text-decoration-none">Flight Status</a></li>
-                        <li><a href="#" class="text-secondary text-decoration-none">Cargo Info</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-3 mb-4">
-                    <h6 class="fw-bold">Support</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-secondary text-decoration-none">Help Center</a></li>
-                        <li><a href="#" class="text-secondary text-decoration-none">Accessibility</a></li>
-                        <li><a href="#" class="text-secondary text-decoration-none">Privacy Policy</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-3">
-                    <h6 class="fw-bold">Follow Us</h6>
-                    <div class="d-flex gap-3">
-                        <a href="#" class="text-white"><i class="fab fa-linkedin fa-lg"></i></a>
-                        <a href="#" class="text-white"><i class="fab fa-twitter fa-lg"></i></a>
-                        <a href="#" class="text-white"><i class="fab fa-facebook fa-lg"></i></a>
-                    </div>
-                </div>
-            </div>
-            <hr class="mt-4 border-secondary">
-            <p class="text-center text-secondary small">© 2024 AA Flight Services Project. For demonstration purposes only.</p>
-        </div>
+    <footer style="margin-top: 20px; font-size: 0.8em;">
+        <p>Learning Progress: API and JSON Integration Complete.</p>
     </footer>
-
-    <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
