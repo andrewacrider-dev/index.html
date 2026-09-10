@@ -651,7 +651,7 @@
       <div class="brand-id">DYNON SKYVIEW TOUCH // AVIONICS CODEX</div>
       <div class="telemetry-row">
         <div>AIRSPACE: <span>KRIC</span></div>
-        <div>METAR: <a id="top-metar-link" href="https://aviationweather.gov/data/metar/?id=KRIC" target="_blank" rel="noopener noreferrer">CONNECTING NOAA...</a></div>
+        <div>METAR: <a id="top-metar-link" href="https://aviationweather.gov/data/metar/?id=KRIC" target="_blank" rel="noopener noreferrer">METAR KRIC 101054Z 22006KT 10SM SCT250 22/19 A3000</a></div>
         <div>UTC: <span id="top-zulu-clock">--:--:--Z</span></div>
       </div>
     </header>
@@ -768,7 +768,7 @@
               <span style="color: var(--sv-amber); font-weight: bold;">KRIC METAR OBSERVATION</span>
               <a href="https://aviationweather.gov/data/metar/?id=KRIC" target="_blank" rel="noopener noreferrer" class="mcu-link-btn">[AVIATIONWEATHER.GOV]</a>
             </div>
-            <pre id="metar-raw-box" style="white-space: pre-wrap; font-size: 0.85rem; color: #ffffff; line-height: 1.5; background: #000; padding: 10px; border: 1px solid #334155; border-radius: 4px;">FETCHING ENTIRE RAW METAR STREAM...</pre>
+            <pre id="metar-raw-box" style="white-space: pre-wrap; font-size: 0.85rem; color: #ffffff; line-height: 1.5; background: #000; padding: 10px; border: 1px solid #334155; border-radius: 4px;">METAR KRIC 101054Z 22006KT 10SM SCT250 22/19 A3000 RMK AO2 SLP164 T02170189</pre>
           </div>
 
           <div id="mfd-view-engine" class="mfd-tab">
@@ -1042,7 +1042,7 @@
 
       }, 40);
 
-      // 5. NOAA AVIATION METAR API (ENTIRE CODE, LINKED TO AVIATIONWEATHER.GOV)
+      // 5. NOAA AVIATION METAR API (FULL ENTIRE OBSERVATION STREAM)
       async function fetchLiveMetar() {
         const topLink = document.getElementById('top-metar-link');
         const rawBox = document.getElementById('metar-raw-box');
@@ -1053,7 +1053,7 @@
           const text = (await res.text()).trim();
 
           if (text) {
-            if (topLink) topLink.textContent = text.substring(0, 30) + '...';
+            if (topLink) topLink.textContent = text;
             if (rawBox) rawBox.textContent = text;
           }
         } catch (e) {
