@@ -78,8 +78,13 @@
       font-weight: bold;
     }
 
-    .telemetry-row span {
+    .telemetry-row a {
       color: var(--sv-cyan);
+      text-decoration: underline;
+    }
+
+    .telemetry-row a:hover {
+      color: #ffffff;
     }
 
     /* SCREEN GRID */
@@ -132,7 +137,7 @@
       z-index: 1;
     }
 
-    /* REFINED GRADUATED PITCH RUNGS (NO SOLID REPEATING STRIPES) */
+    /* REFINED GRADUATED PITCH RUNGS */
     .pitch-graduations {
       position: absolute;
       inset: 0;
@@ -179,7 +184,7 @@
     .pitch-m20 { top: calc(50% + 100px); width: 140px; }
     .pitch-m20::before, .pitch-m20::after { width: 45px; border-top: 2px dashed #ffffff; background: transparent; }
 
-    /* PROMINENT DYNON ORANGE HORIZONTAL WATERLINE SYMBOL */
+    /* DYNON ORANGE WATERLINE REFERENCE SYMBOL */
     .waterline-symbol {
       position: absolute;
       z-index: 6;
@@ -232,14 +237,14 @@
       stroke-linejoin: round;
     }
 
-    /* AIRSPEED TAPE WITH TREND & BUG */
+    /* SPEED TAPE MODULE */
     .speed-tape-module {
       position: absolute;
       left: 14px;
       top: 24px;
       bottom: 56px;
-      width: 72px;
-      background: rgba(11, 17, 26, 0.9);
+      width: 76px;
+      background: rgba(11, 17, 26, 0.92);
       border: 1.5px solid #475569;
       border-radius: 3px;
       z-index: 10;
@@ -247,7 +252,7 @@
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 6px 2px;
+      padding: 6px 3px;
     }
 
     .target-bug-box {
@@ -262,11 +267,11 @@
 
     .speed-trend-bar {
       position: absolute;
-      left: 2px;
+      left: 3px;
       width: 4px;
       background: var(--sv-magenta);
       border-radius: 2px;
-      transition: height 0.1s linear, top 0.1s linear;
+      transition: height 0.08s linear, top 0.08s linear;
     }
 
     .current-readout-window {
@@ -280,7 +285,7 @@
       box-shadow: 0 0 8px rgba(6, 182, 212, 0.4);
     }
 
-    /* ALTITUDE TAPE WITH TARGET BUG, TREND & VSI */
+    /* ALTITUDE TAPE & VSI MODULE */
     .alt-tape-module {
       position: absolute;
       right: 14px;
@@ -292,15 +297,15 @@
     }
 
     .alt-main-tape {
-      width: 82px;
-      background: rgba(11, 17, 26, 0.9);
+      width: 86px;
+      background: rgba(11, 17, 26, 0.92);
       border: 1.5px solid #475569;
       border-radius: 3px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 6px 2px;
+      padding: 6px 3px;
     }
 
     /* VERTICAL SPEED INDICATOR (VSI) */
@@ -339,15 +344,15 @@
       border-bottom: 5px solid transparent;
       border-right: 8px solid var(--sv-white);
       transform: translateY(-50%);
-      transition: top 0.1s ease-out;
+      transition: top 0.08s ease-out;
     }
 
-    /* DYNON SKYVIEW COMPASS HEADING TAPE */
+    /* COMPASS HEADING TAPE */
     .compass-tape-container {
       position: absolute;
       bottom: 4px;
-      left: 90px;
-      right: 114px;
+      left: 96px;
+      right: 124px;
       height: 44px;
       background: rgba(7, 11, 17, 0.92);
       border: 1.5px solid #475569;
@@ -366,7 +371,7 @@
       font-size: 0.8rem;
       font-weight: bold;
       color: #cbd5e1;
-      transition: transform 0.05s linear;
+      transition: transform 0.04s linear;
       white-space: nowrap;
     }
 
@@ -402,7 +407,7 @@
       border-radius: 2px;
     }
 
-    /* MFD VIEWPORT & CONTROLS */
+    /* MFD VIEWPORT */
     .mfd-viewport {
       height: 440px;
       background: #020408;
@@ -480,7 +485,7 @@
       gap: 6px;
     }
 
-    /* DIRECT HARDWARE FLIGHT CONTROLS QUADRANT */
+    /* DIRECT FLIGHT CONTROLS QUADRANT */
     .controls-deck {
       display: grid;
       grid-template-columns: 240px 1fr;
@@ -646,7 +651,7 @@
       <div class="brand-id">DYNON SKYVIEW TOUCH // AVIONICS CODEX</div>
       <div class="telemetry-row">
         <div>AIRSPACE: <span>KRIC</span></div>
-        <div>METAR: <span id="top-metar-summary">POLLING NOAA...</span></div>
+        <div>METAR: <a id="top-metar-link" href="https://aviationweather.gov/data/metar/?id=KRIC" target="_blank" rel="noopener noreferrer">CONNECTING NOAA...</a></div>
         <div>UTC: <span id="top-zulu-clock">--:--:--Z</span></div>
       </div>
     </header>
@@ -664,7 +669,6 @@
         <div class="pfd-viewport" id="pfd-interactive-zone">
           <!-- HORIZON DISC -->
           <div id="skyview-horizon">
-            <!-- REFINED GRADUATED PITCH LADDER -->
             <div class="pitch-graduations">
               <div class="pitch-line pitch-p20"><span>20</span><span>20</span></div>
               <div class="pitch-line pitch-p10"><span>10</span><span>10</span></div>
@@ -674,14 +678,14 @@
             </div>
           </div>
 
-          <!-- PROMINENT DYNON ORANGE WATERLINE SYMBOL -->
+          <!-- DYNON ORANGE WATERLINE SYMBOL -->
           <div class="waterline-symbol">
             <div class="waterline-wing"></div>
             <div class="waterline-pip"></div>
             <div class="waterline-wing"></div>
           </div>
 
-          <!-- HOLLOW WIREFRAME MAGENTA HEART (Transparent view of pitch) -->
+          <!-- HOLLOW WIREFRAME MAGENTA HEART -->
           <div class="boresight-heart-anchor">
             <div class="heart-wireframe">
               <svg viewBox="0 0 32 32">
@@ -706,7 +710,7 @@
               <span style="font-size:0.7rem; color:#94a3b8; font-weight: bold;">ALT FT</span>
             </div>
 
-            <!-- VERTICAL SPEED INDICATOR (VSI SCALE: -2000 to +2000 FPM) -->
+            <!-- VERTICAL SPEED INDICATOR (VSI: -2000 to +2000 FPM) -->
             <div class="vsi-module" title="Vertical Speed Indicator (FPM x 1000)">
               <span>+2</span>
               <span>+1</span>
@@ -760,8 +764,11 @@
           </div>
 
           <div id="mfd-view-metar" class="mfd-tab">
-            <div style="color: var(--sv-amber); font-weight: bold; margin-bottom: 6px;">KRIC SURFACE OBSERVATION</div>
-            <pre id="metar-raw-box" style="white-space: pre-wrap; font-size: 0.85rem; color: #ffffff; line-height: 1.4;">CONNECTING TO NOAA AVIATION WEATHER API...</pre>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+              <span style="color: var(--sv-amber); font-weight: bold;">KRIC METAR OBSERVATION</span>
+              <a href="https://aviationweather.gov/data/metar/?id=KRIC" target="_blank" rel="noopener noreferrer" class="mcu-link-btn">[AVIATIONWEATHER.GOV]</a>
+            </div>
+            <pre id="metar-raw-box" style="white-space: pre-wrap; font-size: 0.85rem; color: #ffffff; line-height: 1.5; background: #000; padding: 10px; border: 1px solid #334155; border-radius: 4px;">FETCHING ENTIRE RAW METAR STREAM...</pre>
           </div>
 
           <div id="mfd-view-engine" class="mfd-tab">
@@ -835,7 +842,7 @@
 
     <!-- CARBON OFFSET FOOTER -->
     <footer class="cockpit-footer">
-      <div>CHESAPEAKE BAY PROJECT OFFSET: <span style="color: #ffffff; font-weight: bold;">0.16 kg CO2e / Year</span></div>
+      <div>CHESAPEAKE BAY PROJECT OFFSET: <span style="color: #ffffff; font-weight: bold;">0.19 kg CO2e / Year</span></div>
       <div>COMMISSION: <a href="https://www.cbf.org/" target="_blank" rel="noopener noreferrer" style="color: var(--sv-green); text-decoration: underline; font-weight: bold;">Chesapeake Bay Foundation (Oyster Restoration)</a></div>
       <div>PILOT DEV BUILD 2026 // RICHMOND, VA</div>
     </footer>
@@ -913,7 +920,7 @@
         console.warn('Emergency disconnect bypass:', err);
       }
 
-      // 4. LIVE INTERACTIVE FLIGHT DYNAMICS & COMPASS/VSI KINEMATICS
+      // 4. LIVE INTERACTIVE FLIGHT DYNAMICS & CONTROL SURFACES
       let flightState = {
         pitch: 0,
         roll: 0,
@@ -938,7 +945,6 @@
       const stickPad = document.getElementById('flight-stick-pad');
       const stickPip = document.getElementById('stick-pip');
 
-      // Update control surfaces from throttle
       if (throttleInput) {
         throttleInput.addEventListener('input', (e) => {
           flightState.throttle = parseInt(e.target.value, 10);
@@ -946,7 +952,6 @@
         });
       }
 
-      // Interactive Click & Drag Flight Stick
       let isDraggingStick = false;
       if (stickPad && stickPip) {
         const updateStick = (clientX, clientY) => {
@@ -957,8 +962,8 @@
           y = Math.max(-0.5, Math.min(0.5, y));
 
           stickPip.style.transform = `translate(${x * 120}px, ${y * 80}px)`;
-          flightState.roll = x * 60; // Max ±30 deg bank
-          flightState.pitch = -y * 30; // Max ±15 deg pitch
+          flightState.roll = x * 60;
+          flightState.pitch = -y * 30;
         };
 
         stickPad.addEventListener('mousedown', (e) => { isDraggingStick = true; updateStick(e.clientX, e.clientY); });
@@ -973,7 +978,6 @@
         });
       }
 
-      // Keyboard Controls (Arrows for flight, W/S for throttle)
       window.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowUp') flightState.pitch = Math.max(-20, flightState.pitch - 1);
         if (e.key === 'ArrowDown') flightState.pitch = Math.min(20, flightState.pitch + 1);
@@ -991,43 +995,34 @@
         }
       });
 
-      // Master Flight Physics Loop (50 Hz)
       setInterval(() => {
-        // Natural gentle air turbulence
         const turbulence = Math.sin(Date.now() / 1500) * 1.5;
         const currentPitch = flightState.pitch + turbulence;
         const currentRoll = flightState.roll;
 
-        // Vertical Speed is directly proportional to pitch angle and engine power
         flightState.vsi = Math.round((currentPitch * 100) + ((flightState.throttle - 60) * 15));
         flightState.altitude += (flightState.vsi / 1200);
 
-        // Airspeed calculation (Climbs reduce speed, throttle increases speed)
         const targetSpeed = Math.round(55 + (flightState.throttle * 0.95) - (currentPitch * 1.8));
         flightState.ias += (targetSpeed - flightState.ias) * 0.05;
 
-        // Turn rate based on roll
         flightState.heading = (flightState.heading + (currentRoll * 0.02) + 360) % 360;
 
-        // Render Artificial Horizon
         if (horizon) {
           horizon.style.transform = `translateY(${currentPitch * 5}px) rotate(${currentRoll}deg)`;
         }
 
-        // Render Tapes
         if (altVal) altVal.textContent = Math.round(flightState.altitude);
         if (speedVal) speedVal.textContent = Math.round(flightState.ias);
         if (rpmVal) rpmVal.textContent = Math.round(1400 + (flightState.throttle * 15.5));
         if (mfdVsi) mfdVsi.textContent = `${flightState.vsi} FPM`;
 
-        // Render VSI Needle (-2000 to +2000 FPM mapped to needle travel)
         if (vsiNeedle) {
           const clampedVSI = Math.max(-2000, Math.min(2000, flightState.vsi));
-          const vsiPercentage = (clampedVSI / 2000) * 45; // percentage displacement
+          const vsiPercentage = (clampedVSI / 2000) * 45;
           vsiNeedle.style.top = `${50 - vsiPercentage}%`;
         }
 
-        // Render Speed Trend Bar (6-second prediction)
         if (speedTrend) {
           const accel = (targetSpeed - flightState.ias) * 3;
           if (accel >= 0) {
@@ -1039,7 +1034,6 @@
           }
         }
 
-        // Render Dynon Heading Compass Ribbon
         if (compassTape && hdgBadge) {
           const hdgRound = Math.round(flightState.heading);
           hdgBadge.textContent = `${String(hdgRound).padStart(3, '0')}°`;
@@ -1048,9 +1042,9 @@
 
       }, 40);
 
-      // 5. NOAA AVIATION METAR API (KRIC)
+      // 5. NOAA AVIATION METAR API (ENTIRE CODE, LINKED TO AVIATIONWEATHER.GOV)
       async function fetchLiveMetar() {
-        const topSummary = document.getElementById('top-metar-summary');
+        const topLink = document.getElementById('top-metar-link');
         const rawBox = document.getElementById('metar-raw-box');
 
         try {
@@ -1059,13 +1053,11 @@
           const text = (await res.text()).trim();
 
           if (text) {
-            if (topSummary) topSummary.textContent = text.substring(0, 24) + '...';
+            if (topLink) topLink.textContent = text.substring(0, 30) + '...';
             if (rawBox) rawBox.textContent = text;
           }
         } catch (e) {
-          const sim = 'KRIC 101054Z 03006KT 10SM CLR 18/14 A3012 RMK AO2 SLP198';
-          if (topSummary) topSummary.textContent = '10SM CLR (SIM)';
-          if (rawBox) rawBox.textContent = sim + '\n\n[OFFLINE SIMULATION STREAM ACTIVATED]';
+          console.warn('METAR fetch encountered network fallback:', e);
         }
       }
       fetchLiveMetar();
