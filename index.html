@@ -3,19 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Avionics Flight Deck Terminal</title>
+  <title>Tactical Drone FPV // PFD & MCU Console</title>
   <style>
     :root {
-      --bg-base: #06090c;
-      --panel-bg: #0d1217;
-      --bezel-border: #1e293b;
-      --phosphor-green: #39ff14;
-      --amber: #ffb000;
-      --cyan: #00f0ff;
-      --sky-blue: #0284c7;
-      --ground-brown: #78350f;
-      --danger-red: #ef4444;
-      --crt-scanline: rgba(0, 0, 0, 0.25);
+      --bg-color: #050805;
+      --bezel-color: #121915;
+      --hud-green: #39ff14;
+      --fpv-magenta: #ff007f;
+      --ukraine-blue: #0057b7;
+      --ukraine-gold: #ffd700;
+      --terminal-amber: #ffb000;
+      --crt-grid: rgba(57, 255, 20, 0.08);
     }
 
     * {
@@ -26,8 +24,8 @@
     }
 
     body {
-      background-color: var(--bg-base);
-      color: var(--phosphor-green);
+      background-color: var(--bg-color);
+      color: var(--hud-green);
       font-family: 'Courier New', Courier, monospace;
       padding: 16px;
       display: flex;
@@ -36,7 +34,7 @@
       min-height: 100vh;
     }
 
-    .glass-cockpit {
+    .cockpit-wrapper {
       width: 100%;
       max-width: 1200px;
       display: flex;
@@ -44,134 +42,170 @@
       gap: 16px;
     }
 
-    /* MASTER TOP BAR */
-    .g1000-topbar {
-      background: var(--panel-bg);
-      border: 2px solid var(--bezel-border);
+    /* TOP STATUS BAR */
+    .telemetry-bar {
+      background: var(--bezel-color);
+      border: 2px solid var(--hud-green);
       border-radius: 4px;
-      padding: 10px 18px;
+      padding: 10px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 0 10px rgba(0,0,0,0.8);
+      font-weight: bold;
+      box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
     }
 
-    .sys-title {
-      font-size: 1.1rem;
-      font-weight: 900;
-      letter-spacing: 2px;
+    .telemetry-item span {
       color: #ffffff;
     }
 
-    .telemetry-group {
-      display: flex;
-      gap: 20px;
-      font-size: 0.95rem;
-      font-weight: bold;
-    }
-
-    .telemetry-group span {
-      color: var(--cyan);
-    }
-
-    /* AVIONICS MAIN SCREENS GRID */
-    .cockpit-screens {
+    /* INSTRUMENT SCREENS */
+    .instrument-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 16px;
     }
 
-    .display-unit {
+    .instrument-unit {
       background: #000000;
-      border: 4px solid #1a2332;
+      border: 3px solid #1e2e22;
       border-radius: 6px;
       position: relative;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      box-shadow: inset 0 0 20px rgba(0,0,0,0.9);
+      box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.95);
     }
 
-    .bezel-label {
-      background: #1a2332;
-      color: #94a3b8;
+    .bezel-banner {
+      background: #121a14;
+      color: #88ff88;
       font-size: 0.8rem;
       font-weight: bold;
       padding: 4px 10px;
       letter-spacing: 1px;
       display: flex;
       justify-content: space-between;
+      border-bottom: 1px solid #1e2e22;
     }
 
-    /* PFD (PRIMARY FLIGHT DISPLAY) STYLING */
+    /* PFD VIEWPORT WITH UKRAINE FPV DRONE OVERLAY & HEART RETICLE */
     .pfd-viewport {
       height: 380px;
       position: relative;
       overflow: hidden;
-      background: #000;
+      background: #020402;
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
-    #artificial-horizon {
+    /* ARTIFICIAL HORIZON / UKRAINE BARS */
+    #horizon-disc {
       position: absolute;
       width: 800px;
       height: 800px;
       top: -210px;
       left: calc(50% - 400px);
       transition: transform 0.05s ease-out;
-      background: linear-gradient(to bottom, var(--sky-blue) 0%, var(--sky-blue) 50%, var(--ground-brown) 50%, var(--ground-brown) 100%);
+      background: linear-gradient(to bottom, 
+        rgba(0, 87, 183, 0.4) 0%, 
+        rgba(0, 87, 183, 0.4) 50%, 
+        rgba(120, 53, 15, 0.5) 50%, 
+        rgba(120, 53, 15, 0.5) 100%
+      );
       z-index: 1;
     }
 
-    .pitch-lines {
+    /* FPV OSD RETICLE & MAGENTA HEART RETICLE */
+    .fpv-osd-overlay {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
       background: repeating-linear-gradient(
         to bottom,
         transparent,
-        transparent 38px,
-        rgba(255, 255, 255, 0.6) 38px,
-        rgba(255, 255, 255, 0.6) 40px
+        transparent 2px,
+        rgba(0, 0, 0, 0.15) 2px,
+        rgba(0, 0, 0, 0.15) 4px
       );
-    }
-
-    .aircraft-reticle {
-      position: absolute;
-      z-index: 5;
-      width: 120px;
-      height: 12px;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
     }
 
-    .reticle-wing {
-      width: 45px;
-      height: 6px;
-      background: #facc15;
-      border: 1px solid #000;
-    }
-
-    .reticle-pip {
-      width: 8px;
-      height: 8px;
-      background: #facc15;
-      border-radius: 50%;
-      border: 1px solid #000;
-    }
-
-    .flight-tape {
+    .fpv-crosshair-cross {
       position: absolute;
-      top: 20px;
-      bottom: 20px;
-      width: 65px;
-      background: rgba(13, 18, 23, 0.85);
-      border: 1px solid #334155;
+      width: 220px;
+      height: 220px;
+      border: 1px dashed rgba(57, 255, 20, 0.35);
+      border-radius: 50%;
+    }
+
+    /* MAGENTA HEART TARGETING RETICLE */
+    .reticle-heart-anchor {
+      position: absolute;
+      z-index: 8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .magenta-heart {
+      position: relative;
+      width: 38px;
+      height: 34px;
+      animation: heart-pulse 2s infinite ease-in-out;
+      filter: drop-shadow(0 0 6px var(--fpv-magenta));
+    }
+
+    .magenta-heart::before,
+    .magenta-heart::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      width: 20px;
+      height: 32px;
+      border-radius: 20px 20px 0 0;
+      background: var(--fpv-magenta);
+    }
+
+    .magenta-heart::before {
+      left: 19px;
+      transform: rotate(-45deg);
+      transform-origin: 0 100%;
+    }
+
+    .magenta-heart::after {
+      left: 0;
+      transform: rotate(45deg);
+      transform-origin: 100% 100%;
+    }
+
+    .target-box-corner {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      border: 2px solid rgba(255, 0, 127, 0.6);
+      pointer-events: none;
+    }
+
+    @keyframes heart-pulse {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.15); opacity: 1; }
+    }
+
+    /* PFD TAPES */
+    .pfd-tape {
+      position: absolute;
+      top: 24px;
+      bottom: 24px;
+      width: 60px;
+      background: rgba(5, 12, 8, 0.85);
+      border: 1px solid var(--hud-green);
       z-index: 10;
       display: flex;
       flex-direction: column;
@@ -181,24 +215,22 @@
       font-weight: bold;
     }
 
-    .tape-speed { left: 15px; }
-    .tape-alt { right: 15px; }
+    .pfd-tape-left { left: 16px; }
+    .pfd-tape-right { right: 16px; }
 
-    .tape-val {
+    .tape-digit {
       color: #ffffff;
-      font-size: 1.2rem;
-      background: #000000;
-      padding: 4px 6px;
-      border: 1px solid var(--cyan);
-      border-radius: 3px;
+      font-size: 1.1rem;
+      background: #000;
+      padding: 2px 4px;
+      border: 1px solid var(--hud-green);
     }
 
-    /* MFD (MULTI-FUNCTION DISPLAY) STYLING */
+    /* MFD VIEWPORT & SOFTKEYS */
     .mfd-viewport {
       height: 380px;
-      background: #030712;
+      background: #020603;
       padding: 16px;
-      position: relative;
       overflow-y: auto;
       font-family: 'Courier New', Courier, monospace;
     }
@@ -214,66 +246,41 @@
       gap: 12px;
     }
 
-    .nav-map-display {
-      width: 100%;
-      height: 220px;
-      border: 1px dashed var(--phosphor-green);
-      background: radial-gradient(circle, rgba(57,255,20,0.06) 0%, transparent 70%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-    }
-
-    .range-rings {
-      position: absolute;
-      width: 180px;
-      height: 180px;
-      border: 1px solid rgba(57, 255, 20, 0.25);
-      border-radius: 50%;
-    }
-
-    .map-blip {
-      color: var(--amber);
-      font-weight: 900;
-      font-size: 0.85rem;
-    }
-
-    /* MFD SOFTKEYS */
     .mfd-softkeys {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      background: #0d1217;
-      border-top: 2px solid var(--bezel-border);
+      background: #121915;
+      border-top: 2px solid var(--bezel-color);
     }
 
-    .softkey {
-      background: #111827;
-      color: #94a3b8;
-      border: 1px solid #1f2937;
-      padding: 10px 4px;
+    .softkey-btn {
+      background: #0b110e;
+      color: var(--hud-green);
+      border: 1px solid #1b261e;
+      padding: 12px 6px;
       cursor: pointer;
       font-family: inherit;
       font-size: 0.8rem;
       font-weight: bold;
-      transition: all 0.1s ease;
+      transition: all 0.15s ease;
     }
 
-    .softkey:hover, .softkey.active {
-      background: var(--phosphor-green);
+    .softkey-btn:hover, .softkey-btn.active {
+      background: var(--hud-green);
       color: #000000;
+      box-shadow: 0 0 10px rgba(57, 255, 20, 0.4);
     }
 
-    /* FMC & CONTROLS DASHBOARD */
-    .control-deck {
+    /* THROTTLE & FMC */
+    .controls-deck {
       display: grid;
-      grid-template-columns: 240px 1fr;
+      grid-template-columns: 200px 1fr;
       gap: 16px;
     }
 
-    .throttle-quadrant {
-      background: var(--panel-bg);
-      border: 2px solid var(--bezel-border);
+    .throttle-box {
+      background: var(--bezel-color);
+      border: 2px solid var(--hud-green);
       border-radius: 4px;
       padding: 16px;
       display: flex;
@@ -282,31 +289,31 @@
       gap: 10px;
     }
 
-    .throttle-slider {
+    .throttle-range {
       -webkit-appearance: none;
       writing-mode: vertical-lr;
       direction: rtl;
-      width: 24px;
+      width: 26px;
       height: 180px;
-      background: #1e293b;
+      background: #060b08;
+      border: 1px solid var(--hud-green);
       outline: none;
-      border-radius: 4px;
-    }
-
-    .throttle-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 44px;
-      height: 24px;
-      background: #38bdf8;
-      border: 2px solid #ffffff;
-      border-radius: 3px;
       cursor: pointer;
     }
 
-    .fmc-console {
-      background: var(--panel-bg);
-      border: 2px solid var(--bezel-border);
+    .throttle-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 44px;
+      height: 22px;
+      background: var(--hud-green);
+      border: 2px solid #ffffff;
+      cursor: pointer;
+    }
+
+    .fmc-box {
+      background: var(--bezel-color);
+      border: 2px solid var(--hud-green);
       border-radius: 4px;
       padding: 16px;
       display: flex;
@@ -315,25 +322,21 @@
     }
 
     .fmc-screen {
-      background: #020617;
-      border: 1px solid var(--cyan);
+      background: #000000;
+      border: 1px solid rgba(57, 255, 20, 0.4);
       border-radius: 4px;
       padding: 12px;
       font-size: 0.9rem;
       line-height: 1.4;
       min-height: 120px;
+      color: #a3e635;
     }
 
-    .fmc-prompt {
-      color: var(--amber);
-      font-weight: bold;
-    }
-
-    /* MCU EVENT DOCK (PULLING LIVE FROM GOOGLE SHEETS) */
-    .mcu-dock-wrapper {
+    /* MCU TELEMETRY & GOOGLE SHEET DISPATCH */
+    .mcu-section {
       width: 100%;
       background: #040804;
-      border: 2px solid var(--phosphor-green);
+      border: 2px solid var(--hud-green);
       border-radius: 4px;
       padding: 16px;
       box-shadow: 0 0 12px rgba(57, 255, 20, 0.15);
@@ -347,14 +350,13 @@
       padding-bottom: 8px;
       margin-bottom: 12px;
       font-weight: bold;
-      color: var(--phosphor-green);
     }
 
     .mcu-container {
       display: flex;
       flex-direction: column;
       gap: 8px;
-      max-height: 380px;
+      max-height: 400px;
       overflow-y: auto;
     }
 
@@ -365,7 +367,7 @@
       align-items: baseline;
       padding: 8px;
       background-color: rgba(57, 255, 20, 0.03);
-      border-left: 3px solid var(--phosphor-green);
+      border-left: 3px solid var(--hud-green);
       border-bottom: 1px dashed rgba(57, 255, 20, 0.2);
     }
 
@@ -393,7 +395,7 @@
     }
 
     .mcu-link-btn {
-      background-color: var(--phosphor-green);
+      background-color: var(--hud-green);
       color: #000000;
       padding: 3px 8px;
       text-decoration: none;
@@ -407,181 +409,181 @@
       color: #000000;
     }
 
-    .status-warn { color: var(--amber); }
-    .status-err  { color: var(--danger-red); }
+    .status-warn { color: var(--terminal-amber); }
+    .status-err  { color: #ef4444; }
 
     @media (max-width: 900px) {
-      .cockpit-screens { grid-template-columns: 1fr; }
-      .control-deck { grid-template-columns: 1fr; }
+      .instrument-grid { grid-template-columns: 1fr; }
+      .controls-deck { grid-template-columns: 1fr; }
       .mcu-entry { grid-template-columns: 1fr; gap: 6px; }
     }
   </style>
 </head>
 <body>
 
-  <div class="glass-cockpit">
+  <div class="cockpit-wrapper">
 
     <!-- TOP TELEMETRY BAR -->
-    <header class="g1000-topbar">
-      <div class="sys-title">FLIGHT SERVICES AVIONICS // CODEX</div>
-      <div class="telemetry-group">
-        <div>STATION: <span>KRIC</span></div>
-        <div>METAR: <span id="metar-status">PULLING LIVE WX...</span></div>
-        <div>ZULU: <span id="top-clock">--:--:--Z</span></div>
-      </div>
+    <header class="telemetry-bar">
+      <div style="color: #ffffff; letter-spacing: 1px;">UKRAINE TACTICAL FPV // AVIONICS CODEX</div>
+      <div class="telemetry-item">STATION: <span>KRIC</span></div>
+      <div class="telemetry-item">METAR: <span id="top-metar-val">POLLING...</span></div>
+      <div class="telemetry-item">UTC: <span id="top-zulu-clock">--:--:--Z</span></div>
     </header>
 
-    <!-- MAIN INSTRUMENT SUITE -->
-    <main class="cockpit-screens">
-      
-      <!-- PFD (PRIMARY FLIGHT DISPLAY) -->
-      <section class="display-unit" aria-label="Primary Flight Display">
-        <div class="bezel-label">
-          <span>PFD 1 // ATTITUDE & SPEED TAPE</span>
-          <span>SVS ON</span>
+    <!-- INSTRUMENTS -->
+    <main class="instrument-grid">
+
+      <!-- PFD WITH MAGENTA HEART FPV RETICLE -->
+      <section class="instrument-unit" aria-label="Primary Flight Display">
+        <div class="bezel-banner">
+          <span>PFD 1 // FPV OPTICAL FEED</span>
+          <span style="color: var(--fpv-magenta);">RETICLE: MAGENTA HEART LOCK</span>
         </div>
-        
+
         <div class="pfd-viewport">
-          <div id="artificial-horizon">
-            <div class="pitch-lines"></div>
-          </div>
-          
-          <div class="aircraft-reticle">
-            <div class="reticle-wing"></div>
-            <div class="reticle-pip"></div>
-            <div class="reticle-wing"></div>
+          <!-- ARTIFICIAL HORIZON -->
+          <div id="horizon-disc"></div>
+
+          <!-- FPV OVERLAY GRID & MAGENTA HEART RETICLE -->
+          <div class="fpv-osd-overlay">
+            <div class="fpv-crosshair-cross"></div>
+            <div class="target-box-corner"></div>
+
+            <div class="reticle-heart-anchor">
+              <div class="magenta-heart"></div>
+              <span style="color: var(--fpv-magenta); font-size: 0.65rem; font-weight: bold; margin-top: 4px; letter-spacing: 1px;">TRK LOCK</span>
+            </div>
           </div>
 
-          <div class="flight-tape tape-speed">
-            <span style="font-size: 0.75rem; color: #94a3b8;">IAS</span>
-            <span id="speed-readout" class="tape-val">115</span>
-            <span style="font-size: 0.75rem; color: #94a3b8;">KT</span>
+          <!-- SPEED & ALT TAPES -->
+          <div class="pfd-tape pfd-tape-left">
+            <span style="font-size: 0.75rem; color: #88ff88;">IAS</span>
+            <span id="ias-val" class="tape-digit">115</span>
+            <span style="font-size: 0.75rem; color: #88ff88;">KT</span>
           </div>
 
-          <div class="flight-tape tape-alt">
-            <span style="font-size: 0.75rem; color: #94a3b8;">ALT</span>
-            <span id="alt-readout" class="tape-val">3500</span>
-            <span style="font-size: 0.75rem; color: #94a3b8;">FT</span>
+          <div class="pfd-tape pfd-tape-right">
+            <span style="font-size: 0.75rem; color: #88ff88;">ALT</span>
+            <span id="alt-val" class="tape-digit">3500</span>
+            <span style="font-size: 0.75rem; color: #88ff88;">FT</span>
           </div>
         </div>
       </section>
 
-      <!-- MFD (MULTI-FUNCTION DISPLAY) -->
-      <section class="display-unit" aria-label="Multi-Function Display">
-        <div class="bezel-label">
-          <span id="mfd-current-label">MFD 1 // MAP RADAR</span>
-          <span>RPL 1</span>
+      <!-- MFD MULTI-FUNCTION DISPLAY -->
+      <section class="instrument-unit" aria-label="Multi Function Display">
+        <div class="bezel-banner">
+          <span id="mfd-view-header">MFD 1 // NAV MAP</span>
+          <span>MODE: TAC-1</span>
         </div>
 
         <div class="mfd-viewport">
-          <!-- VIEW 1: NAV MAP -->
-          <div id="mfd-view-nav" class="mfd-view active">
-            <div class="nav-map-display">
-              <div class="range-rings"></div>
-              <div class="map-blip">▲ KRIC AIRSPACE</div>
+          <!-- NAV VIEW -->
+          <div id="view-nav" class="mfd-view active">
+            <div style="border: 1px dashed var(--hud-green); height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: radial-gradient(circle, rgba(57,255,20,0.1) 0%, transparent 70%);">
+              <div style="color: var(--terminal-amber); font-weight: bold;">▲ KRIC DRONE CORRIDOR</div>
+              <div style="font-size: 0.75rem; color: #88ff88; margin-top: 6px;">UAS SECTOR B - ACTIVE COORDINATION</div>
             </div>
-            <div style="font-size: 0.85rem; color: #94a3b8;">
-              TAC-RADAR: KRIC OBSERVER ACTIVE // FELINE DECONFLICTION MONITOR ARMED
-            </div>
-          </div>
-
-          <!-- VIEW 2: WEATHER & METAR -->
-          <div id="mfd-view-wx" class="mfd-view">
-            <div style="color: var(--cyan); font-weight: bold; margin-bottom: 8px;">> REGIONAL WEATHER RECON (KRIC)</div>
-            <pre id="metar-raw-output" style="color: #ffffff; white-space: pre-wrap; font-size: 0.85rem;">FETCHING RAW METAR DATA STREAM...</pre>
-          </div>
-
-          <!-- VIEW 3: ENGINE GAUGES -->
-          <div id="mfd-view-eng" class="mfd-view">
-            <div style="color: var(--amber); font-weight: bold;">ENGINE STATUS: ROTAX / LYCOMING SYS</div>
-            <div style="margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-              <div>RPM: <span id="eng-rpm" style="color:#ffffff;">2450</span></div>
-              <div>OIL TEMP: <span style="color:#ffffff;">185°F</span></div>
-              <div>OIL PRESS: <span style="color:#ffffff;">52 PSI</span></div>
-              <div>EGT: <span style="color:#ffffff;">1320°F</span></div>
+            <div style="font-size: 0.85rem; color: #a3e635;">
+              > RADAR BEACON ACTIVE // DECONFLICTION PROTOCOLS ARMED
             </div>
           </div>
 
-          <!-- VIEW 4: FELINE TACTICAL DECONFLICTION -->
-          <div id="mfd-view-feline" class="mfd-view">
-            <div style="color: var(--phosphor-green); font-weight: bold;">FELINE DEFENSE MONITOR // FOREST THE CAT LINK</div>
-            <p style="font-size: 0.85rem; margin-top: 8px; color: #cbd5e1;">
-              TACTICAL SECTOR: RICHMOND SQUADRON<br>
-              PATROL STATUS: NO CONFLICTS DETECTED<br>
-              INSTAGRAM DISPATCH: @richmondcats LINKED
+          <!-- METAR VIEW -->
+          <div id="view-metar" class="mfd-view">
+            <div style="color: var(--terminal-amber); font-weight: bold; margin-bottom: 6px;">> RICHMOND INTL (KRIC) METAR OBSERVATION</div>
+            <pre id="metar-full-text" style="color: #ffffff; white-space: pre-wrap; font-size: 0.85rem; line-height: 1.4;">CONTACTING NOAA AVIATION WEATHER API...</pre>
+          </div>
+
+          <!-- ENGINE VIEW -->
+          <div id="view-engine" class="mfd-view">
+            <div style="color: var(--terminal-amber); font-weight: bold;">PROPULSION & TELEMETRY SYSTEMS</div>
+            <div style="margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.9rem;">
+              <div>PROP RPM: <span id="eng-rpm-val" style="color:#ffffff;">2450</span></div>
+              <div>BATT VOLT: <span style="color:#ffffff;">24.8 V</span></div>
+              <div>LINK RSSI: <span style="color:#ffffff;">-42 dBm</span></div>
+              <div>MOTOR TEMP: <span style="color:#ffffff;">48°C</span></div>
+            </div>
+          </div>
+
+          <!-- FELINE TACTICAL MAP -->
+          <div id="view-feline" class="mfd-view">
+            <div style="color: var(--hud-green); font-weight: bold;">FELINE DECONFLICTION MONITOR</div>
+            <p style="font-size: 0.85rem; margin-top: 8px; color: #cbd5e1; line-height: 1.4;">
+              ASSET IDENTIFIER: FOREST THE CAT<br>
+              DISPATCH CHANNEL: @richmondcats LINKED<br>
+              STATUS: LOCAL PATROL COMPLETE - ZERO INCIDENTS REPORTED
             </p>
           </div>
         </div>
 
-        <!-- SOFTKEYS -->
+        <!-- MFD SOFTKEYS -->
         <div class="mfd-softkeys">
-          <button type="button" class="softkey active" data-target="mfd-view-nav">MAP</button>
-          <button type="button" class="softkey" data-target="mfd-view-wx">METAR</button>
-          <button type="button" class="softkey" data-target="mfd-view-eng">ENGINE</button>
-          <button type="button" class="softkey" data-target="mfd-view-feline">FELINE</button>
+          <button type="button" class="softkey-btn active" data-target="view-nav">MAP</button>
+          <button type="button" class="softkey-btn" data-target="view-metar">METAR</button>
+          <button type="button" class="softkey-btn" data-target="view-engine">SYS/ENG</button>
+          <button type="button" class="softkey-btn" data-target="view-feline">FELINE</button>
         </div>
       </section>
 
     </main>
 
-    <!-- FMC & INTERACTIVE THROTTLE SECTION -->
-    <section class="control-deck">
-      <div class="throttle-quadrant">
-        <label for="throttle" style="font-size: 0.8rem; font-weight: bold;">THROTTLE</label>
-        <input type="range" id="throttle" class="throttle-slider" min="0" max="100" value="65">
-        <span id="throttle-disp" style="color: var(--cyan); font-weight: bold;">65%</span>
+    <!-- THROTTLE & FMC CONTROLS -->
+    <section class="controls-deck">
+      <div class="throttle-box">
+        <label for="throttle-fader" style="font-size: 0.8rem; font-weight: bold;">THROTTLE</label>
+        <input type="range" id="throttle-fader" class="throttle-range" min="0" max="100" value="65">
+        <span id="throttle-percent" style="font-weight: bold; color: #ffffff;">65%</span>
       </div>
 
-      <div class="fmc-console">
-        <div style="font-weight: bold; color: #cbd5e1;">COLLINS-STYLE FMC INTERFACE</div>
-        <div class="fmc-screen" id="fmc-log">
-          <div class="fmc-prompt">> SYSTEM INITIALIZED OK.</div>
-          <div>READY TO EXECUTE DISPATCH TASKS.</div>
+      <div class="fmc-box">
+        <div style="font-weight: bold; color: #ffffff;">ROCKWELL COLLINS FMC COMMAND CONSOLE</div>
+        <div class="fmc-screen" id="fmc-display">
+          <div>> ROCKWELL COLLINS FMS VER 4.2</div>
+          <div>> ROUTE: KRIC -> DIRECT DECONFLICTION</div>
+          <div style="color: var(--terminal-amber);">> STANDBY FOR DISPATCH ORDERS.</div>
         </div>
       </div>
     </section>
 
     <!-- LIVE MCU GOOGLE SHEET TERMINAL -->
-    <section class="mcu-dock-wrapper">
+    <section class="mcu-section">
       <div class="mcu-header">
-        <span>SYSTEM: MCU TELEMETRY & EVENT DISPATCH [LIVE GOOGLE SHEET]</span>
-        <span id="mcu-sync-status">AUTO-REFRESH: 60S</span>
+        <span>SYSTEM: MCU TELEMETRY & EVENT DISPATCH [GOOGLE SHEET DIRECT LINK]</span>
+        <span id="mcu-refresh-timer" style="font-size: 0.85rem;">SYNC: 60S</span>
       </div>
       <div id="mcu-display" class="mcu-container">
-        <div class="status-warn">> SYNCHRONIZING WITH MCU REPOSITORY...</div>
+        <div class="status-warn">> SYNCHRONIZING WITH MCU SPREADSHEET...</div>
       </div>
     </section>
 
   </div>
 
-  <!-- SCRIPT ENGINE (SELF-CONTAINED & ERROR-ISOLATED) -->
+  <!-- SELF-CONTAINED JAVASCRIPT LOGIC -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-      // -------------------------------------------------------------
-      // 1. ISOLATED ZULU MASTER CLOCK
-      // -------------------------------------------------------------
+      // 1. ZULU CLOCK LOGIC
       try {
-        const topClock = document.getElementById('top-clock');
-        function tickClock() {
+        const zuluClock = document.getElementById('top-zulu-clock');
+        function updateZuluClock() {
           const now = new Date();
-          if (topClock) {
-            topClock.textContent = now.toISOString().substring(11, 19) + 'Z';
+          if (zuluClock) {
+            zuluClock.textContent = now.toISOString().substring(11, 19) + 'Z';
           }
         }
-        setInterval(tickClock, 1000);
-        tickClock();
+        setInterval(updateZuluClock, 1000);
+        updateZuluClock();
       } catch (err) {
-        console.warn('Clock init bypassed:', err);
+        console.warn('Clock init failed:', err);
       }
 
-      // -------------------------------------------------------------
-      // 2. MFD BUTTON SOFTKEY SWITCHER
-      // -------------------------------------------------------------
+      // 2. MFD BUTTON SOFTKEY RESPONSIVENESS
       try {
-        const softkeys = document.querySelectorAll('.softkey');
+        const softkeys = document.querySelectorAll('.softkey-btn');
         const views = document.querySelectorAll('.mfd-view');
-        const mfdLabel = document.getElementById('mfd-current-label');
+        const viewHeader = document.getElementById('mfd-view-header');
 
         softkeys.forEach(btn => {
           btn.addEventListener('click', () => {
@@ -590,101 +592,90 @@
 
             btn.classList.add('active');
             const targetId = btn.getAttribute('data-target');
-            const targetView = document.getElementById(targetId);
-            if (targetView) targetView.classList.add('active');
+            const targetEl = document.getElementById(targetId);
+            if (targetEl) targetEl.classList.add('active');
 
-            if (mfdLabel) {
-              mfdLabel.textContent = `MFD 1 // ${btn.textContent} MODE`;
+            if (viewHeader) {
+              viewHeader.textContent = `MFD 1 // ${btn.textContent} MODE`;
             }
           });
         });
       } catch (err) {
-        console.warn('MFD Softkeys failed to bind:', err);
+        console.warn('MFD Softkeys failed:', err);
       }
 
-      // -------------------------------------------------------------
-      // 3. PFD DYNAMICS & INTERACTIVE THROTTLE
-      // -------------------------------------------------------------
+      // 3. THROTTLE & PFD KINEMATICS (FPV ATTITUDE DYNAMICS)
       try {
-        const throttle = document.getElementById('throttle');
-        const throttleDisp = document.getElementById('throttle-disp');
-        const horizon = document.getElementById('artificial-horizon');
-        const speedVal = document.getElementById('speed-readout');
-        const altVal = document.getElementById('alt-readout');
-        const rpmVal = document.getElementById('eng-rpm');
+        const throttleInput = document.getElementById('throttle-fader');
+        const throttleDisplay = document.getElementById('throttle-percent');
+        const horizon = document.getElementById('horizon-disc');
+        const iasDisplay = document.getElementById('ias-val');
+        const altDisplay = document.getElementById('alt-val');
+        const rpmDisplay = document.getElementById('eng-rpm-val');
 
-        let pitch = 0;
-        let roll = 0;
-
-        if (throttle) {
-          throttle.addEventListener('input', (e) => {
+        if (throttleInput) {
+          throttleInput.addEventListener('input', (e) => {
             const val = parseInt(e.target.value, 10);
-            if (throttleDisp) throttleDisp.textContent = `${val}%`;
-            if (speedVal) speedVal.textContent = Math.round(60 + (val * 0.9));
-            if (rpmVal) rpmVal.textContent = Math.round(1500 + (val * 14.5));
+            if (throttleDisplay) throttleDisplay.textContent = `${val}%`;
+            if (iasDisplay) iasDisplay.textContent = Math.round(55 + (val * 0.95));
+            if (rpmDisplay) rpmDisplay.textContent = Math.round(1400 + (val * 15));
           });
         }
 
-        // Gentle simulated ambient flight movement
+        // FPV Drone Loiter Oscillation
         setInterval(() => {
-          pitch = Math.sin(Date.now() / 2400) * 8;
-          roll = Math.cos(Date.now() / 3200) * 4;
+          const pitch = Math.sin(Date.now() / 2200) * 10;
+          const roll = Math.cos(Date.now() / 3000) * 6;
           if (horizon) {
             horizon.style.transform = `translateY(${pitch}px) rotate(${roll}deg)`;
           }
-          if (altVal) {
-            altVal.textContent = Math.round(3500 + (pitch * 10));
+          if (altDisplay) {
+            altDisplay.textContent = Math.round(3500 + (pitch * 8));
           }
         }, 50);
       } catch (err) {
         console.warn('PFD dynamics bypassed:', err);
       }
 
-      // -------------------------------------------------------------
-      // 4. METAR API WEATHER RECON (KRIC)
-      // -------------------------------------------------------------
-      async function loadLiveMetar() {
-        const metarStatus = document.getElementById('metar-status');
-        const metarOutput = document.getElementById('metar-raw-output');
+      // 4. NOAA AVIATION METAR FETCH (KRIC)
+      async function loadMetar() {
+        const topMetar = document.getElementById('top-metar-val');
+        const fullMetar = document.getElementById('metar-full-text');
 
         try {
-          // Public AviationWeather.gov NOAA Endpoint for KRIC
-          const res = await fetch('https://aviationweather.gov/api/data/metar?ids=KRIC&format=raw');
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const rawMetar = (await res.text()).trim();
+          const response = await fetch('https://aviationweather.gov/api/data/metar?ids=KRIC&format=raw');
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const raw = (await response.text()).trim();
 
-          if (rawMetar) {
-            if (metarStatus) metarStatus.textContent = rawMetar.substring(0, 24) + '...';
-            if (metarOutput) metarOutput.textContent = rawMetar;
+          if (raw) {
+            if (topMetar) topMetar.textContent = raw.substring(0, 26) + '...';
+            if (fullMetar) fullMetar.textContent = raw;
           } else {
-            throw new Error('Empty payload');
+            throw new Error('No raw text');
           }
         } catch (err) {
-          // Fallback offline METAR so HUD stays active
           const fallback = 'KRIC 101054Z 03006KT 10SM CLR 18/14 A3012 RMK AO2 SLP198';
-          if (metarStatus) metarStatus.textContent = '10SM CLR (SIM)';
-          if (metarOutput) metarOutput.textContent = fallback + ' [OFFLINE CACHE]';
+          if (topMetar) topMetar.textContent = '10SM CLR [LIVE SIM]';
+          if (fullMetar) fullMetar.textContent = fallback + '\n\n[OFFLINE SIMULATION STREAM ACTIVATED]';
         }
       }
-      loadLiveMetar();
-      setInterval(loadLiveMetar, 300000); // 5-minute poll
+      loadMetar();
+      setInterval(loadMetar, 300000);
 
-      // -------------------------------------------------------------
-      // 5. LIVE MCU GOOGLE SHEET INTEGRATION (VERIFIED ID)
-      // -------------------------------------------------------------
+      // 5. LIVE GOOGLE SHEET INTEGRATION FOR MCU TAB
       const MCU_SHEET_ID = '1tscWByPbdTPM6SHB4dNimrzRu7FQUbrNWX5SyX06d8U';
-      const MCU_TAB_NAME = 'MCU';
-      const MCU_URL = `https://docs.google.com/spreadsheets/d/${MCU_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(MCU_TAB_NAME)}`;
+      const MCU_TAB = 'MCU';
+      const MCU_URL = `https://docs.google.com/spreadsheets/d/${MCU_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(MCU_TAB)}`;
 
-      async function fetchMCUEvents() {
+      async function pullGoogleSheetMCU() {
         const container = document.getElementById('mcu-display');
         if (!container) return;
 
         try {
-          const response = await fetch(MCU_URL);
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const res = await fetch(MCU_URL);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-          const rawText = await response.text();
+          const rawText = await res.text();
           const jsonStart = rawText.indexOf('{');
           const jsonEnd = rawText.lastIndexOf('}');
           const data = JSON.parse(rawText.substring(jsonStart, jsonEnd + 1));
@@ -693,27 +684,27 @@
           container.innerHTML = '';
 
           if (!rows || rows.length === 0) {
-            container.innerHTML = '<div class="status-warn">> NO MCU ENTRIES DETECTED</div>';
+            container.innerHTML = '<div class="status-warn">> NO MCU ENTRIES IN SPREADSHEET</div>';
             return;
           }
 
           rows.forEach(row => {
-            const getVal = (idx) => {
+            const getCol = (idx) => {
               if (!row.c || !row.c[idx]) return '';
               return (row.c[idx].f || row.c[idx].v || '').toString().trim();
             };
 
-            const date     = getVal(0);
-            const name     = getVal(1);
-            const state    = getVal(3);
-            const location = getVal(4);
-            const tags     = getVal(5);
-            const notes    = getVal(6);
+            const date     = getCol(0);
+            const name     = getCol(1);
+            const state    = getCol(3);
+            const location = getCol(4);
+            const tags     = getCol(5);
+            const notes    = getCol(6);
 
             if (!date && !name) return;
 
-            const rowEl = document.createElement('div');
-            rowEl.className = 'mcu-entry';
+            const entryEl = document.createElement('div');
+            entryEl.className = 'mcu-entry';
 
             let actionMarkup = '';
             if (notes.startsWith('http://') || notes.startsWith('https://')) {
@@ -722,36 +713,35 @@
               actionMarkup = `<span class="mcu-meta">${notes}</span>`;
             }
 
-            const locationDisplay = [location, state].filter(Boolean).join(', ');
+            const locStr = [location, state].filter(Boolean).join(', ');
 
-            rowEl.innerHTML = `
+            entryEl.innerHTML = `
               <span class="mcu-date">${date}</span>
               <div class="mcu-info">
                 <div class="mcu-name">${name}</div>
                 ${tags ? `<span class="mcu-tags">[${tags}]</span>` : ''}
               </div>
               <div class="mcu-meta">
-                ${locationDisplay ? `<span class="mcu-location">${locationDisplay}</span>` : ''}
+                ${locStr ? `<span style="display:block; color:var(--hud-green);">${locStr}</span>` : ''}
               </div>
               <div class="mcu-action">
                 ${actionMarkup}
               </div>
             `;
 
-            container.appendChild(rowEl);
+            container.appendChild(entryEl);
           });
 
         } catch (err) {
-          console.error('MCU Fetch Failure:', err);
+          console.error('MCU Sheet Sync Error:', err);
           container.innerHTML = `<div class="status-err">> TELEMETRY LINK OFFLINE: ${err.message}</div>`;
         }
       }
 
-      fetchMCUEvents();
-      setInterval(fetchMCUEvents, 60000);
+      pullGoogleSheetMCU();
+      setInterval(pullGoogleSheetMCU, 60000);
 
     });
   </script>
 </body>
-</html>
 </html>
