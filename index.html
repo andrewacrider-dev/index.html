@@ -1,196 +1,220 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Avionics MCU Terminal</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+<!-- ========================================================================= -->
+<!-- MCU TELEMETRY & DISPATCH CONSOLE (PLACEMENT: BOTTOM OF INDEX.HTML)        -->
+<!-- Paste this block directly above your closing </body> tag                  -->
+<!-- ========================================================================= -->
 
-    body {
-      background-color: #0d1117;
-      color: #39ff14;
-      font-family: 'Courier New', Courier, monospace;
-      padding: 24px;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
-    }
+<style>
+  .mcu-dock-wrapper {
+    width: 100%;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    font-family: 'Courier New', Courier, monospace;
+  }
 
-    .terminal-wrapper {
-      width: 100%;
-      max-width: 900px;
-      background-color: #050805;
-      border: 2px solid #39ff14;
-      border-radius: 6px;
-      padding: 20px;
-      box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
-    }
+  .terminal-card {
+    background-color: #040804;
+    border: 1px solid #33ff33;
+    border-radius: 4px;
+    padding: 16px;
+    box-shadow: 0 0 12px rgba(51, 255, 51, 0.15);
+  }
 
-    .terminal-header {
-      display: flex;
-      justify-content: space-between;
-      border-bottom: 2px solid #39ff14;
-      padding-bottom: 10px;
-      margin-bottom: 16px;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
+  .terminal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(51, 255, 51, 0.4);
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+    font-weight: bold;
+    color: #33ff33;
+  }
 
-    .mcu-container {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+  .mcu-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 480px;
+    overflow-y: auto;
+  }
 
+  .mcu-entry {
+    display: grid;
+    grid-template-columns: 140px 1.5fr 1fr auto;
+    gap: 12px;
+    align-items: baseline;
+    padding: 8px;
+    background-color: rgba(51, 255, 51, 0.03);
+    border-left: 3px solid #33ff33;
+    border-bottom: 1px dashed rgba(51, 255, 51, 0.2);
+  }
+
+  .mcu-date {
+    color: #88ff88;
+    font-weight: bold;
+    font-size: 0.9rem;
+  }
+
+  .mcu-name {
+    color: #ffffff;
+    font-weight: bold;
+  }
+
+  .mcu-meta {
+    color: #70d670;
+    font-size: 0.85rem;
+  }
+
+  .mcu-location {
+    display: block;
+    color: #33ff33;
+  }
+
+  .mcu-tags {
+    display: inline-block;
+    font-size: 0.75rem;
+    color: #a3e635;
+    opacity: 0.85;
+  }
+
+  .mcu-link-btn {
+    background-color: #33ff33;
+    color: #000000;
+    padding: 2px 8px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.8rem;
+    border-radius: 2px;
+  }
+
+  .mcu-link-btn:hover {
+    background-color: #ffffff;
+    color: #000000;
+  }
+
+  .status-warn { color: #facc15; }
+  .status-err  { color: #ef4444; }
+
+  @media (max-width: 768px) {
     .mcu-entry {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      padding: 8px;
-      border-bottom: 1px dashed rgba(57, 255, 20, 0.3);
-      align-items: center;
+      grid-template-columns: 1fr;
+      gap: 6px;
     }
+  }
+</style>
 
-    .mcu-col-a {
-      color: #88ff88;
-      font-weight: bold;
-      min-width: 140px;
-    }
-
-    .mcu-col-b {
-      flex: 1;
-      color: #39ff14;
-    }
-
-    .mcu-col-c {
-      color: #a3e635;
-    }
-
-    .mcu-link {
-      color: #000;
-      background-color: #39ff14;
-      padding: 2px 8px;
-      text-decoration: none;
-      font-weight: bold;
-      border-radius: 2px;
-    }
-
-    .mcu-link:hover {
-      background-color: #ffffff;
-      color: #000000;
-    }
-
-    .status-msg {
-      color: #facc15;
-      padding: 12px;
-    }
-
-    .status-err {
-      color: #ef4444;
-      padding: 12px;
-    }
-  </style>
-</head>
-<body>
-
-  <div class="terminal-wrapper">
+<div class="mcu-dock-wrapper">
+  <div class="terminal-card">
     <div class="terminal-header">
-      <span>SYSTEM: MCU DATA LINK</span>
-      <span id="system-clock">UTC 00:00:00</span>
+      <span>SYSTEM: MCU TELEMETRY & EVENT DISPATCH</span>
+      <span id="mcu-clock">UTC --:--:--</span>
     </div>
-
-    <!-- MCU Terminal Output Box -->
     <div id="mcu-display" class="mcu-container">
-      <div class="status-msg">> INITIALIZING DATA LINK WITH SPREADSHEET...</div>
+      <div class="mcu-status-line status-warn">> SYNCHRONIZING WITH MCU REPOSITORY...</div>
     </div>
   </div>
+</div>
 
-  <script>
-    // =========================================================================
-    // CONFIGURATION: Verified Sheet ID plugged in
-    // =========================================================================
-    const SHEET_ID = '1tscWByPbdTPM6SHB4dNimrzRu7FQUbrNWX5SyX06d8U';
-    const SHEET_TAB_NAME = 'MCU';
+<script>
+  (function() {
+    const MCU_CONFIG = {
+      sheetId: '1tscWByPbdTPM6SHB4dNimrzRu7FQUbrNWX5SyX06d8U',
+      tabName: 'MCU',
+      pollIntervalMs: 60000
+    };
 
-    // Google Visualization API Endpoint (Public JSON Feed)
-    const MCU_FEED_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_TAB_NAME)}`;
+    const MCU_ENDPOINT = `https://docs.google.com/spreadsheets/d/${MCU_CONFIG.sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(MCU_CONFIG.tabName)}`;
 
-    // Update terminal clock
-    function updateClock() {
-      const now = new Date();
-      document.getElementById('system-clock').textContent = 'UTC ' + now.toUTCString().split(' ')[4];
+    function updateMCUClock() {
+      const clock = document.getElementById('mcu-clock');
+      if (clock) {
+        const now = new Date();
+        clock.textContent = 'UTC ' + now.toUTCString().split(' ')[4];
+      }
     }
-    setInterval(updateClock, 1000);
-    updateClock();
+    setInterval(updateMCUClock, 1000);
+    updateMCUClock();
 
-    // Fetch and render Google Sheet rows
-    async function loadMCUFromSheet() {
-      const display = document.getElementById('mcu-display');
+    async function fetchMCUEvents() {
+      const container = document.getElementById('mcu-display');
+      if (!container) return;
 
       try {
-        const response = await fetch(MCU_FEED_URL);
+        const response = await fetch(MCU_ENDPOINT);
         if (!response.ok) {
-          throw new Error(`HTTP Error ${response.status} (Check tab name matches "${SHEET_TAB_NAME}")`);
+          throw new Error(`HTTP ${response.status} (Confirm tab is titled '${MCU_CONFIG.tabName}')`);
         }
 
-        const rawText = await response.text();
+        const raw = await response.text();
+        const jsonStart = raw.indexOf('{');
+        const jsonEnd = raw.lastIndexOf('}');
+        const data = JSON.parse(raw.substring(jsonStart, jsonEnd + 1));
+        const rows = data.table.rows;
 
-        // Extract valid JSON from the Google Visualization response wrapper
-        const jsonStart = rawText.indexOf('{');
-        const jsonEnd = rawText.lastIndexOf('}');
-        const cleanJsonString = rawText.substring(jsonStart, jsonEnd + 1);
-
-        const parsedData = JSON.parse(cleanJsonString);
-        const rows = parsedData.table.rows;
-
-        display.innerHTML = '';
+        container.innerHTML = '';
 
         if (!rows || rows.length === 0) {
-          display.innerHTML = '<div class="status-msg">> NO MCU LOG ENTRIES DETECTED.</div>';
+          container.innerHTML = '<div class="mcu-status-line status-warn">> NO MCU ENTRIES LOGGED</div>';
           return;
         }
 
-        // Loop through each row in the Sheet
+        // Columns: Col A=Date, Col B=Name, Col C=Nation, Col D=State, Col E=Location, Col F=Tag, Col G=Notes
         rows.forEach(row => {
-          const colA = row.c && row.c[0] ? (row.c[0].f || row.c[0].v || '') : '';
-          const colB = row.c && row.c[1] ? (row.c[1].f || row.c[1].v || '') : '';
-          const colC = row.c && row.c[2] ? (row.c[2].f || row.c[2].v || '') : '';
+          const getVal = (idx) => {
+            if (!row.c || !row.c[idx]) return '';
+            return (row.c[idx].f || row.c[idx].v || '').toString().trim();
+          };
 
-          const entryDiv = document.createElement('div');
-          entryDiv.className = 'mcu-entry';
+          const date     = getVal(0);
+          const name     = getVal(1);
+          const state    = getVal(3);
+          const location = getVal(4);
+          const tags     = getVal(5);
+          const notes    = getVal(6);
 
-          // Render column C as a button link if it is an HTTP/HTTPS URL
-          let actionMarkup = `<span class="mcu-col-c">${colC}</span>`;
-          if (typeof colC === 'string' && (colC.startsWith('http://') || colC.startsWith('https://'))) {
-            actionMarkup = `<a href="${colC}" target="_blank" rel="noopener noreferrer" class="mcu-link">[VERIFY EVENT]</a>`;
+          if (!date && !name) return;
+
+          const rowEl = document.createElement('div');
+          rowEl.className = 'mcu-entry';
+
+          let actionMarkup = '';
+          if (notes.startsWith('http://') || notes.startsWith('https://')) {
+            actionMarkup = `<a href="${notes}" target="_blank" rel="noopener noreferrer" class="mcu-link-btn">[VERIFY]</a>`;
+          } else if (notes) {
+            actionMarkup = `<span class="mcu-meta">${notes}</span>`;
           }
 
-          entryDiv.innerHTML = `
-            <span class="mcu-col-a">> ${colA}</span>
-            <span class="mcu-col-b">${colB}</span>
-            ${actionMarkup}
+          const locationDisplay = [location, state].filter(Boolean).join(', ');
+
+          rowEl.innerHTML = `
+            <span class="mcu-date">${date}</span>
+            <div class="mcu-info">
+              <div class="mcu-name">${name}</div>
+              ${tags ? `<span class="mcu-tags">[${tags}]</span>` : ''}
+            </div>
+            <div class="mcu-meta">
+              ${locationDisplay ? `<span class="mcu-location">${locationDisplay}</span>` : ''}
+            </div>
+            <div class="mcu-action">
+              ${actionMarkup}
+            </div>
           `;
 
-          display.appendChild(entryDiv);
+          container.appendChild(rowEl);
         });
 
       } catch (err) {
-        console.error('MCU Data Link Error:', err);
-        display.innerHTML = `<div class="status-err">> LINK OFFLINE: ${err.message}. Ensure the tab at the bottom is named "${SHEET_TAB_NAME}".</div>`;
+        console.error('MCU Synchronization Failed:', err);
+        container.innerHTML = `<div class="mcu-status-line status-err">> TELEMETRY LINK ERROR: ${err.message}</div>`;
       }
     }
 
-    // Load data on page launch and re-poll every 60 seconds
-    document.addEventListener('DOMContentLoaded', () => {
-      loadMCUFromSheet();
-      setInterval(loadMCUFromSheet, 60000);
-    });
-  </script>
-</body>
-</html>
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', fetchMCUEvents);
+    } else {
+      fetchMCUEvents();
+    }
+    setInterval(fetchMCUEvents, MCU_CONFIG.pollIntervalMs);
+  })();
+</script>
