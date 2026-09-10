@@ -113,9 +113,9 @@
 
   <script>
     // =========================================================================
-    // CONFIGURATION: Paste your Sheet ID between the single quotes below
+    // CONFIGURATION: Verified Sheet ID plugged in
     // =========================================================================
-    const SHEET_ID = 'YOUR_GOOGLE_SHEET_ID_HERE';
+    const SHEET_ID = '1tscWByPbdTPM6SHB4dNimrzRu7FQUbrNWX5SyX06d8U';
     const SHEET_TAB_NAME = 'MCU';
 
     // Google Visualization API Endpoint (Public JSON Feed)
@@ -136,7 +136,7 @@
       try {
         const response = await fetch(MCU_FEED_URL);
         if (!response.ok) {
-          throw new Error(`HTTP Error ${response.status}`);
+          throw new Error(`HTTP Error ${response.status} (Check tab name matches "${SHEET_TAB_NAME}")`);
         }
 
         const rawText = await response.text();
@@ -182,7 +182,7 @@
 
       } catch (err) {
         console.error('MCU Data Link Error:', err);
-        display.innerHTML = `<div class="status-err">> LINK OFFLINE: ${err.message}. VERIFY SHEET SHARING IS SET TO "ANYONE WITH LINK".</div>`;
+        display.innerHTML = `<div class="status-err">> LINK OFFLINE: ${err.message}. Ensure the tab at the bottom is named "${SHEET_TAB_NAME}".</div>`;
       }
     }
 
