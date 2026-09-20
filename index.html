@@ -1003,17 +1003,22 @@
           });
         });
 
-        // Initialize Tactical Map centered on Richmond between Grace & Broad St
+      // Initialize Tactical Map centered on Richmond between Grace & Broad St
         const mapContainer = document.getElementById('gis-tactical-map');
         if (mapContainer && typeof L !== 'undefined') {
-          map = L.map('gis-tactical-map').setView([37.5558, -77.4655], 14);
+          map = L.map('gis-tactical-map', {
+            zoomControl: true,
+            attributionControl: false // Cleans up the cockpit display
+          }).setView([37.5558, -77.4655], 14);
 
-          // Dark Carto/OSM Tiles
+          // Dark Carto/OSM Keyless Tiles (100% free, no API key token)
           L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-          subdomains: 'abcd',
-          maxZoom: 20
+            subdomains: 'abcd',
+            maxZoom: 20
           }).addTo(map);
+
+          // Force Leaflet to calculate container bounds immediately
+          setTimeout(() => { map.invalidateSize(); }, 250);
 
           // Marker 1: Forest The Cat (2735 W Grace St)
           const forestIcon = L.divIcon({
