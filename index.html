@@ -891,10 +891,11 @@
           <div id="mfd-view-testmap" class="mfd-tab">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
               <span style="color: var(--sv-magenta); font-weight: bold; font-size: 0.85rem;">TEST OPS & PRACTICE AREAS</span>
+              <a href="https://docs.google.com/spreadsheets/d/1YbhITJnZjm0NrxwaDU24lTuxohNKqRvpAuBSEYTZ0rs/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="mcu-link-btn" style="background-color: var(--sv-magenta); color: #fff;">[OPEN OPS SHEET]</a>
             </div>
             <div id="gis-test-map" style="width: 100%; height: 250px; border: 1.5px solid var(--sv-magenta); border-radius: 4px; background: #03080e; z-index: 1;"></div>
             <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 6px; line-height: 1.3;">
-              <strong>RECOMMENDED:</strong> KOFP (Hanover), KFCI (Chesterfield), W96 (New Kent). Keep clear of KRIC Class C surface area during maneuvers.
+              <strong>DYNAMIC SHEET FEED:</strong> Points loaded from Test Ops Sheet. Class C Surface Area depicted in red.
             </div>
           </div>
         </div>
@@ -993,6 +994,7 @@
       // 2. MFD SOFTKEYS & GIS MAP INITIALIZATION
       let map = null;
       let testMap = null;
+      let testOpsLayerGroup = L.layerGroup();
       let forestMarker = null;
       let francineMarker = null;
 
@@ -1059,7 +1061,7 @@
           setTimeout(() => map.invalidateSize(), 250);
         }
 
-        // Initialize Practice Area & Flight Test Map
+        // Initialize Practice Area & Flight Test Map (Dynamic Google Sheet Feed)
         const testMapContainer = document.getElementById('gis-test-map');
         if (testMapContainer && typeof L !== 'undefined') {
           testMap = L.map('gis-test-map', {
@@ -1082,10 +1084,86 @@
             weight: 2
           }).addTo(testMap).bindPopup("<strong>KRIC CLASS C SURFACE AREA</strong><br>SFC - 4,000 FT MSL<br>ATC Clearance Required");
 
-          // Recommended Test / Practice Airports
-          L.marker([37.7073, -77.4360]).addTo(testMap).bindPopup("<strong>KOFP Hanover County</strong><br>Pattern & Test Operations Area");
-          L.marker([37.4069, -77.5250]).addTo(testMap).bindPopup("<strong>KFCI Chesterfield County</strong><br>Maneuvering & Practice Airspace");
-          L.marker([37.5039, -77.1268]).addTo(testMap).bindPopup("<strong>W96 New Kent County</strong><br>Uncongested Flight Testing Corridor");
+          testOpsLayerGroup.addTo(testMap);
+
+          // Dynamic Feed: Load Test Ops Waypoints from Google Sheet
+          const TEST_OPS_SHEET_ID = '1YbhITJnZjm0NrxwaDU24lTuxohNKqRvpAuBSEYTZ0rs';
+          const TEST_OPS_ENDPOINT = `https://docs.google.com/spreadsheets/d/${TEST_OPS_SHEET_ID}/gviz/tq?tqx=out:json`;
+
+          async function loadTestOpsFromSheet() {
+            try {
+              const res = await fetch(TEST_OPS_ENDPOINT);
+              if (!res.ok) throw new Error(`HTTP ${res.status}`);
+              const raw = await res.text();
+              const cleanJson = raw.substring(raw.indexOf('{'), raw.lastIndexOf('}') + 1);
+              const data = JSON.parse(cleanJson);
+              const rows = data.table ? data.table.rows : [];
+
+              testOpsLayerGroup.clearLayers();
+              let markersAdded = 0;
+
+              rows.forEach(row => {
+                const getVal = (idx) => (row.c && row.c[idx]) ? (row.c[idx].v || row.c[idx].f || '').toString().trim() : '';
+
+                const col0 = getVal(0);
+                const col1 = getVal(1);
+                const col2 = getVal(2);
+                const col3 = getVal(3);
+                const col4 = getVal(4);
+
+                let lat = null, lon = null, name = '', notes = '', status = '';
+
+                if (!isNaN(parseFloat(col1)) && !isNaN(parseFloat(col2)) && Math.abs(parseFloat(col1)) <= 90) {
+                  name = col0;
+                  lat = parseFloat(col1);
+                  lon = parseFloat(col2);
+                  status = col3;
+                  notes = col4;
+                } else if (!isNaN(parseFloat(col2)) && !isNaN(parseFloat(col3)) && Math.abs(parseFloat(col2)) <= 90) {
+                  name = col1 || col0;
+                  lat = parseFloat(col2);
+                  lon = parseFloat(col3);
+                  status = col0;
+                  notes = col4;
+                }
+
+                if (lat && lon) {
+                  const testIcon = L.divIcon({
+                    className: 'custom-test-pin',
+                    html: '<div style="background:#ec4899; width:12px; height:12px; border-radius:50%; border:2px solid #ffffff; box-shadow:0 0 6px #ec4899;"></div>',
+                    iconSize: [12, 12]
+                  });
+
+                  const popupContent = `
+                    <div style="font-family:'Courier New', monospace;">
+                      <strong style="color:#ec4899;">${name || 'TEST WAYPOINT'}</strong><br>
+                      ${status ? `<span style="color:#22c55e;">STATUS: ${status}</span><br>` : ''}
+                      ${notes ? `<span style="font-size:0.75rem; color:#cbd5e1;">${notes}</span><br>` : ''}
+                      <span style="font-size:0.7rem; color:#94a3b8;">${lat.toFixed(4)}, ${lon.toFixed(4)}</span>
+                    </div>
+                  `;
+
+                  L.marker([lat, lon], { icon: testIcon }).addTo(testOpsLayerGroup).bindPopup(popupContent);
+                  markersAdded++;
+                }
+              });
+
+              // Airport defaults if sheet is empty or lacks coordinates
+              if (markersAdded === 0) {
+                L.marker([37.7073, -77.4360]).addTo(testOpsLayerGroup).bindPopup("<strong>KOFP Hanover County</strong><br>Default Ops");
+                L.marker([37.4069, -77.5250]).addTo(testOpsLayerGroup).bindPopup("<strong>KFCI Chesterfield County</strong><br>Default Ops");
+                L.marker([37.5039, -77.1268]).addTo(testOpsLayerGroup).bindPopup("<strong>W96 New Kent County</strong><br>Default Ops");
+              }
+            } catch (err) {
+              console.warn('Test Ops sheet feed bypass, loading defaults:', err);
+              L.marker([37.7073, -77.4360]).addTo(testOpsLayerGroup).bindPopup("<strong>KOFP Hanover County</strong><br>Offline Fallback");
+              L.marker([37.4069, -77.5250]).addTo(testOpsLayerGroup).bindPopup("<strong>KFCI Chesterfield County</strong><br>Offline Fallback");
+              L.marker([37.5039, -77.1268]).addTo(testOpsLayerGroup).bindPopup("<strong>W96 New Kent County</strong><br>Offline Fallback");
+            }
+          }
+
+          loadTestOpsFromSheet();
+          setInterval(loadTestOpsFromSheet, 120000);
         }
 
       } catch (err) {
