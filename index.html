@@ -441,6 +441,11 @@
       z-index: 1;
     }
 
+    /* KEYLESS DARK COCKPIT TILE FILTER (Inverts OpenStreetMap) */
+    .dark-cockpit-tiles {
+      filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+    }
+
     /* TACTICAL MAP POPUPS */
     .leaflet-popup-content-wrapper {
       background: #070d14 !important;
@@ -815,7 +820,7 @@
               <button type="button" id="emergency-disconnect-btn" class="btn-emergency">DECONFLICT</button>
             </div>
 
-            <!-- LIVE LEAFLET GIS ENGINE (KEYLESS CARTO TILES) -->
+            <!-- LIVE LEAFLET GIS ENGINE (KEYLESS FILTERED OSM TILES) -->
             <div id="gis-tactical-map"></div>
 
             <div id="override-status-line" style="font-size: 0.75rem; color: var(--sv-green);">
@@ -1027,10 +1032,10 @@
             attributionControl: false
           }).setView([37.5558, -77.4655], 14);
 
-          // 100% Free CartoDB Dark Matter tiles (No API key required)
-          L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            subdomains: 'abcd',
-            maxZoom: 20
+          // Keyless OpenStreetMap with dark cockpit inverted CSS filter
+          L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            className: 'dark-cockpit-tiles'
           }).addTo(map);
 
           // Marker 1: Forest The Cat (2735 W Grace St)
@@ -1062,9 +1067,10 @@
             attributionControl: false
           }).setView([37.53, -77.38], 10);
 
-          L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            subdomains: 'abcd',
-            maxZoom: 20
+          // Keyless OpenStreetMap with dark cockpit inverted CSS filter
+          L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            className: 'dark-cockpit-tiles'
           }).addTo(testMap);
 
           // KRIC Class C Surface Inner Ring (5 NM / 9260m)
