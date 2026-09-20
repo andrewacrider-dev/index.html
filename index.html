@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title> Richmond's AA-Flight-Services / Aviation utility from your neighbors </title>
+  <title>Richmond's AA-Flight-Services / Aviation utility from your neighbors</title>
   <!-- Leaflet GIS Map CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   <style>
@@ -185,40 +185,8 @@
 
     .pitch-m20 { top: calc(50% + 100px); width: 140px; }
     .pitch-m20::before, .pitch-m20::after { width: 45px; border-top: 2px dashed #ffffff; background: transparent; }
-    
- /* UNIFIED HEART BORESIGHT (AIRCRAFT REFERENCE SYMBOL) */
-    .boresight-heart-anchor {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-      filter: drop-shadow(0 0 6px var(--sv-magenta));
-    }
 
-
-    .heart-wireframe {
-      width: 44px;
-      height: 44px;
-      margin: 0 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .heart-wireframe svg {
-      width: 100%;
-      height: 100%;
-      fill: none;
-      stroke: var(--sv-magenta);
-      stroke-width: 2.5;
-      stroke-linejoin: round;
-    }
-    
+    /* WATERLINE SYMBOL */
     .waterline-symbol {
       position: absolute;
       z-index: 6;
@@ -239,19 +207,26 @@
     }
 
     /* HOLLOW WIREFRAME MAGENTA HEART HUD */
-    .hud-heart-anchor {
+    .boresight-heart-anchor {
       position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       z-index: 8;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       pointer-events: none;
+      filter: drop-shadow(0 0 6px var(--sv-magenta));
     }
 
     .heart-wireframe {
-      width: 48px;
-      height: 48px;
-      filter: drop-shadow(0 0 6px var(--sv-magenta));
+      width: 44px;
+      height: 44px;
+      margin: 0 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .heart-wireframe svg {
@@ -480,7 +455,7 @@
 
     .softkey-row {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       background: var(--sv-bezel);
       border-top: 2px solid var(--sv-bezel-border);
     }
@@ -545,7 +520,7 @@
       gap: 6px;
     }
 
-    .portal-card a {
+    .portal-card a, .portal-card button {
       color: #000;
       background: var(--sv-cyan);
       font-weight: 900;
@@ -554,9 +529,12 @@
       text-align: center;
       border-radius: 2px;
       font-size: 0.75rem;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
     }
 
-    .portal-card a:hover {
+    .portal-card a:hover, .portal-card button:hover {
       background: #ffffff;
     }
 
@@ -603,6 +581,7 @@
 
     .throttle-slider {
       -webkit-appearance: none;
+      appearance: none;
       width: 100%;
       height: 10px;
       background: #0b1118;
@@ -640,6 +619,8 @@
       font-size: 0.85rem;
       line-height: 1.4;
       min-height: 120px;
+      max-height: 150px;
+      overflow-y: auto;
       color: var(--sv-green);
     }
 
@@ -718,6 +699,7 @@
       .controls-deck { grid-template-columns: 1fr; }
       .portal-link-grid { grid-template-columns: 1fr; }
       .mcu-entry { grid-template-columns: 1fr; gap: 6px; }
+      .softkey-row { grid-template-columns: repeat(3, 1fr); }
     }
   </style>
 </head>
@@ -727,7 +709,7 @@
 
     <!-- MASTER ANNUNCIATOR -->
     <header class="annunciator-bar">
-      <div class="brand-id">Richmond's AA-Flight-Services / Aviation utility from your neighbors  </div>
+      <div class="brand-id">Richmond's AA-Flight-Services / Aviation utility from your neighbors</div>
       <div class="telemetry-row">
         <div>AIRSPACE: <span>KRIC</span></div>
         <div>METAR: <a id="top-metar-link" href="https://aviationweather.gov/data/metar/?id=KRIC" target="_blank" rel="noopener noreferrer">METAR KRIC 101054Z 22006KT 10SM SCT250 22/19 A3000</a></div>
@@ -760,7 +742,6 @@
           <!-- ORANGE WATERLINE SYMBOL -->
           <div class="waterline-symbol">
             <div class="waterline-wing"></div>
-            <div class="waterline-pip"></div>
             <div class="waterline-wing"></div>
           </div>
 
@@ -834,7 +815,7 @@
               <button type="button" id="emergency-disconnect-btn" class="btn-emergency">DECONFLICT</button>
             </div>
 
-            <!-- LIVE LEAFLET GIS ENGINE -->
+            <!-- LIVE LEAFLET GIS ENGINE (KEYLESS CARTO TILES) -->
             <div id="gis-tactical-map"></div>
 
             <div id="override-status-line" style="font-size: 0.75rem; color: var(--sv-green);">
@@ -848,6 +829,10 @@
               DIRECT DISPATCH & RECRUITMENT PORTALS
             </div>
             <div class="portal-link-grid">
+              <div class="portal-card">
+                <span style="font-size:0.75rem; font-weight:bold;">AA-Flight Services Fleet</span>
+                <button type="button" id="btn-load-fleet">[LOAD FLEET TO FMC]</button>
+              </div>
               <div class="portal-card">
                 <span style="font-size:0.75rem; font-weight:bold;">Careers in Aviation (Elementary)</span>
                 <a href="https://docs.google.com/presentation/d/1e1ld-50PBIsdsnJj5Rfybq2v14E-qN6ZDy-eaT3f3qY/edit#slide=id.p" target="_blank" rel="noopener noreferrer">[LAUNCH SLIDES]</a>
@@ -896,6 +881,17 @@
               <div>VSI RATE: <span id="mfd-vsi-val" style="color:#fff;">0 FPM</span></div>
             </div>
           </div>
+
+          <!-- VIEW 5: FLIGHT TEST OPS MAP -->
+          <div id="mfd-view-testmap" class="mfd-tab">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+              <span style="color: var(--sv-magenta); font-weight: bold; font-size: 0.85rem;">TEST OPS & PRACTICE AREAS</span>
+            </div>
+            <div id="gis-test-map" style="width: 100%; height: 250px; border: 1.5px solid var(--sv-magenta); border-radius: 4px; background: #03080e; z-index: 1;"></div>
+            <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 6px; line-height: 1.3;">
+              <strong>RECOMMENDED:</strong> KOFP (Hanover), KFCI (Chesterfield), W96 (New Kent). Keep clear of KRIC Class C surface area during maneuvers.
+            </div>
+          </div>
         </div>
 
         <div class="softkey-row">
@@ -903,6 +899,7 @@
           <button type="button" class="softkey" data-target="mfd-view-portals">PORTALS</button>
           <button type="button" class="softkey" data-target="mfd-view-metar">METAR</button>
           <button type="button" class="softkey" data-target="mfd-view-engine">ENGINE</button>
+          <button type="button" class="softkey" data-target="mfd-view-testmap">TEST OPS</button>
         </div>
       </section>
 
@@ -946,6 +943,21 @@
       </div>
     </section>
 
+    <!-- RVA LOCAL NEWS TICKER (CNN-STYLE SCROLL) -->
+    <section style="background: var(--sv-bezel); border: 2px solid var(--sv-bezel-border); border-radius: 6px; overflow: hidden; display: flex; align-items: center;">
+      <div style="background: var(--sv-cyan); color: #000; font-weight: 900; padding: 6px 12px; font-size: 0.85rem; white-space: nowrap; z-index: 2; box-shadow: 2px 0 10px rgba(0,0,0,0.8);">RVA NEWS TAPE</div>
+      <marquee id="news-ticker-scroll" scrollamount="6" style="color: #ffffff; font-size: 0.85rem; font-weight: bold; margin-left: 10px;">> SYNCHRONIZING RVA LOCAL NEWS FEED... [CONTACT US TO SUBSCRIBE]</marquee>
+    </section>
+
+    <!-- MEDIA HIGHLIGHT REEL LINK -->
+    <section style="background: var(--sv-bezel); border: 2px dashed var(--sv-bezel-border); border-radius: 6px; padding: 12px;">
+      <div style="color: var(--sv-white); font-weight: bold; font-size: 0.85rem; margin-bottom: 8px;">AA-FLIGHT SERVICES VISUAL ARCHIVES</div>
+      <a href="https://drive.google.com/drive/folders/1iqqERAk2qOnCPWzdY7xntW-HP8sv0_Od?usp=sharing" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; gap: 12px; text-decoration: none; background: #000; padding: 10px; border: 1px solid var(--sv-cyan); border-radius: 4px;">
+        <div style="background: var(--sv-cyan); color: #000; padding: 4px 8px; font-weight: bold; font-size: 0.8rem; border-radius: 2px; white-space: nowrap;">[PLAY HIGHLIGHT REEL]</div>
+        <span style="color: #94a3b8; font-size: 0.8rem; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Google Drive Media Vault // Flight Operations & Community Events</span>
+      </a>
+    </section>
+
     <!-- CARBON OFFSET FOOTER -->
     <footer class="cockpit-footer">
       <div>CHESAPEAKE BAY PROJECT OFFSET: <span style="color: #ffffff; font-weight: bold;">0.19 kg CO2e / Year</span></div>
@@ -975,6 +987,7 @@
 
       // 2. MFD SOFTKEYS & GIS MAP INITIALIZATION
       let map = null;
+      let testMap = null;
       let forestMarker = null;
       let francineMarker = null;
 
@@ -998,27 +1011,27 @@
             }
 
             if (targetId === 'mfd-view-map' && map) {
-              setTimeout(() => map.invalidateSize(), 100);
+              setTimeout(() => map.invalidateSize(), 150);
+            }
+            if (targetId === 'mfd-view-testmap' && testMap) {
+              setTimeout(() => testMap.invalidateSize(), 150);
             }
           });
         });
 
-      // Initialize Tactical Map centered on Richmond between Grace & Broad St
+        // Initialize Primary Tactical Map centered on Richmond between Grace & Broad St
         const mapContainer = document.getElementById('gis-tactical-map');
         if (mapContainer && typeof L !== 'undefined') {
           map = L.map('gis-tactical-map', {
             zoomControl: true,
-            attributionControl: false // Cleans up the cockpit display
+            attributionControl: false
           }).setView([37.5558, -77.4655], 14);
 
-          // Dark Carto/OSM Keyless Tiles (100% free, no API key token)
+          // 100% Free CartoDB Dark Matter tiles (No API key required)
           L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
             subdomains: 'abcd',
             maxZoom: 20
           }).addTo(map);
-
-          // Force Leaflet to calculate container bounds immediately
-          setTimeout(() => { map.invalidateSize(); }, 250);
 
           // Marker 1: Forest The Cat (2735 W Grace St)
           const forestIcon = L.divIcon({
@@ -1027,7 +1040,7 @@
             iconSize: [14, 14]
           });
           forestMarker = L.marker([37.5583, -77.4728], { icon: forestIcon }).addTo(map);
-          forestMarker.bindPopup('<strong>FOREST THE CAT</strong><br>2735 W Grace St, Richmond, VA<br><span style="color:#00f0ff;">SECTOR WATCH: ACTIVE</span>');
+          forestMarker.bindPopup('<strong>FOREST THE CAT</strong><br><a href="https://photos.app.goo.gl/RfDueLprUsuoQ6tdA" target="_blank" style="color:#00f0ff; text-decoration:underline;">2735 W Grace St Photo Vault</a><br><span style="color:#00f0ff;">SECTOR WATCH: ACTIVE</span>');
 
           // Marker 2: Francine (Lowe\'s on Broad St)
           const francineIcon = L.divIcon({
@@ -1036,8 +1049,39 @@
             iconSize: [14, 14]
           });
           francineMarker = L.marker([37.5532, -77.4582], { icon: francineIcon }).addTo(map);
-          francineMarker.bindPopup('<strong>FRANCINE (LOWE\'S)</strong><br>W Broad St Corridor<br><span style="color:#ec4899;">GARDEN PATROL: ACTIVE</span>');
+          francineMarker.bindPopup('<strong>FRANCINE (LOWE\'S)</strong><br><a href="https://photos.app.goo.gl/895W2rGmJCoJGjk99" target="_blank" style="color:#ec4899; text-decoration:underline;">Broad St Corridor Photo Vault</a><br><span style="color:#ec4899;">GARDEN PATROL: ACTIVE</span>');
+
+          setTimeout(() => map.invalidateSize(), 250);
         }
+
+        // Initialize Practice Area & Flight Test Map
+        const testMapContainer = document.getElementById('gis-test-map');
+        if (testMapContainer && typeof L !== 'undefined') {
+          testMap = L.map('gis-test-map', {
+            zoomControl: true,
+            attributionControl: false
+          }).setView([37.53, -77.38], 10);
+
+          L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            subdomains: 'abcd',
+            maxZoom: 20
+          }).addTo(testMap);
+
+          // KRIC Class C Surface Inner Ring (5 NM / 9260m)
+          L.circle([37.5052, -77.3197], {
+            radius: 9260,
+            color: '#ef4444',
+            fillColor: '#ef4444',
+            fillOpacity: 0.12,
+            weight: 2
+          }).addTo(testMap).bindPopup("<strong>KRIC CLASS C SURFACE AREA</strong><br>SFC - 4,000 FT MSL<br>ATC Clearance Required");
+
+          // Recommended Test / Practice Airports
+          L.marker([37.7073, -77.4360]).addTo(testMap).bindPopup("<strong>KOFP Hanover County</strong><br>Pattern & Test Operations Area");
+          L.marker([37.4069, -77.5250]).addTo(testMap).bindPopup("<strong>KFCI Chesterfield County</strong><br>Maneuvering & Practice Airspace");
+          L.marker([37.5039, -77.1268]).addTo(testMap).bindPopup("<strong>W96 New Kent County</strong><br>Uncongested Flight Testing Corridor");
+        }
+
       } catch (err) {
         console.warn('Map initialization bypassed:', err);
       }
@@ -1335,6 +1379,68 @@
 
       pullGoogleSheetMCU();
       setInterval(pullGoogleSheetMCU, 60000);
+
+      // 7. RVA LOCAL NEWS TICKER (CNN-STYLE LEFT-TO-RIGHT / GID: 2060302602)
+      async function pullNewsTicker() {
+        const ticker = document.getElementById('news-ticker-scroll');
+        if (!ticker) return;
+        try {
+          const res = await fetch(`https://docs.google.com/spreadsheets/d/1FCIT_JYLimxUzXI-pdGHT_1zql9nAe3F-vQcCsz70Pg/gviz/tq?tqx=out:json&gid=2060302602`);
+          const raw = await res.text();
+          const cleanJson = raw.substring(raw.indexOf('{'), raw.lastIndexOf('}') + 1);
+          const parsed = JSON.parse(cleanJson);
+          const stories = [];
+
+          if (parsed.table && parsed.table.rows) {
+            parsed.table.rows.forEach(row => {
+              const title = row.c && row.c[0] ? (row.c[0].v || row.c[0].f || '') : '';
+              const desc = row.c && row.c[1] ? (row.c[1].v || row.c[1].f || '') : '';
+              if (title) stories.push(`${title}${desc ? ' - ' + desc : ''}`);
+            });
+          }
+
+          if (stories.length > 0) {
+            ticker.textContent = stories.join('  //  ') + '  //  [ CONTACT US TO SUBSCRIBE FOR DAILY BULLETINS ]';
+          } else {
+            ticker.textContent = '> NO NEWS STORIES ACTIVE ON TAPE  //  [ CONTACT US TO SUBSCRIBE ]';
+          }
+        } catch (e) {
+          ticker.textContent = '> RVA NEWS LINK DOWN  //  [ CONTACT US TO SUBSCRIBE ]';
+        }
+      }
+      pullNewsTicker();
+      setInterval(pullNewsTicker, 120000);
+
+      // 8. LOAD FLEET MANIFEST INTO FMC (Rockwell Collins Terminal)
+      const btnFleet = document.getElementById('btn-load-fleet');
+      if (btnFleet) {
+        btnFleet.addEventListener('click', async () => {
+          const fmc = document.getElementById('fmc-log-terminal');
+          if (!fmc) return;
+          fmc.innerHTML = `<div>> COLLINS FMS VER 4.2 RUNNING</div><div style="color:var(--sv-amber);">> UPLINKING FLEET SPREADSHEET...</div>`;
+          try {
+            const res = await fetch(`https://docs.google.com/spreadsheets/d/1xfa6RJQrMGacL8P-ieCYHRPv_kmyftpG-brWixnd_RA/gviz/tq?tqx=out:json`);
+            const raw = await res.text();
+            const cleanJson = raw.substring(raw.indexOf('{'), raw.lastIndexOf('}') + 1);
+            const parsed = JSON.parse(cleanJson);
+
+            fmc.innerHTML = `<div>> COLLINS FMS VER 4.2 RUNNING</div><div style="color:var(--sv-cyan);">> AA-FLIGHT SERVICES FLEET MANIFEST:</div>`;
+
+            if (parsed.table && parsed.table.rows) {
+              parsed.table.rows.forEach(row => {
+                const tail = row.c && row.c[0] ? (row.c[0].v || '') : '';
+                const type = row.c && row.c[1] ? (row.c[1].v || '') : '';
+                const role = row.c && row.c[2] ? (row.c[2].v || '') : '';
+                if (tail || type) {
+                  fmc.innerHTML += `<div>> ${String(tail).padEnd(8, ' ')} | ${type} ${role ? '| ' + role : ''}</div>`;
+                }
+              });
+            }
+          } catch (e) {
+            fmc.innerHTML += `<div style="color:var(--sv-danger);">> FLEET UPLINK FAILED: CHECK DATALINK</div>`;
+          }
+        });
+      }
 
     });
   </script>
