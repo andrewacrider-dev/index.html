@@ -685,6 +685,17 @@
       white-space: nowrap;
     }
 
+    /* RVA NEWS TICKER LINKS */
+    #news-ticker-scroll a {
+      color: var(--sv-cyan);
+      text-decoration: underline;
+      margin: 0 6px;
+    }
+    #news-ticker-scroll a:hover {
+      color: #ffffff;
+      text-shadow: 0 0 6px var(--sv-cyan);
+    }
+
     .cockpit-footer {
       background: var(--sv-bezel);
       border: 1px solid var(--sv-bezel-border);
@@ -949,28 +960,20 @@
       </div>
     </section>
 
-    <!-- RVA LOCAL NEWS TICKER (CNN-STYLE SCROLL) -->
-    <section style="background: var(--sv-bezel); border: 2px solid var(--sv-bezel-border); border-radius: 6px; overflow: hidden; display: flex; align-items: center;">
-      <div style="background: var(--sv-cyan); color: #000; font-weight: 900; padding: 6px 12px; font-size: 0.85rem; white-space: nowrap; z-index: 2; box-shadow: 2px 0 10px rgba(0,0,0,0.8);">RVA NEWS TAPE</div>
-      <marquee id="news-ticker-scroll" scrollamount="6" style="color: #ffffff; font-size: 0.85rem; font-weight: bold; margin-left: 10px;">> SYNCHRONIZING RVA LOCAL NEWS FEED... [CONTACT US TO SUBSCRIBE]</marquee>
-    </section>
-
-<!-- RVA LOCAL NEWS TICKER (CNN-STYLE SCROLL WITH CLICKABLE LINKS) -->
+    <!-- RVA LOCAL NEWS TICKER (CNN-STYLE SCROLL WITH CLICKABLE LINKS) -->
     <section style="background: var(--sv-bezel); border: 2px solid var(--sv-bezel-border); border-radius: 6px; overflow: hidden; display: flex; align-items: center;">
       <div style="background: var(--sv-cyan); color: #000; font-weight: 900; padding: 6px 12px; font-size: 0.85rem; white-space: nowrap; z-index: 2; box-shadow: 2px 0 10px rgba(0,0,0,0.8);">RVA NEWS TAPE</div>
       <marquee id="news-ticker-scroll" scrollamount="5" onmouseover="this.stop();" onmouseout="this.start();" style="color: #ffffff; font-size: 0.85rem; font-weight: bold; margin-left: 10px;">> SYNCHRONIZING RVA LOCAL NEWS BEAT... [CONTACT US TO SUBSCRIBE]</marquee>
     </section>
 
-<!-- RVA NEWS TICKER LINKS -->/
-    #news-ticker-scroll a {
-      color: var(--sv-cyan);
-      text-decoration: underline;
-      margin: 0 6px;
-    }
-    #news-ticker-scroll a:hover {
-      color: #ffffff;
-      text-shadow: 0 0 6px var(--sv-cyan);
-    }
+    <!-- MEDIA HIGHLIGHT REEL LINK -->
+    <section style="background: var(--sv-bezel); border: 2px dashed var(--sv-bezel-border); border-radius: 6px; padding: 12px;">
+      <div style="color: var(--sv-white); font-weight: bold; font-size: 0.85rem; margin-bottom: 8px;">AA-FLIGHT SERVICES VISUAL ARCHIVES</div>
+      <a href="https://drive.google.com/drive/folders/1iqqERAk2qOnCPWzdY7xntW-HP8sv0_Od?usp=sharing" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; gap: 12px; text-decoration: none; background: #000; padding: 10px; border: 1px solid var(--sv-cyan); border-radius: 4px;">
+        <div style="background: var(--sv-cyan); color: #000; padding: 4px 8px; font-weight: bold; font-size: 0.8rem; border-radius: 2px; white-space: nowrap;">[PLAY HIGHLIGHT REEL]</div>
+        <span style="color: #94a3b8; font-size: 0.8rem; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Google Drive Media Vault // Flight Operations & Community Events</span>
+      </a>
+    </section>
 
     <!-- CARBON OFFSET FOOTER -->
     <footer class="cockpit-footer">
@@ -1472,34 +1475,66 @@
       pullGoogleSheetMCU();
       setInterval(pullGoogleSheetMCU, 60000);
 
-      // 7. RVA LOCAL NEWS TICKER (CNN-STYLE LEFT-TO-RIGHT / GID: 2060302602)
+      // 7. RVA LOCAL NEWS TICKER (CLICKABLE ITEMS & SHEET LINKING / GID: 2060302602)
+      const NEWS_SHEET_ID = '1FCIT_JYLimxUzXI-pdGHT_1zql9nAe3F-vQcCsz70Pg';
+      const NEWS_GID = '2060302602';
+      const NEWS_ENDPOINT = `https://docs.google.com/spreadsheets/d/${NEWS_SHEET_ID}/gviz/tq?tqx=out:json&gid=${NEWS_GID}`;
+
       async function pullNewsTicker() {
         const ticker = document.getElementById('news-ticker-scroll');
         if (!ticker) return;
+
         try {
-          const res = await fetch(`https://docs.google.com/spreadsheets/d/1FCIT_JYLimxUzXI-pdGHT_1zql9nAe3F-vQcCsz70Pg/gviz/tq?tqx=out:json&gid=2060302602`);
+          const res = await fetch(NEWS_ENDPOINT);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
           const raw = await res.text();
           const cleanJson = raw.substring(raw.indexOf('{'), raw.lastIndexOf('}') + 1);
           const parsed = JSON.parse(cleanJson);
-          const stories = [];
+          const storyElements = [];
 
           if (parsed.table && parsed.table.rows) {
             parsed.table.rows.forEach(row => {
-              const title = row.c && row.c[0] ? (row.c[0].v || row.c[0].f || '') : '';
-              const desc = row.c && row.c[1] ? (row.c[1].v || row.c[1].f || '') : '';
-              if (title) stories.push(`${title}${desc ? ' - ' + desc : ''}`);
+              if (!row.c) return;
+
+              const getVal = (idx) => (row.c[idx] && (row.c[idx].v || row.c[idx].f)) ? (row.c[idx].f || row.c[idx].v).toString().trim() : '';
+
+              const col0 = getVal(0);
+              const col1 = getVal(1);
+              const col2 = getVal(2);
+              const col3 = getVal(3);
+
+              if (!col0 && !col1) return;
+
+              const cells = [col0, col1, col2, col3];
+              let storyUrl = cells.find(c => c.startsWith('http://') || c.startsWith('https://')) || '';
+
+              let title = col0.startsWith('http') ? col1 : col0;
+              let detail = (col1 !== title && !col1.startsWith('http')) ? col1 : (col2 !== storyUrl ? col2 : '');
+
+              if (!title) title = 'LOCAL BEAT UPDATE';
+
+              const displayText = detail ? `${title}: ${detail}` : title;
+
+              if (storyUrl) {
+                storyElements.push(`<a href="${storyUrl}" target="_blank" rel="noopener noreferrer">${displayText}</a>`);
+              } else {
+                storyElements.push(`<span>${displayText}</span>`);
+              }
             });
           }
 
-          if (stories.length > 0) {
-            ticker.textContent = stories.join('  //  ') + '  //  [ CONTACT US TO SUBSCRIBE FOR DAILY BULLETINS ]';
+          if (storyElements.length > 0) {
+            const subscribeCTA = `<a href="https://docs.google.com/forms/d/1fwb6tQpHIdalDk3xGAKDaB6t9FPrVjpasWAIpMQ4cHU/viewform" target="_blank" rel="noopener noreferrer" style="color:var(--sv-amber);">[ CONTACT US TO SUBSCRIBE FOR DAILY BULLETINS ]</a>`;
+            ticker.innerHTML = storyElements.join(' &nbsp;//&nbsp; ') + ' &nbsp;//&nbsp; ' + subscribeCTA;
           } else {
-            ticker.textContent = '> NO NEWS STORIES ACTIVE ON TAPE  //  [ CONTACT US TO SUBSCRIBE ]';
+            ticker.innerHTML = '> NO NEWS STORIES ACTIVE ON TAPE &nbsp;//&nbsp; <a href="https://docs.google.com/forms/d/1fwb6tQpHIdalDk3xGAKDaB6t9FPrVjpasWAIpMQ4cHU/viewform" target="_blank" rel="noopener noreferrer" style="color:var(--sv-amber);">[ CONTACT US TO SUBSCRIBE ]</a>';
           }
         } catch (e) {
-          ticker.textContent = '> RVA NEWS LINK DOWN  //  [ CONTACT US TO SUBSCRIBE ]';
+          ticker.innerHTML = '> RVA NEWS FEED LINK DOWN &nbsp;//&nbsp; <a href="https://docs.google.com/forms/d/1fwb6tQpHIdalDk3xGAKDaB6t9FPrVjpasWAIpMQ4cHU/viewform" target="_blank" rel="noopener noreferrer" style="color:var(--sv-amber);">[ CONTACT US TO SUBSCRIBE ]</a>';
         }
       }
+
       pullNewsTicker();
       setInterval(pullNewsTicker, 120000);
 
