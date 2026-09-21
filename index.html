@@ -1475,7 +1475,7 @@
       pullGoogleSheetMCU();
       setInterval(pullGoogleSheetMCU, 60000);
 
-      // 7. RVA LOCAL NEWS TICKER (CLICKABLE ITEMS & SHEET LINKING / GID: 2060302602)
+      // 7. RVA LOCAL NEWS TICKER (SKIPS ROW 1 HEADERS; FEEDS ROWS 2+ AS CLICKABLE ITEMS)
       const NEWS_SHEET_ID = '1FCIT_JYLimxUzXI-pdGHT_1zql9nAe3F-vQcCsz70Pg';
       const NEWS_GID = '2060302602';
       const NEWS_ENDPOINT = `https://docs.google.com/spreadsheets/d/${NEWS_SHEET_ID}/gviz/tq?tqx=out:json&gid=${NEWS_GID}`;
@@ -1493,21 +1493,25 @@
           const parsed = JSON.parse(cleanJson);
           const storyElements = [];
 
-          if (parsed.table && parsed.table.rows) {
-            parsed.table.rows.forEach(row => {
+          if (parsed.table && parsed.table.rows && parsed.table.rows.length > 1) {
+            // Slice(1) to deliberately bypass Row 1 headers and feed subsequent rows
+            const dataRows = parsed.table.rows.slice(1);
+
+            dataRows.forEach(row => {
               if (!row.c) return;
 
-              const getVal = (idx) => (row.c[idx] && (row.c[idx].v || row.c[idx].f)) ? (row.c[idx].f || row.c[idx].v).toString().trim() : '';
+              const getVal = (idx) => (row.c[idx] && (row.c[idx].v !== null && row.c[idx].v !== undefined)) ? (row.c[idx].f || row.c[idx].v).toString().trim() : '';
 
               const col0 = getVal(0);
               const col1 = getVal(1);
               const col2 = getVal(2);
               const col3 = getVal(3);
+              const col4 = getVal(4);
 
               if (!col0 && !col1) return;
 
-              const cells = [col0, col1, col2, col3];
-              let storyUrl = cells.find(c => c.startsWith('http://') || c.startsWith('https://')) || '';
+              const cells = [col0, col1, col2, col3, col4];
+              const storyUrl = cells.find(c => c.startsWith('http://') || c.startsWith('https://')) || '';
 
               let title = col0.startsWith('http') ? col1 : col0;
               let detail = (col1 !== title && !col1.startsWith('http')) ? col1 : (col2 !== storyUrl ? col2 : '');
