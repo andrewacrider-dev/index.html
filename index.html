@@ -955,14 +955,22 @@
       <marquee id="news-ticker-scroll" scrollamount="6" style="color: #ffffff; font-size: 0.85rem; font-weight: bold; margin-left: 10px;">> SYNCHRONIZING RVA LOCAL NEWS FEED... [CONTACT US TO SUBSCRIBE]</marquee>
     </section>
 
-    <!-- MEDIA HIGHLIGHT REEL LINK -->
-    <section style="background: var(--sv-bezel); border: 2px dashed var(--sv-bezel-border); border-radius: 6px; padding: 12px;">
-      <div style="color: var(--sv-white); font-weight: bold; font-size: 0.85rem; margin-bottom: 8px;">AA-FLIGHT SERVICES VISUAL ARCHIVES</div>
-      <a href="https://drive.google.com/drive/folders/1iqqERAk2qOnCPWzdY7xntW-HP8sv0_Od?usp=sharing" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; gap: 12px; text-decoration: none; background: #000; padding: 10px; border: 1px solid var(--sv-cyan); border-radius: 4px;">
-        <div style="background: var(--sv-cyan); color: #000; padding: 4px 8px; font-weight: bold; font-size: 0.8rem; border-radius: 2px; white-space: nowrap;">[PLAY HIGHLIGHT REEL]</div>
-        <span style="color: #94a3b8; font-size: 0.8rem; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Google Drive Media Vault // Flight Operations & Community Events</span>
-      </a>
+<!-- RVA LOCAL NEWS TICKER (CNN-STYLE SCROLL WITH CLICKABLE LINKS) -->
+    <section style="background: var(--sv-bezel); border: 2px solid var(--sv-bezel-border); border-radius: 6px; overflow: hidden; display: flex; align-items: center;">
+      <div style="background: var(--sv-cyan); color: #000; font-weight: 900; padding: 6px 12px; font-size: 0.85rem; white-space: nowrap; z-index: 2; box-shadow: 2px 0 10px rgba(0,0,0,0.8);">RVA NEWS TAPE</div>
+      <marquee id="news-ticker-scroll" scrollamount="5" onmouseover="this.stop();" onmouseout="this.start();" style="color: #ffffff; font-size: 0.85rem; font-weight: bold; margin-left: 10px;">> SYNCHRONIZING RVA LOCAL NEWS BEAT... [CONTACT US TO SUBSCRIBE]</marquee>
     </section>
+
+<!-- RVA NEWS TICKER LINKS -->/
+    #news-ticker-scroll a {
+      color: var(--sv-cyan);
+      text-decoration: underline;
+      margin: 0 6px;
+    }
+    #news-ticker-scroll a:hover {
+      color: #ffffff;
+      text-shadow: 0 0 6px var(--sv-cyan);
+    }
 
     <!-- CARBON OFFSET FOOTER -->
     <footer class="cockpit-footer">
