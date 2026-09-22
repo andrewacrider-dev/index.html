@@ -713,73 +713,74 @@
       font-weight: 900;
     }
 
-    .cockpit-footer {
-.vault-gallery-container {
+    /* INLINE FLIGHT HIGHLIGHT PLAYER DECK */
+    .vault-player-deck {
+      background: var(--sv-bezel);
+      border: 2px solid var(--sv-bezel-border);
+      border-radius: 6px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .vault-screen-wrapper {
+      width: 100%;
+      height: 440px;
       background: #000000;
       border: 1.5px solid var(--sv-cyan);
       border-radius: 4px;
       overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding: 10px;
+      position: relative;
     }
 
-    .vault-embed-frame {
+    .vault-screen-wrapper iframe {
       width: 100%;
-      height: 380px;
-      border: 1px solid #334155;
-      border-radius: 4px;
-      background: #020408;
+      height: 100%;
+      border: none;
     }
 
-    .vault-card-strip {
+    .vault-channels-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 10px;
     }
 
-    .vault-preview-card {
+    .vault-channel-card {
       background: rgba(6, 182, 212, 0.05);
       border: 1px solid #334155;
       border-radius: 4px;
-      padding: 8px;
+      padding: 10px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      justify-content: space-between;
+      gap: 8px;
     }
 
-    .vault-preview-card:hover {
+    .vault-channel-card:hover {
       border-color: var(--sv-cyan);
-      box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+      box-shadow: 0 0 8px rgba(0, 240, 255, 0.25);
     }
 
-    .vault-thumb-box {
-      width: 100%;
-      height: 140px;
-      background: #070d14;
-      border-radius: 3px;
-      overflow: hidden;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid #1e293b;
-    }
-
-    .vault-play-tag {
-      position: absolute;
-      top: 6px;
-      right: 6px;
-      background: rgba(0, 0, 0, 0.75);
-      color: var(--sv-cyan);
-      border: 1px solid var(--sv-cyan);
-      font-size: 0.65rem;
+    .vault-btn-load {
+      background: var(--sv-cyan);
+      color: #000;
+      border: none;
       font-weight: 900;
-      padding: 2px 6px;
+      font-size: 0.75rem;
+      padding: 6px 10px;
       border-radius: 2px;
+      cursor: pointer;
+      font-family: inherit;
+      width: 100%;
+      text-align: center;
     }
-      
+
+    .vault-btn-load:hover {
+      background: #ffffff;
+    }
+
+    .cockpit-footer {
       background: var(--sv-bezel);
       border: 1px solid var(--sv-bezel-border);
       border-radius: 6px;
@@ -799,6 +800,7 @@
       .portal-link-grid { grid-template-columns: 1fr; }
       .mcu-entry { grid-template-columns: 1fr; gap: 6px; }
       .softkey-row { grid-template-columns: repeat(3, 1fr); }
+      .vault-screen-wrapper { height: 280px; }
     }
   </style>
 </head>
@@ -1049,13 +1051,47 @@
       <marquee id="news-ticker-scroll" scrollamount="5" onmouseover="this.stop();" onmouseout="this.start();" style="color: #ffffff; font-size: 0.85rem; font-weight: bold; margin-left: 10px;">> SYNCHRONIZING RVA LOCAL NEWS BEAT... [CONTACT US TO SUBSCRIBE]</marquee>
     </section>
 
-    <!-- MEDIA HIGHLIGHT REEL LINK -->
-    <section style="background: var(--sv-bezel); border: 2px dashed var(--sv-bezel-border); border-radius: 6px; padding: 12px;">
-      <div style="color: var(--sv-white); font-weight: bold; font-size: 0.85rem; margin-bottom: 8px;">AA-FLIGHT SERVICES VISUAL ARCHIVES</div>
-      <a href="https://drive.google.com/drive/folders/1iqqERAk2qOnCPWzdY7xntW-HP8sv0_Od?usp=sharing" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; gap: 12px; text-decoration: none; background: #000; padding: 10px; border: 1px solid var(--sv-cyan); border-radius: 4px;">
-        <div style="background: var(--sv-cyan); color: #000; padding: 4px 8px; font-weight: bold; font-size: 0.8rem; border-radius: 2px; white-space: nowrap;">[PLAY HIGHLIGHT REEL]</div>
-        <span style="color: #94a3b8; font-size: 0.8rem; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Google Drive Media Vault // Flight Operations & Community Events</span>
-      </a>
+    <!-- INLINE FLIGHT HIGHLIGHT & MEDIA ARCHIVES PLAYER -->
+    <section class="vault-player-deck">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <div>
+          <span style="color: var(--sv-white); font-weight: bold; font-size: 0.9rem;">AA-FLIGHT SERVICES VISUAL ARCHIVES</span>
+          <span style="color: var(--sv-cyan); font-size: 0.75rem; margin-left: 8px;">// INLINE FLIGHT VIEWER</span>
+        </div>
+        <a href="https://drive.google.com/drive/folders/1iqqERAk2qOnCPWzdY7xntW-HP8sv0_Od?usp=sharing" target="_blank" rel="noopener noreferrer" class="mcu-link-btn" style="background-color: var(--sv-cyan); color: #000;">[OPEN FULL DRIVE VAULT]</a>
+      </div>
+
+      <!-- MAIN EMBEDDED FLIGHT VIDEO PREVIEW WINDOW -->
+      <div class="vault-screen-wrapper">
+        <iframe 
+          id="main-vault-player"
+          src="https://drive.google.com/file/d/14-X3e8n9Wn7V_Nf4f0c4Z4c9r7-preview/preview" 
+          title="Flight Operations Highlight Reel"
+          allow="autoplay; encrypted-media; picture-in-picture" 
+          allowfullscreen>
+        </iframe>
+      </div>
+
+      <!-- QUICK CHANNEL SWITCHER (IMAGE & VIDEO PREVIEWS) -->
+      <div class="vault-channels-grid">
+        
+        <div class="vault-channel-card">
+          <div>
+            <div style="color: var(--sv-cyan); font-weight: 900; font-size: 0.8rem;">CH 01: RICHMOND URBAN & RIVER RUNS</div>
+            <div style="color: #94a3b8; font-size: 0.72rem; margin-top: 2px;">Low approach, James River, and downtown corridor passes</div>
+          </div>
+          <button type="button" class="vault-btn-load" data-media-url="https://drive.google.com/file/d/1iqqERAk2qOnCPWzdY7xntW-HP8sv0_Od/preview">[LOAD CH 1 STREAM]</button>
+        </div>
+
+        <div class="vault-channel-card">
+          <div>
+            <div style="color: var(--sv-magenta); font-weight: 900; font-size: 0.8rem;">CH 02: FORMATION & COCKPIT VIEW</div>
+            <div style="color: #94a3b8; font-size: 0.72rem; margin-top: 2px;">RV-12 & Cessna flight controls, maneuvers, and telemetry</div>
+          </div>
+          <button type="button" class="vault-btn-load" style="background: var(--sv-magenta); color: #fff;" data-media-url="https://drive.google.com/drive/folders/1iqqERAk2qOnCPWzdY7xntW-HP8sv0_Od?usp=sharing">[OPEN VAULT DIRECT]</button>
+        </div>
+
+      </div>
     </section>
 
     <!-- CARBON OFFSET FOOTER -->
@@ -1141,7 +1177,7 @@
             iconSize: [14, 14]
           });
           forestMarker = L.marker([37.5583, -77.4728], { icon: forestIcon }).addTo(map);
-          forestMarker.bindPopup('<strong>FOREST THE CAT</strong><br><a href="https://photos.app.goo.gl/RfDueLprUsuoQ6tdA" target="_blank" style="color:#00f0ff; text-decoration:underline;">2735 W Grace St Photo Vault</a><br><span style="color:#00f0ff;">SECTOR WATCH: ACTIVE</span>'); //
+          forestMarker.bindPopup('<strong>FOREST THE CAT</strong><br><a href="https://photos.app.goo.gl/RfDueLprUsuoQ6tdA" target="_blank" style="color:#00f0ff; text-decoration:underline;">2735 W Grace St Photo Vault</a><br><span style="color:#00f0ff;">SECTOR WATCH: ACTIVE</span>');
 
           // Marker 2: Francine (Lowe\'s on Broad St)
           const francineIcon = L.divIcon({
@@ -1150,7 +1186,7 @@
             iconSize: [14, 14]
           });
           francineMarker = L.marker([37.5532, -77.4582], { icon: francineIcon }).addTo(map);
-          francineMarker.bindPopup('<strong>FRANCINE (LOWE\'S)</strong><br><a href="https://photos.app.goo.gl/895W2rGmJCoJGjk99" target="_blank" style="color:#ec4899; text-decoration:underline;">Broad St Corridor Photo Vault</a><br><span style="color:#ec4899;">GARDEN PATROL: ACTIVE</span>'); //
+          francineMarker.bindPopup('<strong>FRANCINE (LOWE\'S)</strong><br><a href="https://photos.app.goo.gl/895W2rGmJCoJGjk99" target="_blank" style="color:#ec4899; text-decoration:underline;">Broad St Corridor Photo Vault</a><br><span style="color:#ec4899;">GARDEN PATROL: ACTIVE</span>');
 
           setTimeout(() => map.invalidateSize(), 250);
         }
@@ -1577,19 +1613,16 @@
           const storyElements = [];
 
           if (parsed.table && parsed.table.rows && parsed.table.rows.length > 1) {
-            // Bypass Row 1 (Headers) and ingest all subsequent rows
             const dataRows = parsed.table.rows.slice(1);
 
             dataRows.forEach(row => {
               if (!row.c) return;
 
-              // Extract values, strings, and any formula text
               const cellVals = row.c.map(c => {
                 if (!c) return '';
                 return (c.v !== null && c.v !== undefined ? c.v : (c.f || '')).toString().trim();
               });
 
-              // Search all row cells for web URLs
               let storyUrl = '';
               for (const val of cellVals) {
                 const urlMatch = val.match(/https?:\/\/[^\s"'\)]+/i);
@@ -1599,9 +1632,7 @@
                 }
               }
 
-              // Filter out bare URLs to isolate textual content
               const textFields = cellVals.filter(v => v && !v.startsWith('http://') && !v.startsWith('https://'));
-
               if (textFields.length === 0 && !storyUrl) return;
 
               const title = textFields[0] || 'RVA FLIGHT DISPATCH';
@@ -1612,7 +1643,6 @@
                 detail = textFields[1];
               } else if (textFields.length >= 3) {
                 detail = textFields[1];
-                // Authors, journalists, and pilot callsigns in col 3+
                 byline = textFields[2];
               }
 
@@ -1628,13 +1658,13 @@
           }
 
           if (storyElements.length > 0) {
-            const subscribeCTA = `<a href="https://docs.google.com/forms/d/1fwb6tQpHIdalDk3xGAKDaB6t9FPrVjpasWAIpMQ4cHU/viewform" target="_blank" rel="noopener noreferrer" style="color:var(--sv-amber); text-decoration:underline; font-weight:900;">[ CONTACT US TO SUBSCRIBE FOR DAILY BULLETINS ]</a>`; //
+            const subscribeCTA = `<a href="https://docs.google.com/forms/d/1fwb6tQpHIdalDk3xGAKDaB6t9FPrVjpasWAIpMQ4cHU/viewform" target="_blank" rel="noopener noreferrer" style="color:var(--sv-amber); text-decoration:underline; font-weight:900;">[ CONTACT US TO SUBSCRIBE FOR DAILY BULLETINS ]</a>`;
             ticker.innerHTML = storyElements.join(' &nbsp;<span style="color:var(--sv-bezel-border);">//</span>&nbsp; ') + ' &nbsp;<span style="color:var(--sv-bezel-border);">//</span>&nbsp; ' + subscribeCTA;
           } else {
-            ticker.innerHTML = '> NO NEWS STORIES ACTIVE ON TAPE &nbsp;//&nbsp; <a href="https://docs.google.com/forms/d/1fwb6tQpHIdalDk3xGAKDaB6t9FPrVjpasWAIpMQ4cHU/viewform" target="_blank" rel="noopener noreferrer" style="color:var(--sv-amber);">[ CONTACT US TO SUBSCRIBE ]</a>'; //
+            ticker.innerHTML = '> NO NEWS STORIES ACTIVE ON TAPE &nbsp;//&nbsp; <a href="https://docs.google.com/forms/d/1fwb6tQpHIdalDk3xGAKDaB6t9FPrVjpasWAIpMQ4cHU/viewform" target="_blank" rel="noopener noreferrer" style="color:var(--sv-amber);">[ CONTACT US TO SUBSCRIBE ]</a>';
           }
         } catch (e) {
-          ticker.innerHTML = '> RVA NEWS FEED LINK DOWN &nbsp;//&nbsp; <a href="https://docs.google.com/forms/d/1fwb6tQpHIdalDk3xGAKDaB6t9FPrVjpasWAIpMQ4cHU/viewform" target="_blank" rel="noopener noreferrer" style="color:var(--sv-amber);">[ CONTACT US TO SUBSCRIBE ]</a>'; //
+          ticker.innerHTML = '> RVA NEWS FEED LINK DOWN &nbsp;//&nbsp; <a href="https://docs.google.com/forms/d/1fwb6tQpHIdalDk3xGAKDaB6t9FPrVjpasWAIpMQ4cHU/viewform" target="_blank" rel="noopener noreferrer" style="color:var(--sv-amber);">[ CONTACT US TO SUBSCRIBE ]</a>';
         }
       }
 
@@ -1671,6 +1701,17 @@
           }
         });
       }
+
+      // 9. VAULT PLAYER CHANNEL CONTROLS
+      const vaultPlayer = document.getElementById('main-vault-player');
+      document.querySelectorAll('.vault-btn-load').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetUrl = btn.getAttribute('data-media-url');
+          if (vaultPlayer && targetUrl) {
+            vaultPlayer.src = targetUrl;
+          }
+        });
+      });
 
     });
   </script>
