@@ -732,18 +732,37 @@
       border-radius: 4px;
       overflow: hidden;
       position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
 
     .vault-screen-wrapper iframe {
       width: 100%;
       height: 100%;
       border: none;
+      background: #000;
+    }
+
+    .vault-fallback-poster {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(0, 240, 255, 0.1) 0%, rgba(2, 4, 8, 0.95) 75%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      z-index: 2;
+      padding: 20px;
+      text-align: center;
     }
 
     .vault-channels-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
     }
 
     .vault-channel-card {
@@ -759,7 +778,26 @@
 
     .vault-channel-card:hover {
       border-color: var(--sv-cyan);
-      box-shadow: 0 0 8px rgba(0, 240, 255, 0.25);
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.25);
+    }
+
+    .vault-thumb-box {
+      width: 100%;
+      height: 130px;
+      background: #050a10;
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .vault-thumb-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .vault-btn-load {
@@ -774,6 +812,8 @@
       font-family: inherit;
       width: 100%;
       text-align: center;
+      text-decoration: none;
+      display: inline-block;
     }
 
     .vault-btn-load:hover {
@@ -1051,44 +1091,78 @@
       <marquee id="news-ticker-scroll" scrollamount="5" onmouseover="this.stop();" onmouseout="this.start();" style="color: #ffffff; font-size: 0.85rem; font-weight: bold; margin-left: 10px;">> SYNCHRONIZING RVA LOCAL NEWS BEAT... [CONTACT US TO SUBSCRIBE]</marquee>
     </section>
 
-    <!-- INLINE FLIGHT HIGHLIGHT & MEDIA ARCHIVES PLAYER -->
+    <!-- INLINE FLIGHT HIGHLIGHT & MEDIA ARCHIVES PLAYER DECK -->
     <section class="vault-player-deck">
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
         <div>
           <span style="color: var(--sv-white); font-weight: bold; font-size: 0.9rem;">AA-FLIGHT SERVICES VISUAL ARCHIVES</span>
-          <span style="color: var(--sv-cyan); font-size: 0.75rem; margin-left: 8px;">// INLINE FLIGHT VIEWER</span>
+          <span style="color: var(--sv-cyan); font-size: 0.75rem; margin-left: 8px;">// FLIGHT REEL HUD SCREEN</span>
         </div>
-        <a href="" style="background-color: var(--sv-cyan); color: #000;">[OPEN FULL DRIVE VAULT]</a>
+        <a href="https://drive.google.com/drive/folders/1iqqERAk2qOnCPWzdY7xntW-HP8sv0_Od?usp=sharing" target="_blank" rel="noopener noreferrer" class="mcu-link-btn" style="background-color: var(--sv-cyan); color: #000;">[OPEN FULL DRIVE VAULT]</a>
       </div>
 
-      <!-- MAIN EMBEDDED FLIGHT VIDEO PREVIEW WINDOW -->
-      <div class="vault-screen-wrapper">
+      <!-- MAIN EMBEDDED FLIGHT SCREEN -->
+      <div class="vault-screen-wrapper" id="vault-screen-box">
+        <div class="vault-fallback-poster" id="vault-poster">
+          <div style="font-size: 2.2rem;">🛩️</div>
+          <div style="color: #ffffff; font-weight: 900; font-size: 1.1rem; letter-spacing: 1px;">AA-FLIGHT SERVICES MEDIA ARCHIVE</div>
+          <div style="color: #94a3b8; font-size: 0.8rem; max-width: 480px; line-height: 1.4;">
+            Urban river runs, flight training passes, cockpit HUD recordings, and Richmond corridor operations.
+          </div>
+          <a href="https://drive.google.com/drive/folders/1iqqERAk2qOnCPWzdY7xntW-HP8sv0_Od?usp=sharing" target="_blank" rel="noopener noreferrer" class="mcu-link-btn" style="background: var(--sv-cyan); color: #000; padding: 8px 16px; font-size: 0.85rem; margin-top: 6px;">[LAUNCH FLIGHT REEL DRIVE]</a>
+        </div>
         <iframe 
           id="main-vault-player"
-          src="https://drive.google.com/file/d/12Jydcg5jWOY-rVJ2sHPFjWCJ839FQqT7/view?usp=sharing&t=40.306" 
+          src="" 
+          style="display: none;"
           title="Flight Operations Highlight Reel"
+          sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
           allow="autoplay; encrypted-media; picture-in-picture" 
           allowfullscreen>
         </iframe>
       </div>
 
-      <!-- QUICK CHANNEL SWITCHER (IMAGE & VIDEO PREVIEWS) -->
+      <!-- QUICK CHANNEL PREVIEWS & DIRECT ACCESS -->
       <div class="vault-channels-grid">
         
+        <!-- CARD 1 -->
         <div class="vault-channel-card">
+          <div class="vault-thumb-box">
+            <img 
+              src="https://drive.google.com/thumbnail?id=1iqqERAk2qOnCPWzdY7xntW-HP8sv0_Od&sz=w1000" 
+              alt="Channel 1 Reel"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            />
+            <div style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: #070d14; color: var(--sv-cyan); font-size: 0.75rem; font-weight: 900;">
+              HUD // REEL 01
+            </div>
+            <span style="position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.85); color: var(--sv-cyan); border: 1px solid var(--sv-cyan); font-size: 0.65rem; font-weight: 900; padding: 2px 6px; border-radius: 2px;">RIVER PASS</span>
+          </div>
           <div>
             <div style="color: var(--sv-cyan); font-weight: 900; font-size: 0.8rem;">CH 01: RICHMOND URBAN & RIVER RUNS</div>
-            <div style="color: #94a3b8; font-size: 0.72rem; margin-top: 2px;">Low approach, James River, and downtown corridor passes</div>
+            <div style="color: #94a3b8; font-size: 0.72rem; margin-top: 2px;">Low approach, James River corridor, and downtown skyline passes</div>
           </div>
-          <button type="button" class="vault-btn-load" data-media-url="https://drive.google.com/file/d/1iqqERAk2qOnCPWzdY7xntW-HP8sv0_Od/preview">[LOAD CH 1 STREAM]</button>
+          <a href="https://drive.google.com/drive/folders/1iqqERAk2qOnCPWzdY7xntW-HP8sv0_Od?usp=sharing" target="_blank" rel="noopener noreferrer" class="vault-btn-load">[OPEN REEL IN VAULT]</a>
         </div>
 
+        <!-- CARD 2 -->
         <div class="vault-channel-card">
-          <div>
-            <div style="color: var(--sv-magenta); font-weight: 900; font-size: 0.8rem;">CH 02: FORMATION & COCKPIT VIEW</div>
-            <div style="color: #94a3b8; font-size: 0.72rem; margin-top: 2px;">RV-12 & Cessna flight controls, maneuvers, and telemetry</div>
+          <div class="vault-thumb-box">
+            <img 
+              src="https://drive.google.com/thumbnail?id=1iqqERAk2qOnCPWzdY7xntW-HP8sv0_Od&sz=w600" 
+              alt="Channel 2 Reel"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            />
+            <div style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: #070d14; color: var(--sv-magenta); font-size: 0.75rem; font-weight: 900;">
+              HUD // REEL 02
+            </div>
+            <span style="position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.85); color: var(--sv-magenta); border: 1px solid var(--sv-magenta); font-size: 0.65rem; font-weight: 900; padding: 2px 6px; border-radius: 2px;">COCKPIT HUD</span>
           </div>
-          <button type="button" class="vault-btn-load" style="background: var(--sv-magenta); color: #fff;" data-media-url="https://drive.google.com/drive/folders/1iqqERAk2qOnCPWzdY7xntW-HP8sv0_Od?usp=sharing">[OPEN VAULT DIRECT]</button>
+          <div>
+            <div style="color: var(--sv-magenta); font-weight: 900; font-size: 0.8rem;">CH 02: FORMATION & TELEMETRY PASSES</div>
+            <div style="color: #94a3b8; font-size: 0.72rem; margin-top: 2px;">Cockpit instruments, controls, maneuvers, and aerial practice</div>
+          </div>
+          <a href="https://drive.google.com/drive/folders/1iqqERAk2qOnCPWzdY7xntW-HP8sv0_Od?usp=sharing" target="_blank" rel="noopener noreferrer" class="vault-btn-load" style="background: var(--sv-magenta); color: #fff;">[OPEN VAULT ARCHIVE]</a>
         </div>
 
       </div>
@@ -1701,17 +1775,6 @@
           }
         });
       }
-
-      // 9. VAULT PLAYER CHANNEL CONTROLS
-      const vaultPlayer = document.getElementById('main-vault-player');
-      document.querySelectorAll('.vault-btn-load').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const targetUrl = btn.getAttribute('data-media-url');
-          if (vaultPlayer && targetUrl) {
-            vaultPlayer.src = targetUrl;
-          }
-        });
-      });
 
     });
   </script>
