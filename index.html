@@ -959,8 +959,11 @@
             <!-- LIVE LEAFLET GIS ENGINE (KEYLESS FILTERED OSM TILES) -->
             <div id="gis-tactical-map"></div>
 
-            <div id="override-status-line" style="font-size: 0.75rem; color: var(--sv-green);">
-              DISPATCH GRID: 2 TARGETS LOCKED // RICHMOND URBAN CORRIDOR
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+              <div id="override-status-line" style="font-size: 0.75rem; color: var(--sv-green);">
+                DISPATCH GRID: 2 TARGETS LOCKED // RICHMOND URBAN CORRIDOR
+              </div>
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLSfJAShmRs8FjbtPNf0MWV9c1oV1ONrVRP3KgwTfl_C_AeJvcw/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer" class="mcu-link-btn" style="background-color: var(--sv-cyan); color: #000; font-size: 0.75rem;">[+ PLACE FRIEND ON MAP]</a>
             </div>
           </div>
 
@@ -970,6 +973,10 @@
               DIRECT DISPATCH & RECRUITMENT PORTALS
             </div>
             <div class="portal-link-grid">
+              <div class="portal-card">
+                <span style="font-size:0.75rem; font-weight:bold;">Place Your Friend on the Map</span>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSfJAShmRs8FjbtPNf0MWV9c1oV1ONrVRP3KgwTfl_C_AeJvcw/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer">[SUBMIT LOCATION]</a>
+              </div>
               <div class="portal-card">
                 <span style="font-size:0.75rem; font-weight:bold;">AA-Flight Services Fleet</span>
                 <button type="button" id="btn-load-fleet">[LOAD FLEET TO FMC]</button>
