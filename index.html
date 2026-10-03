@@ -489,6 +489,14 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .disconnect-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .btn-emergency {
@@ -500,11 +508,32 @@
       font-weight: bold;
       cursor: pointer;
       border-radius: 3px;
+      font-size: 0.75rem;
     }
 
     .btn-emergency.disconnected {
       background: #475569;
       color: #cbd5e1;
+    }
+
+    .btn-drone-id {
+      background: #000000;
+      color: var(--sv-amber);
+      border: 1.5px solid var(--sv-amber);
+      padding: 5px 10px;
+      font-family: inherit;
+      font-weight: 900;
+      text-decoration: none;
+      font-size: 0.75rem;
+      border-radius: 3px;
+      white-space: nowrap;
+      display: inline-block;
+      transition: all 0.15s ease-in-out;
+    }
+
+    .btn-drone-id:hover {
+      background: var(--sv-amber);
+      color: #000000;
     }
 
     /* DISPATCH PORTAL TILES */
@@ -953,7 +982,10 @@
                 <strong style="color: var(--sv-danger);">EMERGENCY OVERRIDE</strong>
                 <div style="font-size: 0.72rem; color: #94a3b8;">Sever community tracking feed immediately</div>
               </div>
-              <button type="button" id="emergency-disconnect-btn" class="btn-emergency">DECONFLICT</button>
+              <div class="disconnect-actions">
+                <a href="https://virginiafix.com/index.html#/?start_time=%7B%3Aoperator+%22gte%22%2C+%3Avalue+nil%7D&end_time=%7B%3Aoperator+%22lte%22%2C+%3Avalue+nil%7D&within-radius=%7B%3Aradius+21.846444234020097%2C+%3Apoint+%5B-77.45153323141133+37.55515846536642%5D%7D&active=true" target="_blank" rel="noopener noreferrer" class="btn-drone-id" title="Query Virginia Remote ID ADS-B Grid">IDENTIFY DRONE</a>
+                <button type="button" id="emergency-disconnect-btn" class="btn-emergency">DECONFLICT</button>
+              </div>
             </div>
 
             <!-- LIVE LEAFLET GIS ENGINE (KEYLESS FILTERED OSM TILES) -->
@@ -973,6 +1005,10 @@
               DIRECT DISPATCH & RECRUITMENT PORTALS
             </div>
             <div class="portal-link-grid">
+              <div class="portal-card">
+                <span style="font-size:0.75rem; font-weight:bold;">Identify Mystery Drone</span>
+                <a href="https://virginiafix.com/index.html#/?start_time=%7B%3Aoperator+%22gte%22%2C+%3Avalue+nil%7D&end_time=%7B%3Aoperator+%22lte%22%2C+%3Avalue+nil%7D&within-radius=%7B%3Aradius+21.846444234020097%2C+%3Apoint+%5B-77.45153323141133+37.55515846536642%5D%7D&active=true" target="_blank" rel="noopener noreferrer">[TRACK DRONE]</a>
+              </div>
               <div class="portal-card">
                 <span style="font-size:0.75rem; font-weight:bold;">Place Your Friend on the Map</span>
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSfJAShmRs8FjbtPNf0MWV9c1oV1ONrVRP3KgwTfl_C_AeJvcw/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer">[SUBMIT LOCATION]</a>
