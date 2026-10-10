@@ -1,16 +1,3 @@
-Here is the updated, complete index.html.
-
-Key Adjustments Made
-Real-Time Clocks (Local & UTC/Zulu):
-
-Expanded the annunciator bar telemetry section to render both LOCAL (12-hour format with AM/PM and time zone indicator) and UTC (--:--:--Z) simultaneously in real time.
-
-METAR Observation Time Alignment:
-
-Synchronized the fallback placeholder observation time to 101754Z (matching the current 18Z window).
-
-Enhanced fetchLiveMetar() to immediately fetch and populate the current live observation text from aviationweather.gov into both the top annunciator link and MFD tab display upon page load, eliminating stale discrepancies.
-
 HTML
 <!DOCTYPE html>
 <html lang="en">
