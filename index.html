@@ -293,8 +293,7 @@
     });
 
     // --- 3. GOOGLE SPREADSHEET LIVE CSV FEED CONFIGURATION ---
-    // Replace with your target Google Sheet ID published to the web as CSV:
-    const SPREADSHEET_KEY = "YOUR_SPREADSHEET_ID_HERE";
+    const SPREADSHEET_KEY = "Birds and Cats";
     const CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_KEY}/gviz/tq?tqx=out:csv`;
 
     const sightingsLayer = L.layerGroup().addTo(map);
