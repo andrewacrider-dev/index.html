@@ -814,21 +814,50 @@
 
     .vault-thumb-box {
       width: 100%;
-      height: 130px;
+      height: 140px;
       background: #050a10;
       border-radius: 3px;
       overflow: hidden;
       position: relative;
       border: 1px solid #1e293b;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      cursor: pointer;
     }
 
-    .vault-thumb-box img {
+    .vault-thumb-box video, .vault-thumb-box img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      display: block;
+    }
+
+    .vault-play-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.2s ease;
+    }
+
+    .vault-play-overlay:hover {
+      background: rgba(0, 240, 255, 0.25);
+    }
+
+    .vault-play-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(0, 240, 255, 0.85);
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      box-shadow: 0 0 12px var(--sv-cyan);
+      border: 1px solid #fff;
     }
 
     .vault-btn-load {
@@ -978,7 +1007,7 @@
         </div>
 
         <div class="mfd-viewport">
-          <!-- VIEW 1: GIS MAP WITH FOREST, FRANCINE & LIVE eBIRD FEED -->
+          <!-- VIEW 1: GIS MAP WITH LIVE GOOGLE SHEET (BIRDS AND CATS) -->
           <div id="mfd-view-map" class="mfd-tab active">
             <div class="disconnect-panel">
               <div>
@@ -996,10 +1025,10 @@
 
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
               <div id="override-status-line" style="font-size: 0.75rem; color: var(--sv-green);">
-                DISPATCH GRID: 2 TARGETS LOCKED // RICHMOND URBAN CORRIDOR
+                DISPATCH GRID: SYNCHRONIZING REAL OBSERVATIONS...
               </div>
-              <div style="display: flex; gap: 6px;">
-                <span id="bird-status-indicator" style="font-size: 0.72rem; color: var(--sv-amber); align-self: center;">eBIRD SYNCING...</span>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <span id="bird-status-indicator" style="font-size: 0.72rem; color: var(--sv-cyan); font-weight: bold;">[SHEET: BIRDS & CATS CONNECTED]</span>
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSfJAShmRs8FjbtPNf0MWV9c1oV1ONrVRP3KgwTfl_C_AeJvcw/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer" class="mcu-link-btn" style="background-color: var(--sv-cyan); color: #000; font-size: 0.75rem;">[+ PLACE FRIEND ON MAP]</a>
               </div>
             </div>
@@ -1118,7 +1147,7 @@
         <div class="fmc-screen" id="fmc-log-terminal">
           <div>> COLLINS FMS VER 4.2 RUNNING</div>
           <div>> ACTIVE FLIGHT PLAN: KRIC -> DIRECT DECONFLICTION</div>
-          <div style="color: var(--sv-amber);">> OBSERVER TARGETS: FOREST (GRACE ST) & FRANCINE (BROAD ST) ACTIVE.</div>
+          <div style="color: var(--sv-green);">> SPREADSHEET TELEMETRY: BIRDS AND CATS FEED ENGAGED.</div>
         </div>
       </div>
     </section>
@@ -1140,7 +1169,7 @@
       <marquee id="news-ticker-scroll" scrollamount="5" onmouseover="this.stop();" onmouseout="this.start();" style="color: #ffffff; font-size: 0.85rem; font-weight: bold; margin-left: 10px;">> SYNCHRONIZING RVA LOCAL NEWS BEAT... [CONTACT US TO SUBSCRIBE]</marquee>
     </section>
 
-    <!-- INLINE FLIGHT HIGHLIGHT & MEDIA ARCHIVES PLAYER DECK -->
+    <!-- INLINE FLIGHT HIGHLIGHT & MEDIA ARCHIVES PLAYER DECK WITH INTERACTIVE VIDEO SCREENSHOTS -->
     <section class="vault-player-deck">
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
         <div>
@@ -1154,9 +1183,9 @@
       <div class="vault-screen-wrapper" id="vault-screen-box">
         <div class="vault-fallback-poster" id="vault-poster">
           <div style="font-size: 2.2rem;">🛩️</div>
-          <div style="color: #ffffff; font-weight: 900; font-size: 1.1rem; letter-spacing: 1px;">AA-FLIGHT SERVICES MEDIA ARCHIVE</div>
-          <div style="color: #94a3b8; font-size: 0.8rem; max-width: 480px; line-height: 1.4;">
-            Urban river runs, flight training passes, cockpit HUD recordings, and Richmond corridor operations.
+          <div id="vault-active-title" style="color: #ffffff; font-weight: 900; font-size: 1.1rem; letter-spacing: 1px;">AA-FLIGHT SERVICES MEDIA ARCHIVE</div>
+          <div id="vault-active-desc" style="color: #94a3b8; font-size: 0.8rem; max-width: 480px; line-height: 1.4;">
+            Click any channel reel preview card below to stream video directly onto this cockpit HUD display.
           </div>
           <a href="https://drive.google.com/drive/folders/1iqqERAk2qOnCPWzdY7xntW-HP8sv0_Od?usp=sharing" target="_blank" rel="noopener noreferrer" class="mcu-link-btn" style="background: var(--sv-cyan); color: #000; padding: 8px 16px; font-size: 0.85rem; margin-top: 6px;">[LAUNCH FLIGHT REEL DRIVE]</a>
         </div>
@@ -1171,47 +1200,49 @@
         </iframe>
       </div>
 
-      <!-- QUICK CHANNEL PREVIEWS & DIRECT ACCESS -->
+      <!-- QUICK CHANNEL PREVIEWS & LIVE FOOTAGE SCREENSHOTS -->
       <div class="vault-channels-grid">
 
         <!-- CARD 1 -->
         <div class="vault-channel-card">
-          <div class="vault-thumb-box">
+          <div class="vault-thumb-box" onclick="playVaultVideo('https://drive.google.com/file/d/15oEW2fvdSlQ-kBi66uD_WY4N2ffjNas1/preview', 'CH 01: Drones & Donuts Aerial Sortie', 'DJI aerial flight footage captured over Richmond operational grid.')">
             <img 
-              src="https://drive.google.com/thumbnail?id=1iqqERAk2qOnCPWzdY7xntW-HP8sv0_Od&sz=w1000" 
-              alt="Channel 1 Reel"
-              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+              src="https://drive.google.com/thumbnail?id=15oEW2fvdSlQ-kBi66uD_WY4N2ffjNas1&sz=w800" 
+              alt="Drones and Donuts Video Screenshot"
+              onerror="this.src='https://drive.google.com/thumbnail?id=1xAj4aT5C2ZSfnVppiTTT6R0yDa8t1udd&sz=w800';"
             />
-            <div style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: #070d14; color: var(--sv-cyan); font-size: 0.75rem; font-weight: 900;">
-              HUD // REEL 01
+            <div class="vault-play-overlay">
+              <div class="vault-play-btn">▶</div>
+              <span style="font-size:0.7rem; font-weight:900; color:#fff; letter-spacing:1px;">PLAY PREVIEW</span>
             </div>
-            <span style="position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.85); color: var(--sv-cyan); border: 1px solid var(--sv-cyan); font-size: 0.65rem; font-weight: 900; padding: 2px 6px; border-radius: 2px;">RIVER PASS</span>
+            <span style="position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.85); color: var(--sv-cyan); border: 1px solid var(--sv-cyan); font-size: 0.65rem; font-weight: 900; padding: 2px 6px; border-radius: 2px;">DRONE SORTIE</span>
           </div>
           <div>
-            <div style="color: var(--sv-cyan); font-weight: 900; font-size: 0.8rem;">CH 01: RICHMOND URBAN & RIVER RUNS</div>
-            <div style="color: #94a3b8; font-size: 0.72rem; margin-top: 2px;">Low approach, James River corridor, and downtown skyline passes</div>
+            <div style="color: var(--sv-cyan); font-weight: 900; font-size: 0.8rem;">CH 01: DRONES & DONUTS FLIGHT</div>
+            <div style="color: #94a3b8; font-size: 0.72rem; margin-top: 2px;">Live drone flight operations, James River approaches, and maneuvers</div>
           </div>
-          <a href="https://drive.google.com/drive/folders/1iqqERAk2qOnCPWzdY7xntW-HP8sv0_Od?usp=sharing" target="_blank" rel="noopener noreferrer" class="vault-btn-load">[OPEN REEL IN VAULT]</a>
+          <button type="button" class="vault-btn-load" onclick="playVaultVideo('https://drive.google.com/file/d/15oEW2fvdSlQ-kBi66uD_WY4N2ffjNas1/preview', 'CH 01: Drones & Donuts Aerial Sortie', 'DJI aerial flight footage captured over Richmond operational grid.')">[LOAD TO COCKPIT HUD]</button>
         </div>
 
         <!-- CARD 2 -->
         <div class="vault-channel-card">
-          <div class="vault-thumb-box">
+          <div class="vault-thumb-box" onclick="playVaultVideo('https://drive.google.com/file/d/12Jydcg5jWOY-rVJ2sHPFjWCJ839FQqT7/preview', 'CH 02: EEOC Aerial Survey', 'EEOC flight operations and Richmond airspace survey run.')">
             <img 
-              src="https://drive.google.com/thumbnail?id=1iqqERAk2qOnCPWzdY7xntW-HP8sv0_Od&sz=w600" 
-              alt="Channel 2 Reel"
-              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+              src="https://drive.google.com/thumbnail?id=12Jydcg5jWOY-rVJ2sHPFjWCJ839FQqT7&sz=w800" 
+              alt="EEOC Flight Video Screenshot"
+              onerror="this.src='https://drive.google.com/thumbnail?id=1f4fo3UhygfQnVtaqXC8lDA72yieQOjDU&sz=w800';"
             />
-            <div style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: #070d14; color: var(--sv-magenta); font-size: 0.75rem; font-weight: 900;">
-              HUD // REEL 02
+            <div class="vault-play-overlay">
+              <div class="vault-play-btn">▶</div>
+              <span style="font-size:0.7rem; font-weight:900; color:#fff; letter-spacing:1px;">PLAY PREVIEW</span>
             </div>
-            <span style="position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.85); color: var(--sv-magenta); border: 1px solid var(--sv-magenta); font-size: 0.65rem; font-weight: 900; padding: 2px 6px; border-radius: 2px;">COCKPIT HUD</span>
+            <span style="position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.85); color: var(--sv-magenta); border: 1px solid var(--sv-magenta); font-size: 0.65rem; font-weight: 900; padding: 2px 6px; border-radius: 2px;">EEOC AIR SURVEY</span>
           </div>
           <div>
-            <div style="color: var(--sv-magenta); font-weight: 900; font-size: 0.8rem;">CH 02: FORMATION & TELEMETRY PASSES</div>
-            <div style="color: #94a3b8; font-size: 0.72rem; margin-top: 2px;">Cockpit instruments, controls, maneuvers, and aerial practice</div>
+            <div style="color: var(--sv-magenta); font-weight: 900; font-size: 0.8rem;">CH 02: EEOC CORRIDOR SURVEY</div>
+            <div style="color: #94a3b8; font-size: 0.72rem; margin-top: 2px;">Richmond operational passes and urban flight video telemetry</div>
           </div>
-          <a href="https://drive.google.com/drive/folders/1iqqERAk2qOnCPWzdY7xntW-HP8sv0_Od?usp=sharing" target="_blank" rel="noopener noreferrer" class="vault-btn-load" style="background: var(--sv-magenta); color: #fff;">[OPEN VAULT ARCHIVE]</a>
+          <button type="button" class="vault-btn-load" style="background: var(--sv-magenta); color: #fff;" onclick="playVaultVideo('https://drive.google.com/file/d/12Jydcg5jWOY-rVJ2sHPFjWCJ839FQqT7/preview', 'CH 02: EEOC Aerial Survey', 'EEOC flight operations and Richmond airspace survey run.')">[LOAD TO COCKPIT HUD]</button>
         </div>
 
       </div>
@@ -1229,6 +1260,22 @@
   <!-- Leaflet GIS Map Script -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script>
+    // Global Vault Video Loader Function
+    function playVaultVideo(embedUrl, title, desc) {
+      const player = document.getElementById('main-vault-player');
+      const poster = document.getElementById('vault-poster');
+      const titleEl = document.getElementById('vault-active-title');
+      const descEl = document.getElementById('vault-active-desc');
+
+      if (player && poster) {
+        player.src = embedUrl;
+        player.style.display = 'block';
+        poster.style.display = 'none';
+      }
+      if (titleEl) titleEl.textContent = title;
+      if (descEl) descEl.textContent = desc;
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
 
       // 1. DUAL REAL-TIME CLOCKS: LOCAL & UTC (ZULU)
@@ -1295,13 +1342,13 @@
           });
         });
 
-        // Initialize Primary Tactical Map centered on Richmond between Grace & Broad St
+        // Initialize Primary Tactical Map centered over Richmond Urban Corridor
         const mapContainer = document.getElementById('gis-tactical-map');
         if (mapContainer && typeof L !== 'undefined') {
           map = L.map('gis-tactical-map', {
             zoomControl: true,
             attributionControl: false
-          }).setView([37.5558, -77.4655], 13);
+          }).setView([37.585, -77.470], 13);
 
           // Keyless OpenStreetMap with dark cockpit inverted CSS filter
           L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -1309,16 +1356,7 @@
             className: 'dark-cockpit-tiles'
           }).addTo(map);
 
-          // Marker 1: Forest The Cat (2735 W Grace St)
-          const forestIcon = L.divIcon({
-            className: 'custom-cat-pin',
-            html: '<div style="background:#00f0ff; width:14px; height:14px; border-radius:50%; border:2px solid #ffffff; box-shadow:0 0 8px #00f0ff;"></div>',
-            iconSize: [14, 14]
-          });
-          forestMarker = L.marker([37.5583, -77.4728], { icon: forestIcon }).addTo(map);
-          forestMarker.bindPopup('<strong>FOREST THE CAT</strong><br><a href="https://photos.app.goo.gl/RfDueLprUsuoQ6tdA" target="_blank" style="color:#00f0ff; text-decoration:underline;">2735 W Grace St Photo Vault</a><br><span style="color:#00f0ff;">SECTOR WATCH: ACTIVE</span>');
-
-          // Marker 2: Francine (Lowe\'s on Broad St)
+          // Francine Anchor (Lowe's Broad St)
           const francineIcon = L.divIcon({
             className: 'custom-cat-pin',
             html: '<div style="background:#ec4899; width:14px; height:14px; border-radius:50%; border:2px solid #ffffff; box-shadow:0 0 8px #ec4899;"></div>',
@@ -1327,34 +1365,79 @@
           francineMarker = L.marker([37.5532, -77.4582], { icon: francineIcon }).addTo(map);
           francineMarker.bindPopup('<strong>FRANCINE (LOWE\'S)</strong><br><a href="https://photos.app.goo.gl/895W2rGmJCoJGjk99" target="_blank" style="color:#ec4899; text-decoration:underline;">Broad St Corridor Photo Vault</a><br><span style="color:#ec4899;">GARDEN PATROL: ACTIVE</span>');
 
-          // Attach Avian Sightings Layer Group to Main Map
+          // Attach Dynamic Layer Group for Google Sheet
           birdSightingsLayerGroup.addTo(map);
 
-          // Dynamic Avian & eBird Feed from Google Sheet
-          // Set your target Google Sheet ID below:
-          const BIRD_SHEET_ID = 'YOUR_BIRD_SHEET_ID_HERE'; 
-          const BIRD_SHEET_ENDPOINT = `https://docs.google.com/spreadsheets/d/${BIRD_SHEET_ID}/gviz/tq?tqx=out:json`;
+          // DYNAMIC SPREADSHEET FEED: Birds and Cats
+          const BIRDS_CATS_SHEET_ID = '1YbhITJnZjm0NrxwaDU24lTuxohNKqRvpAuBSEYTZ0rs';
+          const BIRDS_CATS_ENDPOINT = `https://docs.google.com/spreadsheets/d/${BIRDS_CATS_SHEET_ID}/gviz/tq?tqx=out:json`;
 
-          async function loadBirdSightingsFromSheet() {
-            const statusIndicator = document.getElementById('bird-status-indicator');
-            try {
-              if (BIRD_SHEET_ID.includes('YOUR_BIRD_SHEET_ID')) {
-                // Baseline local fallback coordinates along the James River corridor
-                const defaultSightings = [
-                  { name: "Bald Eagle", code: "baleag", lat: 37.5312, lon: -77.4485, count: "2", date: "Recent" },
-                  { name: "Osprey", code: "osprey", lat: 37.5250, lon: -77.4200, count: "1", date: "Recent" },
-                  { name: "Great Blue Heron", code: "grbher3", lat: 37.5680, lon: -77.4900, count: "3", date: "Recent" }
-                ];
-                birdSightingsLayerGroup.clearLayers();
-                defaultSightings.forEach(renderBirdMarker);
-                if (statusIndicator) {
-                  statusIndicator.textContent = `eBIRD: 3 FLYWAYS ONLINE`;
-                  statusIndicator.style.color = 'var(--sv-green)';
-                }
-                return;
+          // Coordinate Parsing Helper: converts Decimal or DMS strings (e.g. 37°33'58.7"N)
+          function parseCoord(input) {
+            if (!input) return null;
+            if (typeof input === 'number') return input;
+            const str = input.toString().trim();
+            const direct = parseFloat(str);
+            if (!isNaN(direct) && !str.includes('°')) return direct;
+
+            const dmsMatch = str.match(/(\d+)[°\s]+(\d+)['\s]+([\d.]+)?["\s]*([NSEW])/i);
+            if (dmsMatch) {
+              const deg = parseFloat(dmsMatch[1]);
+              const min = parseFloat(dmsMatch[2]) || 0;
+              const sec = parseFloat(dmsMatch[3]) || 0;
+              const dir = dmsMatch[4].toUpperCase();
+              let dec = deg + (min / 60) + (sec / 3600);
+              if (dir === 'S' || dir === 'W') dec = -dec;
+              return dec;
+            }
+            return null;
+          }
+
+          // eBird Species Code Resolver Helper
+          const EBIRD_CODES = {
+            'redheaded woodpecker': 'rehwoo',
+            'red-headed woodpecker': 'rehwoo',
+            'red bellied woodpecker': 'rebwoo',
+            'red-bellied woodpecker': 'rebwoo',
+            'rose breasted grosbeak': 'robgro',
+            'rose-breasted grosbeak': 'robgro',
+            'bluejay': 'blujay',
+            'blue jay': 'blujay',
+            'belted king fisher': 'belkin1',
+            'belted kingfisher': 'belkin1',
+            'american goldfish': 'amegfi',
+            'american goldfinch': 'amegfi',
+            'canadian geass': 'cangoo',
+            'canada goose': 'cangoo',
+            'brown thrasher': 'brnthr',
+            'morning dove': 'moudov',
+            'mourning dove': 'moudov',
+            'northern flicker': 'norfli',
+            'carolina wren': 'carwre',
+            'american robin': 'amerob',
+            'northermockingbird': 'normoc',
+            'northern mockingbird': 'normoc'
+          };
+
+          function resolveBirdUrl(name, rawCode) {
+            if (rawCode && rawCode.trim().length >= 4) {
+              return `https://ebird.org/species/${rawCode.trim().toLowerCase()}`;
+            }
+            const cleanName = (name || '').toLowerCase().replace(/[^a-z\s-]/g, '').trim();
+            for (const [key, code] of Object.entries(EBIRD_CODES)) {
+              if (cleanName.includes(key)) {
+                return `https://ebird.org/species/${code}`;
               }
+            }
+            return 'https://ebird.org/explore';
+          }
 
-              const res = await fetch(BIRD_SHEET_ENDPOINT);
+          async function syncBirdsAndCats() {
+            const statusLine = document.getElementById('override-status-line');
+            const birdStatus = document.getElementById('bird-status-indicator');
+
+            try {
+              const res = await fetch(BIRDS_CATS_ENDPOINT);
               if (!res.ok) throw new Error(`HTTP ${res.status}`);
               const raw = await res.text();
               const cleanJson = raw.substring(raw.indexOf('{'), raw.lastIndexOf('}') + 1);
@@ -1362,83 +1445,114 @@
               const rows = data.table ? data.table.rows : [];
 
               birdSightingsLayerGroup.clearLayers();
-              let count = 0;
+              let totalLoaded = 0;
 
               rows.forEach(row => {
+                if (!row.c) return;
                 const getVal = (idx) => (row.c && row.c[idx]) ? (row.c[idx].v || row.c[idx].f || '').toString().trim() : '';
 
-                // Supports: Name/Species, Lat, Lon, SpeciesCode/Count, Date
                 const col0 = getVal(0);
                 const col1 = getVal(1);
                 const col2 = getVal(2);
                 const col3 = getVal(3);
                 const col4 = getVal(4);
+                const col5 = getVal(5);
+                const col6 = getVal(6);
 
-                let lat = null, lon = null, name = '', code = '', obsCount = '1', date = '';
+                let name = col0;
+                let lat = null;
+                let lon = null;
+                let code = '';
+                let count = '1';
 
-                if (!isNaN(parseFloat(col1)) && !isNaN(parseFloat(col2)) && Math.abs(parseFloat(col1)) <= 90) {
-                  name = col0 || 'Avian Sighting';
-                  lat = parseFloat(col1);
-                  lon = parseFloat(col2);
+                // Format Case 1: Standard columns [ID, Name, Code, Lat, Lon, Date, Count]
+                if (parseCoord(col3) !== null && parseCoord(col4) !== null) {
+                  name = col1 || col0;
+                  code = col2;
+                  lat = parseCoord(col3);
+                  lon = parseCoord(col4);
+                  count = col6 || '1';
+                }
+                // Format Case 2: [Name, Lat, Lon, Count...]
+                else if (parseCoord(col1) !== null && parseCoord(col2) !== null) {
+                  name = col0;
+                  lat = parseCoord(col1);
+                  lon = parseCoord(col2);
                   code = col3;
-                  obsCount = col4 || '1';
-                } else if (!isNaN(parseFloat(col2)) && !isNaN(parseFloat(col3)) && Math.abs(parseFloat(col2)) <= 90) {
-                  name = col1 || col0 || 'Avian Sighting';
-                  lat = parseFloat(col2);
-                  lon = parseFloat(col3);
-                  code = col4;
-                  obsCount = '1';
+                  count = col4 || '1';
+                }
+                // Format Case 3: Embedded coordinates e.g., "37.597331, -77.469025" in col1
+                else if (col1 && col1.includes(',')) {
+                  const parts = col1.split(',');
+                  lat = parseCoord(parts[0]);
+                  lon = parseCoord(parts[1]);
+                }
+                // Format Case 4: Space-separated DMS coordinates e.g. "37°55'83"N 77°47'28"W" in col1
+                else if (col1 && (col1.includes('N') || col1.includes('S')) && (col1.includes('W') || col1.includes('E'))) {
+                  const parts = col1.split(/\s+/);
+                  lat = parseCoord(parts[0]);
+                  lon = parseCoord(parts[1]);
                 }
 
-                if (lat && lon) {
-                  renderBirdMarker({ name, code, lat, lon, count: obsCount, date });
-                  count++;
+                if (lat !== null && lon !== null) {
+                  totalLoaded++;
+                  const isCat = name.toUpperCase().includes('CAT') || name.toUpperCase().includes('FOREST');
+
+                  if (isCat) {
+                    const catIcon = L.divIcon({
+                      className: 'custom-cat-pin',
+                      html: '<div style="background:#00f0ff; width:15px; height:15px; border-radius:50%; border:2px solid #ffffff; box-shadow:0 0 10px #00f0ff;"></div>',
+                      iconSize: [15, 15]
+                    });
+                    L.marker([lat, lon], { icon: catIcon })
+                      .addTo(birdSightingsLayerGroup)
+                      .bindPopup(`<strong>${name.toUpperCase()}</strong><br><a href="https://photos.app.goo.gl/RfDueLprUsuoQ6tdA" target="_blank" style="color:#00f0ff; text-decoration:underline;">2735 W Grace St Photo Vault</a><br><span style="color:#00f0ff;">CAT RADAR: TRACKED</span>`);
+                  } else {
+                    const eBirdUrl = resolveBirdUrl(name, code);
+                    const birdIcon = L.divIcon({
+                      className: 'custom-bird-pin',
+                      html: '<div style="background:#22c55e; width:11px; height:11px; border-radius:50%; border:1.5px solid #ffffff; box-shadow:0 0 6px #22c55e;"></div>',
+                      iconSize: [11, 11]
+                    });
+
+                    const popup = `
+                      <strong style="color:var(--sv-green);">🦅 ${name}</strong><br>
+                      <span style="color:#cbd5e1; font-size:0.75rem;">COUNT: ${count}</span><br>
+                      <span style="color:#94a3b8; font-size:0.7rem;">COORDS: ${lat.toFixed(4)}, ${lon.toFixed(4)}</span><br>
+                      <a href="${eBirdUrl}" target="_blank" rel="noopener noreferrer" style="color:var(--sv-cyan); text-decoration:underline; font-size:0.75rem; font-weight:bold;">[OPEN IN eBIRD APP]</a>
+                    `;
+
+                    L.marker([lat, lon], { icon: birdIcon })
+                      .addTo(birdSightingsLayerGroup)
+                      .bindPopup(popup);
+                  }
                 }
               });
 
-              if (statusIndicator) {
-                statusIndicator.textContent = `eBIRD: ${count} LOGGED`;
-                statusIndicator.style.color = 'var(--sv-green)';
+              if (statusLine) {
+                statusLine.textContent = `DISPATCH GRID: ${totalLoaded} AUTHENTICATED OBSERVATIONS ONLINE`;
+                statusLine.style.color = 'var(--sv-green)';
+              }
+              if (birdStatus) {
+                birdStatus.textContent = `[LIVE: ${totalLoaded} ENTRIES]`;
+                birdStatus.style.color = 'var(--sv-green)';
               }
             } catch (err) {
-              console.warn('Avian sheet feed bypass:', err);
-              if (statusIndicator) {
-                statusIndicator.textContent = 'eBIRD: CACHE LOADED';
-                statusIndicator.style.color = 'var(--sv-amber)';
+              console.warn('Birds and Cats sheet sync bypassed:', err);
+              if (statusLine) {
+                statusLine.textContent = 'DISPATCH GRID: SHEET CONNECTION OFFLINE';
+                statusLine.style.color = 'var(--sv-amber)';
               }
             }
           }
 
-          function renderBirdMarker(sighting) {
-            const birdIcon = L.divIcon({
-              className: 'custom-bird-pin',
-              html: '<div style="background:#22c55e; width:12px; height:12px; border-radius:50%; border:2px solid #ffffff; box-shadow:0 0 8px #22c55e;"></div>',
-              iconSize: [12, 12]
-            });
-
-            const eBirdUrl = sighting.code 
-              ? `https://ebird.org/species/${sighting.code}` 
-              : `https://ebird.org/explore`;
-
-            const popup = `
-              <strong style="color:var(--sv-green);">🦅 ${sighting.name}</strong><br>
-              <span style="color:#cbd5e1; font-size:0.75rem;">COUNT: ${sighting.count || 1}</span><br>
-              <span style="color:#94a3b8; font-size:0.7rem;">COORDS: ${sighting.lat.toFixed(4)}, ${sighting.lon.toFixed(4)}</span><br>
-              <a href="${eBirdUrl}" target="_blank" rel="noopener noreferrer" style="color:var(--sv-cyan); text-decoration:underline; font-size:0.75rem; font-weight:bold;">[OPEN IN eBIRD APP]</a>
-            `;
-
-            L.marker([sighting.lat, sighting.lon], { icon: birdIcon })
-              .addTo(birdSightingsLayerGroup)
-              .bindPopup(popup);
-          }
-
-          loadBirdSightingsFromSheet();
-          setInterval(loadBirdSightingsFromSheet, 60000);
+          syncBirdsAndCats();
+          setInterval(syncBirdsAndCats, 60000);
 
           setTimeout(() => map.invalidateSize(), 250);
         }
 
-        // Initialize Practice Area & Flight Test Map (Dynamic Google Sheet Feed)
+        // Initialize Practice Area & Flight Test Map
         const testMapContainer = document.getElementById('gis-test-map');
         if (testMapContainer && typeof L !== 'undefined') {
           testMap = L.map('gis-test-map', {
@@ -1446,13 +1560,12 @@
             attributionControl: false
           }).setView([37.53, -77.38], 10);
 
-          // Keyless OpenStreetMap with dark cockpit inverted CSS filter
           L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             className: 'dark-cockpit-tiles'
           }).addTo(testMap);
 
-          // KRIC Class C Surface Inner Ring (5 NM / 9260m)
+          // KRIC Class C Surface Inner Ring
           L.circle([37.5052, -77.3197], {
             radius: 9260,
             color: '#ef4444',
@@ -1463,7 +1576,6 @@
 
           testOpsLayerGroup.addTo(testMap);
 
-          // Dynamic Feed: Load Test Ops Waypoints from Google Sheet
           const TEST_OPS_SHEET_ID = '1YbhITJnZjm0NrxwaDU24lTuxohNKqRvpAuBSEYTZ0rs';
           const TEST_OPS_ENDPOINT = `https://docs.google.com/spreadsheets/d/${TEST_OPS_SHEET_ID}/gviz/tq?tqx=out:json`;
 
@@ -1481,7 +1593,6 @@
 
               rows.forEach(row => {
                 const getVal = (idx) => (row.c && row.c[idx]) ? (row.c[idx].v || row.c[idx].f || '').toString().trim() : '';
-
                 const col0 = getVal(0);
                 const col1 = getVal(1);
                 const col2 = getVal(2);
@@ -1489,18 +1600,11 @@
                 const col4 = getVal(4);
 
                 let lat = null, lon = null, name = '', notes = '', status = '';
-
                 if (!isNaN(parseFloat(col1)) && !isNaN(parseFloat(col2)) && Math.abs(parseFloat(col1)) <= 90) {
                   name = col0;
                   lat = parseFloat(col1);
                   lon = parseFloat(col2);
                   status = col3;
-                  notes = col4;
-                } else if (!isNaN(parseFloat(col2)) && !isNaN(parseFloat(col3)) && Math.abs(parseFloat(col2)) <= 90) {
-                  name = col1 || col0;
-                  lat = parseFloat(col2);
-                  lon = parseFloat(col3);
-                  status = col0;
                   notes = col4;
                 }
 
@@ -1525,7 +1629,6 @@
                 }
               });
 
-              // Airport defaults if sheet is empty or lacks coordinates
               if (markersAdded === 0) {
                 L.marker([37.7073, -77.4360]).addTo(testOpsLayerGroup).bindPopup("<strong>KOFP Hanover County</strong><br>Default Ops");
                 L.marker([37.4069, -77.5250]).addTo(testOpsLayerGroup).bindPopup("<strong>KFCI Chesterfield County</strong><br>Default Ops");
@@ -1557,7 +1660,6 @@
           toggleBtn.addEventListener('click', () => {
             disconnected = !disconnected;
             if (disconnected) {
-              if (forestMarker && map) map.removeLayer(forestMarker);
               if (francineMarker && map) map.removeLayer(francineMarker);
               if (birdSightingsLayerGroup && map) map.removeLayer(birdSightingsLayerGroup);
               toggleBtn.textContent = 'RESTORE';
@@ -1567,13 +1669,12 @@
                 statusLine.style.color = 'var(--sv-danger)';
               }
             } else {
-              if (forestMarker && map) forestMarker.addTo(map);
               if (francineMarker && map) francineMarker.addTo(map);
               if (birdSightingsLayerGroup && map) birdSightingsLayerGroup.addTo(map);
               toggleBtn.textContent = 'DECONFLICT';
               toggleBtn.classList.remove('disconnected');
               if (statusLine) {
-                statusLine.textContent = 'DISPATCH GRID: 2 TARGETS LOCKED // RICHMOND URBAN CORRIDOR';
+                statusLine.textContent = 'DISPATCH GRID: TARGETS RESTORED';
                 statusLine.style.color = 'var(--sv-green)';
               }
             }
@@ -1717,7 +1818,7 @@
 
       }, 40);
 
-      // 5. NOAA AVIATION METAR API (IMMEDIATE AUTO-UPDATE)
+      // 5. NOAA AVIATION METAR API
       async function fetchLiveMetar() {
         const topLink = document.getElementById('top-metar-link');
         const rawBox = document.getElementById('metar-raw-box');
